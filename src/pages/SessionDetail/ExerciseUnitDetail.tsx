@@ -1,6 +1,8 @@
 import React from "react";
 import { ExerciseUnitInterface } from "../SessionOverview/Session";
+import NewSet from "./NewSet";
 import SetDetail from "./SetDetail";
+import "./exerciseUnitDetail.css";
 
 type Props = {
   exerciseUnit: ExerciseUnitInterface;
@@ -28,12 +30,22 @@ export default function ExerciseUnitDetail(props: Props) {
 
   return (
     <div>
-      <h2>{props.exerciseUnit.exercise_name}</h2>
-      <button onClick={handleRemoveExercise}>Remove Exercise</button>
+      <div className="exercise-name-container">
+        <h2 className="exercise-name">{props.exerciseUnit.exercise_name}</h2>
+        <button
+          className="remove-exercise-button"
+          onClick={handleRemoveExercise}
+        >
+          Remove Exercise
+        </button>
+      </div>
       {props.exerciseUnit.set.map((set, key) => {
         return <SetDetail key={key} set={set} />;
       })}
-      <button>Add Set</button>
+      <NewSet
+        exercise_unit={props.exerciseUnit.id}
+        set_number={props.exerciseUnit.set.length + 1}
+      />
     </div>
   );
 }

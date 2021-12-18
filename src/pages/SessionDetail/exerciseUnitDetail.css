@@ -1,0 +1,15 @@
+.exercise-name-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.exercise-name {
+  margin-left: 10px;
+}
+
+.remove-exercise-button {
+  margin-right: 10px;
+  height: 20px;
+  align-self: center;
+}

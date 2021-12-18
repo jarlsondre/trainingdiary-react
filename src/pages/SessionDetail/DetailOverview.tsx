@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { SessionInterface } from "../SessionOverview/Session";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
+import "./detailOverview.css";
 
 interface ExerciseDetail {
   name: string;
@@ -79,22 +80,24 @@ export default function DetailOverview() {
         {session.exercise_unit.map((exerciseUnit, key) => {
           return <ExerciseUnitDetail key={key} exerciseUnit={exerciseUnit} />;
         })}
-        <button onClick={handleAddExercise}>Add Exercise</button>
-        <select
-          name="exercises"
-          id="exercises"
-          onChange={(event) => {
-            setSelectedExercise(parseInt(event.target.value));
-          }}
-        >
-          {exercises.map((exercise, key) => {
-            return (
-              <option key={key} value={exercise.id}>
-                {exercise.name}
-              </option>
-            );
-          })}
-        </select>
+        <div className="add-exercise-container">
+          <select
+            name="exercises"
+            id="exercises"
+            onChange={(event) => {
+              setSelectedExercise(parseInt(event.target.value));
+            }}
+          >
+            {exercises.map((exercise, key) => {
+              return (
+                <option key={key} value={exercise.id}>
+                  {exercise.name}
+                </option>
+              );
+            })}
+          </select>
+          <button onClick={handleAddExercise}>Add Exercise</button>
+        </div>
       </div>
     );
   }
