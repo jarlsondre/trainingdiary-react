@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, Navigate } from "react-router-dom";
 import { SessionInterface } from "../SessionOverview/Session";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
@@ -11,6 +11,7 @@ interface ExerciseDetail {
 
 export default function DetailOverview() {
   let { sessionId } = useParams();
+  const navigate = useNavigate();
 
   const [session, setSession] = useState<SessionInterface | null>(null);
   const [exercises, setExercises] = useState<ExerciseDetail[]>([]);
@@ -64,6 +65,22 @@ export default function DetailOverview() {
     return false;
   };
 
+  const handleDelete = () => {
+    let successful = false;
+    fetch("http://127.0.0.1:8000/session/" + sessionId + "/", {
+      method: "DELETE",
+      headers: {
+        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
+      },
+    })
+      .then(() => {
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log("Failed to delete session");
+      });
+  };
+
   if (!session)
     return (
       <div>
@@ -77,6 +94,7 @@ export default function DetailOverview() {
       <div>
         <Link to={"/"}>Home</Link>
         <h1>Session - {date.toLocaleDateString()}</h1>
+        <button onClick={handleDelete}>Remove Session</button>
         {session.exercise_unit.map((exerciseUnit, key) => {
           return <ExerciseUnitDetail key={key} exerciseUnit={exerciseUnit} />;
         })}
