@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./sessionOverview.css";
 import Session from "./Session";
 import { SessionInterface } from "./Session";
+import { Link } from "react-router-dom";
 
 export default function SessionOverview() {
   const [sessions, setSessions] = useState([
@@ -67,6 +68,7 @@ export default function SessionOverview() {
   };
   return (
     <div className="container">
+      <Link to="/login">Login</Link>
       <div>
         <h2>Sessions</h2>
       </div>
