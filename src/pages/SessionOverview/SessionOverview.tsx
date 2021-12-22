@@ -46,6 +46,25 @@ export default function SessionOverview() {
         console.log("error");
       });
   }, [sessions.length]);
+
+  const handleNewSession = () => {
+    const data = {
+      datetime: new Date().toLocaleString(),
+    };
+    fetch("http://127.0.0.1:8000/session/", {
+      method: "POST",
+      headers: {
+        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
+      },
+    })
+      .then(() => {
+        console.log("Successfully created new session");
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log("Failed to create new session");
+      });
+  };
   return (
     <div className="container">
       <div>
@@ -60,6 +79,7 @@ export default function SessionOverview() {
               </div>
             );
           })}
+        <button onClick={handleNewSession}>New Session</button>
       </div>
     </div>
   );
