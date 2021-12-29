@@ -1,0 +1,10 @@
+.navbar-container {
+  display: flex;
+  justify-content: center;
+  height: 50px;
+  border-bottom: solid black 2px;
+}
+
+.link-element {
+  margin: 5px;
+}

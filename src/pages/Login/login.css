@@ -9,3 +9,7 @@
   display: flex;
   flex-direction: column;
 }
+
+.remember-me-container {
+  align-self: center;
+}

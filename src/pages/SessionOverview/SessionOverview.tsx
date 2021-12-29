@@ -2,9 +2,23 @@ import React, { useEffect, useState } from "react";
 import "./sessionOverview.css";
 import Session from "./Session";
 import { SessionInterface } from "./Session";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { retrieveSessions } from "../../actions/sessions";
 
 export default function SessionOverview() {
+  const navigate = useNavigate();
+  let token: string | null;
+  if (localStorage.getItem("token") !== "") {
+    token = localStorage.getItem("token");
+  } else if (sessionStorage.getItem("token") !== "") {
+    token = sessionStorage.getItem("token");
+  } else {
+    navigate("/login");
+  }
+
+  const dispatch = useDispatch();
+  const reduxSessions = useSelector<any>((state) => state.sessions);
   const [sessions, setSessions] = useState([
     {
       id: 14,
@@ -32,21 +46,23 @@ export default function SessionOverview() {
   ]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/session/", {
-      headers: {
-        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
-      },
-    })
-      .then((response: any) => {
-        return response.json();
-      })
-      .then((jsonResponse: any) => {
-        setSessions(jsonResponse);
-      })
-      .catch((err) => {
-        console.log("error");
-      });
-  }, [sessions.length]);
+    dispatch(retrieveSessions());
+    console.log(reduxSessions);
+    // fetch("http://127.0.0.1:8000/session/", {
+    //   headers: {
+    //     Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
+    //   },
+    // })
+    //   .then((response: any) => {
+    //     return response.json();
+    //   })
+    //   .then((jsonResponse: any) => {
+    //     setSessions(jsonResponse);
+    //   })
+    //   .catch((err) => {
+    //     console.log("error");
+    //   });
+  }, [dispatch]);
 
   const handleNewSession = () => {
     const data = {
@@ -66,15 +82,15 @@ export default function SessionOverview() {
         console.log("Failed to create new session");
       });
   };
+
   return (
     <div className="container">
-      <Link to="/login">Login</Link>
       <div>
         <h2>Sessions</h2>
       </div>
       <div className="session-list">
-        {sessions.length > 0 &&
-          sessions.map((session: SessionInterface, key) => {
+        {(reduxSessions as any[]).length > 0 &&
+          (reduxSessions as any[]).map((session: SessionInterface, key) => {
             return (
               <div key={key}>
                 <Session session={session} />

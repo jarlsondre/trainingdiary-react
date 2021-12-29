@@ -92,7 +92,6 @@ export default function DetailOverview() {
     let date = new Date(session.datetime);
     return (
       <div>
-        <Link to={"/"}>Home</Link>
         <h1>Session - {date.toLocaleDateString()}</h1>
         <button onClick={handleDelete}>Remove Session</button>
         {session.exercise_unit.map((exerciseUnit, key) => {
