@@ -6,6 +6,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { retrieveSessions } from "../../actions/sessions";
 
+interface sessions {
+  sessionList: any[];
+  selectedSession: any;
+}
+
 export default function SessionOverview() {
   const navigate = useNavigate();
   let token: string | null;
@@ -18,7 +23,7 @@ export default function SessionOverview() {
   }
 
   const dispatch = useDispatch();
-  const reduxSessions = useSelector<any>((state) => state.sessions);
+  const reduxSessions = useSelector<any[]>((state: any) => state.sessions);
   const [sessions, setSessions] = useState([
     {
       id: 14,
@@ -47,7 +52,6 @@ export default function SessionOverview() {
 
   useEffect(() => {
     dispatch(retrieveSessions());
-    console.log(reduxSessions);
     // fetch("http://127.0.0.1:8000/session/", {
     //   headers: {
     //     Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
@@ -89,14 +93,16 @@ export default function SessionOverview() {
         <h2>Sessions</h2>
       </div>
       <div className="session-list">
-        {(reduxSessions as any[]).length > 0 &&
-          (reduxSessions as any[]).map((session: SessionInterface, key) => {
-            return (
-              <div key={key}>
-                <Session session={session} />
-              </div>
-            );
-          })}
+        {(reduxSessions as sessions).sessionList.length > 0 &&
+          (reduxSessions as sessions).sessionList.map(
+            (session: SessionInterface, key) => {
+              return (
+                <div key={key}>
+                  <Session session={session} />
+                </div>
+              );
+            }
+          )}
         <button onClick={handleNewSession}>New Session</button>
       </div>
     </div>

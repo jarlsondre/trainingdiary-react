@@ -4,7 +4,12 @@ import thunk from "redux-thunk";
 
 import { composeWithDevTools } from "redux-devtools-extension";
 
-const initialState = {};
+const initialState = {
+  sessions: {
+    sessionList: [],
+    selectedSession: {},
+  },
+};
 
 const middleware = [thunk];
 
