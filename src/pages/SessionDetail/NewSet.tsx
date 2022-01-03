@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addSet } from "../../actions/sets";
 import "./newSet.css";
 
 type Props = {
@@ -10,6 +12,8 @@ export default function NewSet(props: Props) {
   const [weight, setWeight] = useState(0);
   const [repetitions, setRepetitions] = useState(0);
 
+  const dispatch = useDispatch();
+
   const handleAddSet = () => {
     const data = {
       exercise_unit: props.exercise_unit,
@@ -17,21 +21,7 @@ export default function NewSet(props: Props) {
       weight: weight,
       repetitions: repetitions,
     };
-    fetch("http://127.0.0.1:8000/set/", {
-      method: "POST",
-      headers: {
-        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        console.log("Successfully added set");
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log("Failed to add set");
-      });
+    dispatch(addSet(data));
   };
   return (
     <div className="new-set-container">

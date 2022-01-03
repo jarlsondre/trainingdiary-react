@@ -3,33 +3,16 @@ import { ExerciseUnitInterface } from "../SessionOverview/Session";
 import NewSet from "./NewSet";
 import SetDetail from "./SetDetail";
 import "./exerciseUnitDetail.css";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { deleteExerciseUnit } from "../../actions/exerciseUnits";
 
-type Props = {
-  exerciseUnit: ExerciseUnitInterface;
-};
-
-export default function ExerciseUnitDetail(props: Props) {
+function ExerciseUnitDetail(props: any) {
   const handleRemoveExercise = () => {
-    fetch(
-      "http://127.0.0.1:8000/exercise-unit/" + props.exerciseUnit.id + "/",
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
-        },
-      }
-    )
-      .then((res) => {
-        console.log("Successfully deleted exercise!");
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log("Failed to delete", err.message);
-      });
+    props.onDeleteExerciseUnit(Number(props.exerciseUnit.id));
   };
 
   return (
-    <div>
+    <div key={props.exerciseUnit}>
       <div className="exercise-name-container">
         <h2 className="exercise-name">{props.exerciseUnit.exercise_name}</h2>
         <button
@@ -39,7 +22,7 @@ export default function ExerciseUnitDetail(props: Props) {
           Remove Exercise
         </button>
       </div>
-      {props.exerciseUnit.set.map((set, key) => {
+      {props.exerciseUnit.set.map((set: any, key: number) => {
         return <SetDetail key={key} set={set} />;
       })}
       <NewSet
@@ -49,3 +32,13 @@ export default function ExerciseUnitDetail(props: Props) {
     </div>
   );
 }
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    onDeleteExerciseUnit: (id: number) => {
+      dispatch(deleteExerciseUnit(id));
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ExerciseUnitDetail);

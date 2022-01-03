@@ -1,12 +1,16 @@
 import http from "../http-common";
 
 class SetDataService {
-  getAll() {
-    return http.get("/set/");
+  addSet(data: any) {
+    return http.post("/set/", data);
   }
 
-  getOne(id: number) {
-    return http.get("/set/" + id + "/");
+  deleteSet(id: any) {
+    return http.delete("/set/" + id + "/");
+  }
+
+  updateSet(data: any) {
+    return http.patch("/set/" + data.id + "/", data);
   }
 }
 

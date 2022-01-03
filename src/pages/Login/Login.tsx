@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
+import userService from "../../services/user.service";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../actions/authentication";
 
 type TokenResponse = {
   token: string;
@@ -11,44 +14,23 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    console.log(username);
-    console.log(password);
-    console.log(remember);
+  const isAuthenticated = useSelector(
+    (state: any) => state.authentication.isAuthenticated
+  );
+
+  const handleLogin = async () => {
     const data = {
       username: username,
       password: password,
     };
-
-    fetch("http://127.0.0.1:8000/log-in/", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      method: "POST",
-    })
-      .then(async (res) => {
-        if (res.ok) {
-          const jsonRes = (await res.json()) as unknown as TokenResponse;
-          console.log(jsonRes);
-          if (remember) {
-            localStorage.setItem("token", jsonRes["token"]);
-            sessionStorage.setItem("token", "");
-          } else {
-            sessionStorage.setItem("token", jsonRes["token"]);
-            localStorage.setItem("token", "");
-          }
-          navigate("/");
-        } else {
-          console.log("login failed, probably incorrect credentials");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    dispatch(login(data));
   };
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated]);
 
   return (
     <div className="login-page">

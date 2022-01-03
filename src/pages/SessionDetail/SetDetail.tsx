@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteSet, updateSet } from "../../actions/sets";
 import { SetInterface } from "../SessionOverview/Session";
 import "./setDetail.css";
 
@@ -9,41 +11,22 @@ type Props = {
 export default function SetDetail(props: Props) {
   const [weight, setWeight] = useState(props.set.weight);
   const [repetitions, setRepetitions] = useState(props.set.repetitions);
+  const dispatch = useDispatch();
+
   const handleDelete = () => {
-    fetch("http://127.0.0.1:8000/set/" + props.set.id + "/", {
-      method: "DELETE",
-      headers: {
-        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
-      },
-    })
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log("Failed to delete set");
-      });
+    dispatch(deleteSet(props.set));
   };
 
   const handleUpdate = () => {
     const data = {
+      id: props.set.id,
       weight: weight,
       repetitions: repetitions,
     };
-    fetch("http://127.0.0.1:8000/set/" + props.set.id + "/", {
-      method: "PATCH",
-      headers: {
-        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log("Update failed");
-      });
+
+    dispatch(updateSet(data));
   };
+
   return (
     <div className="set-detail-container">
       <input

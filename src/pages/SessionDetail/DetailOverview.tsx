@@ -4,71 +4,55 @@ import { SessionInterface } from "../SessionOverview/Session";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
 import { useDispatch, useSelector } from "react-redux";
-import { retrieveSingleSession } from "../../actions/sessions";
+import { deleteSession, retrieveSingleSession } from "../../actions/sessions";
 import { addExerciseUnit } from "../../actions/exerciseUnits";
+import { retrieveExercises } from "../../actions/exercises";
+import { connect } from "react-redux";
 
 interface ExerciseDetail {
   name: string;
   id: number;
 }
 
-export default function DetailOverview() {
+function DetailOverview(props: any) {
   let { sessionId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const reduxSingleSession = useSelector<any>(
-    (state: any) => state.sessions.selectedSession
-  );
 
-  const [session, setSession] = useState<SessionInterface | null>(null);
-  const [exercises, setExercises] = useState<ExerciseDetail[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<number>(1);
+  const [keyValue, setKeyValue] = useState<number>(0);
 
   useEffect(() => {
-    dispatch(retrieveSingleSession(Number(sessionId)));
-
-    // Getting the exercises
-    fetch("http://127.0.0.1:8000/exercise-list", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((jsonRes) => {
-        setExercises(jsonRes);
-      });
-  }, [dispatch]);
+    if (
+      (!props.selectedSession.id ||
+        props.selectedSession.id !== Number(sessionId)) &&
+      !props.isLoading
+    )
+      props.onRetrieveSingleSession(Number(sessionId));
+    if (props.exercises.length === 0) props.onRetrieveExercises();
+  }, [props.isLoading]);
 
   const handleAddExercise = () => {
     const data = {
       exercise: selectedExercise,
       session: sessionId,
     };
-    dispatch(addExerciseUnit(data));
-    window.location.reload();
+    props.onAddExerciseUnit(data);
+    setKeyValue(keyValue + (1 % 5));
   };
 
   const handleDelete = () => {
-    let successful = false;
-    fetch("http://127.0.0.1:8000/session/" + sessionId + "/", {
-      method: "DELETE",
-      headers: {
-        Authorization: "token ab6c19df64ff379ce9583cc18be350f3e7a6839d",
-      },
-    })
-      .then(() => {
-        navigate("/");
-      })
-      .catch((err) => {
-        console.log("Failed to delete session");
-      });
+    props.onDeleteSession(Number(sessionId));
+    navigate("/");
   };
 
-  let date = new Date((reduxSingleSession as any).datetime);
+  let date = new Date(props.selectedSession.datetime);
+  if (props.isLoading) return <div>Loading...</div>;
   return (
-    <div>
+    <div key={keyValue}>
       <h1>Session - {date.toLocaleDateString()}</h1>
       <button onClick={handleDelete}>Remove Session</button>
-      {(reduxSingleSession as any).exercise_unit &&
-        (reduxSingleSession as any).exercise_unit.map(
+      {props.selectedSession.exercise_unit &&
+        props.selectedSession.exercise_unit.map(
           (exerciseUnit: any, key: number) => {
             return <ExerciseUnitDetail key={key} exerciseUnit={exerciseUnit} />;
           }
@@ -81,7 +65,7 @@ export default function DetailOverview() {
             setSelectedExercise(parseInt(event.target.value));
           }}
         >
-          {exercises.map((exercise, key) => {
+          {props.exercises.map((exercise: any, key: number) => {
             return (
               <option key={key} value={exercise.id}>
                 {exercise.name}
@@ -94,3 +78,30 @@ export default function DetailOverview() {
     </div>
   );
 }
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    onRetrieveSingleSession: (id: number) => {
+      dispatch(retrieveSingleSession(id));
+    },
+    onRetrieveExercises: () => {
+      dispatch(retrieveExercises());
+    },
+    onAddExerciseUnit: (data: any) => {
+      dispatch(addExerciseUnit(data));
+    },
+    onDeleteSession: (id: number) => {
+      dispatch(deleteSession(id));
+    },
+  };
+};
+
+const mapStateToProps = (state: any) => {
+  return {
+    selectedSession: state.sessions.selectedSession,
+    isLoading: state.sessions.selectedSession.isLoading,
+    exercises: state.exercises,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DetailOverview);

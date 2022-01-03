@@ -7,8 +7,11 @@ import { composeWithDevTools } from "redux-devtools-extension";
 const initialState = {
   sessions: {
     sessionList: [],
-    selectedSession: {},
+    selectedSession: {
+      isLoading: false,
+    },
   },
+  exercises: [],
 };
 
 const middleware = [thunk];
