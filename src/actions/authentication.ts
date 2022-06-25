@@ -6,7 +6,6 @@ import {
   LOGOUT,
 } from "./types";
 import userService from "../services/user.service";
-import { useNavigate } from "react-router-dom";
 
 export const login = (data: any) => async (dispatch: any) => {
   dispatch({

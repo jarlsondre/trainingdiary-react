@@ -1,11 +1,10 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
 import store from "./store";
 import { AUTH_ERROR } from "./actions/types";
 
-const baseURL = "http://localhost:8000";
+const baseURL = "http://api.jarlstrainingdiary.com";
 
 let authToken = localStorage.getItem("authToken")
   ? JSON.parse(localStorage.getItem("authToken")!)
