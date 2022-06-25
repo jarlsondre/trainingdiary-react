@@ -1,9 +1,7 @@
-import React from "react";
-import { ExerciseUnitInterface } from "../SessionOverview/Session";
 import NewSet from "./NewSet";
 import SetDetail from "./SetDetail";
 import "./exerciseUnitDetail.css";
-import { useDispatch, useSelector, connect } from "react-redux";
+import { connect } from "react-redux";
 import { deleteExerciseUnit } from "../../actions/exerciseUnits";
 
 function ExerciseUnitDetail(props: any) {

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import {
   LOGIN_FAIL,
   LOGIN_REQUEST,
@@ -18,7 +17,7 @@ type ActionType = {
 };
 
 export default function authReducer(state = initialState, action: ActionType) {
-  const { type, payload } = action;
+  const { type } = action;
   switch (type) {
     case LOGIN_REQUEST:
       return {

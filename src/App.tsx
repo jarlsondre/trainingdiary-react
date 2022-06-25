@@ -1,7 +1,7 @@
 import "./App.css";
 import SessionOverview from "./pages/SessionOverview/SessionOverview";
 
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import DetailOverview from "./pages/SessionDetail/DetailOverview";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/navbar/Navbar";

@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate, Navigate } from "react-router-dom";
-import { SessionInterface } from "../SessionOverview/Session";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
-import { useDispatch, useSelector } from "react-redux";
 import { deleteSession, retrieveSingleSession } from "../../actions/sessions";
 import { addExerciseUnit } from "../../actions/exerciseUnits";
 import { retrieveExercises } from "../../actions/exercises";
 import { connect } from "react-redux";
-
-interface ExerciseDetail {
-  name: string;
-  id: number;
-}
 
 function DetailOverview(props: any) {
   let { sessionId } = useParams();

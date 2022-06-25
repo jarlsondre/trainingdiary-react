@@ -3,7 +3,7 @@ import axios from "axios";
 class UserService {
   async login(data: any) {
     return await axios
-      .post("http://api.jarlstrainingdiary.com/api/token/", data)
+      .post("https://api.jarlstrainingdiary.com/api/token/", data)
       .then((res) => {
         return res;
       })
@@ -14,7 +14,7 @@ class UserService {
 
   async refresh(token: string) {
     return await axios
-      .post("http://api.jarlstrainingdiary.com/api/token/refresh/", {
+      .post("https://api.jarlstrainingdiary.com/api/token/refresh/", {
         refresh: token,
       })
       .then((res: any) => {

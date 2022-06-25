@@ -15,7 +15,6 @@ export const login = (data: any) => async (dispatch: any) => {
   userService
     .login(data)
     .then((res: any) => {
-      console.log("res is", res);
       localStorage.setItem("authToken", JSON.stringify(res.data));
       dispatch({
         type: LOGIN_SUCCESS,
@@ -23,7 +22,6 @@ export const login = (data: any) => async (dispatch: any) => {
       });
     })
     .catch((err) => {
-      console.log("login failed:", err);
       dispatch({
         type: LOGIN_FAIL,
         payload: null,
@@ -43,7 +41,6 @@ export const refresh = (token: any) => async (dispatch: any) => {
         });
       })
       .catch((err) => {
-        console.log("refresh action failed", err);
         dispatch({
           type: AUTH_ERROR,
           payload: null,

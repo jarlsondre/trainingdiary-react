@@ -16,7 +16,7 @@ export const addExerciseUnit = (data: any) => async (dispatch: any) => {
 
 export const deleteExerciseUnit = (id: any) => async (dispatch: any) => {
   try {
-    const res = await ExerciseUnitDataService.deleteExerciseUnit(id);
+    await ExerciseUnitDataService.deleteExerciseUnit(id);
 
     dispatch({
       type: DELETE_EXERCISE_UNIT,

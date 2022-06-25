@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "./sessionOverview.css";
 import Session from "./Session";
 import { SessionInterface } from "./Session";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addSession, retrieveSessions } from "../../actions/sessions";
-import { refresh } from "../../actions/authentication";
 
 interface sessions {
   sessionList: any[];

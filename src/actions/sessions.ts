@@ -67,7 +67,7 @@ export const addSession = (data: any) => async (dispatch: any) => {
 
 export const deleteSession = (id: number) => async (dispatch: any) => {
   try {
-    const res = await SessionDataService.deleteSession(id);
+    await SessionDataService.deleteSession(id);
 
     dispatch({
       type: DELETE_SESSION,

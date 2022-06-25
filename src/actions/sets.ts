@@ -16,7 +16,7 @@ export const addSet = (data: any) => async (dispatch: any) => {
 
 export const deleteSet = (data: any) => async (dispatch: any) => {
   try {
-    const res = await SetDataService.deleteSet(data.id);
+    await SetDataService.deleteSet(data.id);
 
     dispatch({
       type: DELETE_SET,
@@ -29,7 +29,7 @@ export const deleteSet = (data: any) => async (dispatch: any) => {
 
 export const updateSet = (data: any) => async (dispatch: any) => {
   try {
-    const res = await SetDataService.updateSet(data);
+    await SetDataService.updateSet(data);
 
     dispatch({
       type: UPDATE_SET,

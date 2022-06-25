@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
-import userService from "../../services/user.service";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/authentication";
-
-type TokenResponse = {
-  token: string;
-};
 
 export default function Login() {
   const [username, setUsername] = useState<string>("");

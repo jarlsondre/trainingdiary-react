@@ -1,4 +1,3 @@
-import { addSet } from "../actions/sets";
 import {
   ADD_EXERCISE_UNIT,
   ADD_SESSION_FAIL,
