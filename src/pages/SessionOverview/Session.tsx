@@ -35,9 +35,10 @@ export default function Session(props: Props) {
   let date = new Date(props.session.datetime);
   return (
     <div className="session-container">
-      <Link to={"session/" + props.session.id}>
-        {date.toLocaleDateString()} - Session #{props.session.id}{" "}
-      </Link>
+      <h3 className="session-header">{date.toLocaleDateString()}</h3>
+      <button>
+        <Link to={"session/" + props.session.id}>Open</Link>
+      </button>
       <div>
         {props.session.exercise_unit.map((exerciseUnit, key) => {
           return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;

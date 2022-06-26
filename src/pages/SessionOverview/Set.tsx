@@ -9,7 +9,7 @@ type Props = {
 export default function Set(props: Props) {
   return (
     <div className="set-container">
-      {props.set.weight + "kg x " + props.set.repetitions}
+      - {props.set.weight + "kg x " + props.set.repetitions}
     </div>
   );
 }

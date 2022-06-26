@@ -47,6 +47,7 @@ export default function SessionOverview() {
         <h2>Sessions</h2>
       </div>
       <div className="session-list">
+        <button onClick={handleNewSession}>New Session</button>
         {(reduxSessions as sessions).sessionList.length > 0 &&
           (reduxSessions as sessions).sessionList.map(
             (session: SessionInterface, key) => {
@@ -57,7 +58,6 @@ export default function SessionOverview() {
               );
             }
           )}
-        <button onClick={handleNewSession}>New Session</button>
       </div>
     </div>
   );

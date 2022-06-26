@@ -10,7 +10,9 @@ type Props = {
 export default function ExerciseUnit(props: Props) {
   return (
     <div className="exercise-unit-container">
-      <div>{props.exerciseUnit.exercise_name}</div>
+      <h4 className="exercise-unit-header">
+        {props.exerciseUnit.exercise_name}
+      </h4>
       <div>
         {props.exerciseUnit.set.map((set, key) => {
           return <Set set={set} key={key} />;

@@ -1,3 +1,9 @@
 .exercise-unit-container {
-  background-color: lightyellow;
+  margin: 3px;
+}
+
+.exercise-unit-header {
+  font-weight: 700;
+  margin: 0px;
+  border-bottom: 1px solid black;
 }
