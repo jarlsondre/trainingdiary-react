@@ -41,7 +41,7 @@ function DetailOverview(props: any) {
   let date = new Date(props.selectedSession.datetime);
   if (props.isLoading) return <div>Loading...</div>;
   return (
-    <div key={keyValue}>
+    <div key={keyValue} className="detail-overview-container">
       <h1>Session - {date.toLocaleDateString()}</h1>
       <button onClick={handleDelete}>Remove Session</button>
       {props.selectedSession.exercise_unit &&

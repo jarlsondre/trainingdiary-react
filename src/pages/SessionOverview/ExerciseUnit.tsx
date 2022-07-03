@@ -15,7 +15,12 @@ export default function ExerciseUnit(props: Props) {
       </h4>
       <div>
         {props.exerciseUnit.set.map((set, key) => {
-          return <Set set={set} key={key} />;
+          return (
+            <span>
+              {key > 0 && ", "}
+              <Set set={set} key={key} />
+            </span>
+          );
         })}
       </div>
     </div>
