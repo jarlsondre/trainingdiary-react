@@ -47,12 +47,7 @@ function DetailOverview(props: any) {
         <label htmlFor="session-date" style={{ display: "block" }}>
           Session Date
         </label>
-        <input
-          type="date"
-          id="session-date"
-          name="session-date"
-          value={date.toISOString().split("T")[0]}
-        ></input>
+        <input type="date" id="session-date" name="session-date"></input>
         <button>Update Date [in progress]</button>
         <button className="delete-session-button" onClick={handleDelete}>
           Remove Session
