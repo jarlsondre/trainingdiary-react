@@ -42,31 +42,35 @@ function DetailOverview(props: any) {
   if (props.isLoading) return <div>Loading...</div>;
   return (
     <div key={keyValue} className="detail-overview-container">
-      <h1>Session - {date.toLocaleDateString()}</h1>
-      <button onClick={handleDelete}>Remove Session</button>
-      {props.selectedSession.exercise_unit &&
-        props.selectedSession.exercise_unit.map(
-          (exerciseUnit: any, key: number) => {
-            return <ExerciseUnitDetail key={key} exerciseUnit={exerciseUnit} />;
-          }
-        )}
-      <div className="add-exercise-container">
-        <select
-          name="exercises"
-          id="exercises"
-          onChange={(event) => {
-            setSelectedExercise(parseInt(event.target.value));
-          }}
-        >
-          {props.exercises.map((exercise: any, key: number) => {
-            return (
-              <option key={key} value={exercise.id}>
-                {exercise.name}
-              </option>
-            );
-          })}
-        </select>
-        <button onClick={handleAddExercise}>Add Exercise</button>
+      <div className="detail-overview-inner-container">
+        <h1>Session - {date.toLocaleDateString()}</h1>
+        <button onClick={handleDelete}>Remove Session</button>
+        {props.selectedSession.exercise_unit &&
+          props.selectedSession.exercise_unit.map(
+            (exerciseUnit: any, key: number) => {
+              return (
+                <ExerciseUnitDetail key={key} exerciseUnit={exerciseUnit} />
+              );
+            }
+          )}
+        <div className="add-exercise-container">
+          <select
+            name="exercises"
+            id="exercises"
+            onChange={(event) => {
+              setSelectedExercise(parseInt(event.target.value));
+            }}
+          >
+            {props.exercises.map((exercise: any, key: number) => {
+              return (
+                <option key={key} value={exercise.id}>
+                  {exercise.name}
+                </option>
+              );
+            })}
+          </select>
+          <button onClick={handleAddExercise}>Add Exercise</button>
+        </div>
       </div>
     </div>
   );

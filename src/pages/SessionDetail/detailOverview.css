@@ -5,4 +5,13 @@
 
 .detail-overview-container {
   margin-bottom: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media only screen and (min-width: 640px) {
+  .detail-overview-inner-container {
+    width: 600px;
+  }
 }
