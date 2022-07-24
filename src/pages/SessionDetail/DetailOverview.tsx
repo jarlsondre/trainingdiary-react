@@ -39,12 +39,23 @@ function DetailOverview(props: any) {
   };
 
   let date = new Date(props.selectedSession.datetime);
+
   if (props.isLoading) return <div>Loading...</div>;
   return (
     <div key={keyValue} className="detail-overview-container">
       <div className="detail-overview-inner-container">
-        <h1>Session - {date.toLocaleDateString()}</h1>
-        <button onClick={handleDelete}>Remove Session</button>
+        <label htmlFor="session-date" style={{ display: "block" }}>
+          Session Date
+        </label>
+        <input
+          type="date"
+          id="session-date"
+          name="session-date"
+          value={date.toISOString().split("T")[0]}
+        ></input>
+        <button className="delete-session-button" onClick={handleDelete}>
+          Remove Session
+        </button>
         {props.selectedSession.exercise_unit &&
           props.selectedSession.exercise_unit.map(
             (exerciseUnit: any, key: number) => {

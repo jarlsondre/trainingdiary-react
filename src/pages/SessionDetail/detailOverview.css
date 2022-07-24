@@ -10,6 +10,10 @@
   align-items: center;
 }
 
+.delete-session-button {
+  float: right;
+}
+
 @media only screen and (min-width: 640px) {
   .detail-overview-inner-container {
     width: 600px;
