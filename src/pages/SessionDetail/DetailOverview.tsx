@@ -53,6 +53,7 @@ function DetailOverview(props: any) {
           name="session-date"
           value={date.toISOString().split("T")[0]}
         ></input>
+        <button>Update Date [in progress]</button>
         <button className="delete-session-button" onClick={handleDelete}>
           Remove Session
         </button>
