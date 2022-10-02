@@ -10,3 +10,21 @@
   flex-direction: column;
   justify-content: center;
 }
+
+.new-session-button {
+  background-color: #4caf50; /* Green */
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  margin-left: 10px;
+  margin-right: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.new-session-button:hover {
+  background-color: #4ccf50;
+}
