@@ -1,10 +1,30 @@
 .navbar-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   height: 50px;
   border-bottom: solid black 2px;
+  margin: 5px;
 }
 
-.link-element {
-  margin: 5px;
+.logo {
+  height: 40px;
+  border: solid black;
+  margin-bottom: 5px;
+}
+
+.logout-button {
+  background-color: #ff4444;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.logout-button:hover {
+  background-color: #ff2244;
 }

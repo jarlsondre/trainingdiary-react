@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
 import "./navbar.css";
+import logo from "./logo.jpg";
 
 export default function Navbar() {
   const isAuthenticated = useSelector(
@@ -28,10 +29,12 @@ export default function Navbar() {
   if (isAuthenticated)
     return (
       <div className="navbar-container">
-        <Link to="/" className="link-element">
-          Home
+        <Link to="/">
+          <img src={logo} alt="logo" className="logo" />
         </Link>
-        <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </div>
     );
   return (
