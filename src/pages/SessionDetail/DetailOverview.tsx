@@ -52,6 +52,7 @@ function DetailOverview(props: any) {
         <button className="delete-session-button" onClick={handleDelete}>
           Remove Session
         </button>
+        <div>User: {props.selectedSession.username}</div>
         {props.selectedSession.exercise_unit &&
           props.selectedSession.exercise_unit.map(
             (exerciseUnit: any, key: number) => {
@@ -105,6 +106,7 @@ const mapStateToProps = (state: any) => {
     selectedSession: state.sessions.selectedSession,
     isLoading: state.sessions.selectedSession.isLoading,
     exercises: state.exercises,
+    user: state.user,
   };
 };
 

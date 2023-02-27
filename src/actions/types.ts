@@ -32,3 +32,9 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 
 export const AUTH_ERROR = "AUTH_ERROR";
 export const LOGOUT = "LOGOUT";
+
+// User
+export const RETRIEVE_USER = "RETRIEVE_USER";
+
+// metric
+export const TOGGLE_METRIC = "TOGGLE_METRIC";

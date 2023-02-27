@@ -1,9 +1,21 @@
 import axios from "axios";
+import http, { baseURL } from "../http-common";
 
 class UserService {
   async login(data: any) {
     return await axios
-      .post("https://api.jarlstrainingdiary.com/api/token/", data)
+      .post(baseURL + "/api/token/", data)
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async fetchUser() {
+    return await http
+      .get(baseURL + "/accounts/")
       .then((res) => {
         return res;
       })
@@ -14,7 +26,7 @@ class UserService {
 
   async refresh(token: string) {
     return await axios
-      .post("https://api.jarlstrainingdiary.com/api/token/refresh/", {
+      .post(baseURL + "/api/token/refresh/", {
         refresh: token,
       })
       .then((res: any) => {

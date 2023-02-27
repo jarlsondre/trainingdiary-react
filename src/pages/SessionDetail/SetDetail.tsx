@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteSet, updateSet } from "../../actions/sets";
 import { SetInterface } from "../SessionOverview/Session";
 import "./setDetail.css";
@@ -12,6 +12,7 @@ export default function SetDetail(props: Props) {
   const [weight, setWeight] = useState(props.set.weight);
   const [repetitions, setRepetitions] = useState(props.set.repetitions);
   const dispatch = useDispatch();
+  const metric = useSelector((state: any) => state.settings.metric);
 
   const handleDelete = () => {
     dispatch(deleteSet(props.set));
@@ -20,7 +21,7 @@ export default function SetDetail(props: Props) {
   const handleUpdate = () => {
     const data = {
       id: props.set.id,
-      weight: weight,
+      weight: Math.round(weight * 10) / 10,
       repetitions: repetitions,
     };
 
@@ -30,16 +31,19 @@ export default function SetDetail(props: Props) {
   return (
     <div className="set-detail-container">
       <input
+        itemID={props.set.id.toString()}
         type="number"
         id="weight"
         name="weight"
         className="weight-input"
-        defaultValue={props.set.weight}
+        defaultValue={
+          Math.round(props.set.weight * (metric ? 1 : 2.2) * 10) / 10
+        }
         onChange={(event) => {
-          setWeight(parseInt(event.target.value));
+          setWeight(parseFloat(event.target.value) / (metric ? 1 : 2.2));
         }}
       ></input>
-      {"kg x"}
+      {metric ? "kg x" : "lbs x"}
       <input
         type="number"
         id="repetitions"

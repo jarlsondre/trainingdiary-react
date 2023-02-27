@@ -25,6 +25,7 @@ export interface SessionInterface {
   description: string;
   datetime: string;
   user: number;
+  username: string;
 }
 
 type Props = {
@@ -39,6 +40,7 @@ export default function Session(props: Props) {
       <button>
         <Link to={"session/" + props.session.id}>Open</Link>
       </button>
+      <div className="username-container">User: {props.session.username}</div>
       <div>
         {props.session.exercise_unit.map((exerciseUnit, key) => {
           return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;

@@ -4,17 +4,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
 import "./navbar.css";
 import logo from "./logo.jpg";
+import { toggleMetric } from "../../actions/settings";
+import { connect } from "react-redux";
 
-export default function Navbar() {
+function Navbar(props: any) {
   const isAuthenticated = useSelector(
     (state: any) => state.authentication.isAuthenticated
   );
+  const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
+  };
+
+  const handleUnitChange = () => {
+    props.onToggleMetric(!props.metric);
+    navigate("/");
   };
 
   useEffect(() => {
@@ -32,6 +40,12 @@ export default function Navbar() {
         <Link to="/">
           <img src={logo} alt="logo" className="logo" />
         </Link>
+        <div>
+          Logged in as: <br /> {user.username}
+        </div>
+        <button onClick={handleUnitChange} className="unit-button">
+          {props.metric ? "kg" : "lbs"}
+        </button>
         <button onClick={handleLogout} className="logout-button">
           Logout
         </button>
@@ -45,3 +59,18 @@ export default function Navbar() {
     </div>
   );
 }
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    onToggleMetric: (value: boolean) => {
+      dispatch(toggleMetric(value));
+    },
+  };
+};
+const mapStateToProps = (state: any) => {
+  return {
+    metric: state.settings.metric,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

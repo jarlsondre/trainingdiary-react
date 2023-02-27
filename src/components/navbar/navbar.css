@@ -18,6 +18,23 @@
   margin-bottom: 5px;
 }
 
+.unit-button {
+  background-color: blue;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.unit-button:hover {
+  background-color: #000088;
+}
+
 .logout-button {
   background-color: #ff4444;
   border-radius: 10px;

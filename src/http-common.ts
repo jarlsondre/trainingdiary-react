@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import store from "./store";
 import { AUTH_ERROR } from "./actions/types";
 
-const baseURL = "https://api.jarlstrainingdiary.com";
+export const baseURL = "https://api.jarlstrainingdiary.com";
 
 let authToken = localStorage.getItem("authToken")
   ? JSON.parse(localStorage.getItem("authToken")!)

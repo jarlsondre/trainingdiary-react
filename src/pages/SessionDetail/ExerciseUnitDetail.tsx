@@ -1,7 +1,7 @@
 import NewSet from "./NewSet";
 import SetDetail from "./SetDetail";
 import "./exerciseUnitDetail.css";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { deleteExerciseUnit } from "../../actions/exerciseUnits";
 
 function ExerciseUnitDetail(props: any) {

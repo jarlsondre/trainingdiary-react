@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/authentication";
+import { fetchUser } from "../../actions/user";
 
 export default function Login() {
   const [username, setUsername] = useState<string>("");
@@ -22,6 +23,7 @@ export default function Login() {
       password: password,
     };
     dispatch(login(data));
+    // dispatch(fetchUser());
   };
   useEffect(() => {
     if (isAuthenticated) navigate("/");

@@ -4,6 +4,7 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGOUT,
+  RETRIEVE_USER,
 } from "./types";
 import userService from "../services/user.service";
 
@@ -19,6 +20,14 @@ export const login = (data: any) => async (dispatch: any) => {
       dispatch({
         type: LOGIN_SUCCESS,
         payload: null,
+      });
+    })
+    .then(() => {
+      userService.fetchUser().then((res: any) => {
+        dispatch({
+          type: RETRIEVE_USER,
+          payload: res.data[0],
+        });
       });
     })
     .catch((err) => {
@@ -38,6 +47,14 @@ export const refresh = (token: any) => async (dispatch: any) => {
         dispatch({
           type: LOGIN_SUCCESS,
           payload: null,
+        });
+      })
+      .then(() => {
+        userService.fetchUser().then((res: any) => {
+          dispatch({
+            type: RETRIEVE_USER,
+            payload: res.data[0],
+          });
         });
       })
       .catch((err) => {

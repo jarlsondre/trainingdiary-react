@@ -12,6 +12,10 @@ const initialState = {
     },
   },
   exercises: [],
+  user: {},
+  settings: {
+    metric: false,
+  },
 };
 
 const middleware = [thunk];

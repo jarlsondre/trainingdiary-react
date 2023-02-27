@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addSet } from "../../actions/sets";
 import "./newSet.css";
 
@@ -12,6 +12,7 @@ export default function NewSet(props: Props) {
   const [weight, setWeight] = useState(0);
   const [repetitions, setRepetitions] = useState(0);
 
+  const metric = useSelector((state: any) => state.settings.metric);
   const dispatch = useDispatch();
 
   const handleAddSet = () => {
@@ -31,10 +32,10 @@ export default function NewSet(props: Props) {
         name="weight"
         className="weight-input"
         onChange={(event) => {
-          setWeight(parseInt(event.target.value));
+          setWeight(parseFloat(event.target.value) / (metric ? 1 : 2.2));
         }}
       ></input>
-      {"kg x"}
+      {metric ? "kg x" : "lbs x"}
       <input
         type="number"
         id="repetitions"
