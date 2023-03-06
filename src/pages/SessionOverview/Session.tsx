@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
@@ -34,8 +35,15 @@ type Props = {
 
 export default function Session(props: Props) {
   let date = new Date(props.session.datetime);
+  const user = useSelector((state: any) => state.user);
   return (
-    <div className="session-container">
+    <div
+      className={
+        user.username === props.session.username
+          ? "session-container personal-session"
+          : "session-container"
+      }
+    >
       <h3 className="session-header">{date.toLocaleDateString()}</h3>
       <button>
         <Link to={"session/" + props.session.id}>Open</Link>

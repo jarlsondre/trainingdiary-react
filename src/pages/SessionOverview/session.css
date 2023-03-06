@@ -4,6 +4,11 @@
   padding: 10px;
 }
 
+.personal-session {
+  background-color: aliceblue;
+  border: 2px solid grey;
+}
+
 .session-header {
   margin: 0px;
   display: inline-block;
