@@ -52,7 +52,6 @@ export default function sessionReducer(
       let cursor: any = "";
       if (payload.next) {
         let url = new URLSearchParams(payload.next.split("?")[1]);
-        console.log(url);
         cursor = url.get("cursor");
         moreToLoad = true;
       }
