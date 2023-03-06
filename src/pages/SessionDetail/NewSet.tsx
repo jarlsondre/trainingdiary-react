@@ -19,7 +19,7 @@ export default function NewSet(props: Props) {
     const data = {
       exercise_unit: props.exercise_unit,
       set_number: props.set_number,
-      weight: weight,
+      weight: Math.round(weight * 10) / 10,
       repetitions: repetitions,
     };
     dispatch(addSet(data));

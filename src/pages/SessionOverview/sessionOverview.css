@@ -25,6 +25,23 @@
   font-size: 16px;
 }
 
+.load-more-button {
+  background-color: orange; /* Green */
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  margin-left: 10px;
+  margin-right: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.more-to-load:hover {
+  background-color: darkorange;
+}
+
 .new-session-button:hover {
   background-color: #4ccf50;
 }

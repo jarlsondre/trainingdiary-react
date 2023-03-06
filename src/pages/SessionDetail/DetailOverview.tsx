@@ -5,11 +5,12 @@ import "./detailOverview.css";
 import { deleteSession, retrieveSingleSession } from "../../actions/sessions";
 import { addExerciseUnit } from "../../actions/exerciseUnits";
 import { retrieveExercises } from "../../actions/exercises";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 
 function DetailOverview(props: any) {
   let { sessionId } = useParams();
   const navigate = useNavigate();
+  const sessionList = useSelector((state: any) => state.sessions.sessionList);
 
   const [selectedExercise, setSelectedExercise] = useState<number>(1);
   const [keyValue, setKeyValue] = useState<number>(0);
@@ -20,7 +21,7 @@ function DetailOverview(props: any) {
         props.selectedSession.id !== Number(sessionId)) &&
       !props.isLoading
     )
-      props.onRetrieveSingleSession(Number(sessionId));
+      props.onRetrieveSingleSession(Number(sessionId), sessionList);
     if (props.exercises.length === 0) props.onRetrieveExercises();
   }, [props.isLoading]);
 
@@ -86,8 +87,8 @@ function DetailOverview(props: any) {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    onRetrieveSingleSession: (id: number) => {
-      dispatch(retrieveSingleSession(id));
+    onRetrieveSingleSession: (id: number, sessionList: any) => {
+      dispatch(retrieveSingleSession(id, sessionList));
     },
     onRetrieveExercises: () => {
       dispatch(retrieveExercises());

@@ -19,19 +19,30 @@ export default function SessionOverview() {
   const isAuthenticated = useSelector<any>(
     (state) => state.authentication.isAuthenticated
   );
-
-  const dispatch = useDispatch();
   const reduxSessions = useSelector<any[]>((state: any) =>
     state.sessions.sessionList.sort(compareDates)
   );
+
+  // Pagination
+  const offset = useSelector<any>((state: any) => state.sessions.offset);
+  const limit = useSelector<any>((state: any) => state.sessions.limit);
+  const moreToLoad = useSelector<any>(
+    (state: any) => state.sessions.moreToLoad
+  );
+
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    dispatch(retrieveSessions());
+    dispatch(retrieveSessions(limit, offset));
   }, [dispatch]);
 
   const handleNewSession = () => {
     const data = {};
     dispatch(addSession(data));
+  };
+
+  const handleLoadMore = () => {
+    dispatch(retrieveSessions(limit, offset));
   };
 
   return (
@@ -51,6 +62,18 @@ export default function SessionOverview() {
               </div>
             );
           })}
+        {moreToLoad ? (
+          <button
+            onClick={handleLoadMore}
+            className="load-more-button more-to-load"
+          >
+            Load More
+          </button>
+        ) : (
+          <button className="load-more-button" disabled>
+            No more sessions to load
+          </button>
+        )}
       </div>
     </div>
   );

@@ -10,39 +10,60 @@ import {
 } from "./types";
 import SessionDataService from "../services/session.service";
 
-export const retrieveSessions = () => async (dispatch: any) => {
-  try {
-    const res = await SessionDataService.getAll();
+export const retrieveSessions =
+  (limit: any, offset: any) => async (dispatch: any) => {
+    try {
+      const res = await SessionDataService.getAll(limit, offset);
 
-    dispatch({
-      type: RETRIEVE_SESSIONS,
-      payload: res.data,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const retrieveSingleSession = (id: number) => async (dispatch: any) => {
-  dispatch({
-    type: RETRIEVE_SINGLE_SESSION_REQUEST,
-    payload: null,
-  });
-
-  await SessionDataService.getOne(id)
-    .then((res: any) => {
       dispatch({
-        type: RETRIEVE_SINGLE_SESSION_SUCCESS,
+        type: RETRIEVE_SESSIONS,
         payload: res.data,
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: RETRIEVE_SINGLE_SESSION_FAIL,
-        payload: null,
-      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+export const retrieveSingleSession =
+  (id: number, sessionList: any) => async (dispatch: any) => {
+    dispatch({
+      type: RETRIEVE_SINGLE_SESSION_REQUEST,
+      payload: null,
     });
-};
+
+    // let selectedSession = null;
+    // for (const session of sessionList) {
+    //   if (session.id === id) {
+    //     selectedSession = session;
+    //     break;
+    //   }
+    // }
+    // if (!selectedSession) {
+    //   dispatch({
+    //     type: RETRIEVE_SINGLE_SESSION_FAIL,
+    //     payload: null,
+    //   });
+    // } else {
+    //   dispatch({
+    //     type: RETRIEVE_SINGLE_SESSION_SUCCESS,
+    //     payload: selectedSession,
+    //   });
+    // }
+
+    await SessionDataService.getOne(id)
+      .then((res: any) => {
+        dispatch({
+          type: RETRIEVE_SINGLE_SESSION_SUCCESS,
+          payload: res.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: RETRIEVE_SINGLE_SESSION_FAIL,
+          payload: null,
+        });
+      });
+  };
 
 export const addSession = (data: any) => async (dispatch: any) => {
   dispatch({

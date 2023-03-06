@@ -10,6 +10,9 @@ const initialState = {
     selectedSession: {
       isLoading: false,
     },
+    limit: 10,
+    offset: 0,
+    moreToLoad: true,
   },
   exercises: [],
   user: {},

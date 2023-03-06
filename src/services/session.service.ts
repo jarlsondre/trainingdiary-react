@@ -1,8 +1,8 @@
 import http from "../http-common";
 
 class SessionDataService {
-  getAll() {
-    return http.get("/session/");
+  getAll(limit: number, offset: number) {
+    return http.get("/session/?limit=" + limit + "&offset=" + offset);
   }
 
   getOne(id: number) {

@@ -24,6 +24,9 @@ const initialState: any = {
   selectedSession: {
     isLoading: false,
   },
+  offset: 0,
+  limit: 10,
+  moreToLoad: true,
 };
 
 export default function sessionReducer(
@@ -31,10 +34,34 @@ export default function sessionReducer(
   action: ActionType
 ) {
   const { type, payload } = action;
+  let sessionId = sessions.selectedSession.id;
+  let filteredSessionList = [
+    ...sessions.sessionList.filter((session: any) => session.id !== sessionId),
+  ];
 
   switch (type) {
     case RETRIEVE_SESSIONS:
-      return { ...sessions, sessionList: payload };
+      // Pagination stuff
+      let newSessions = [];
+      let existingSessionIds = sessions.sessionList.map(
+        (session: any) => session.id
+      );
+      for (const session of payload.results) {
+        if (existingSessionIds.includes(session.id)) continue;
+        newSessions.push(session);
+      }
+      let offset = sessions.offset;
+      let moreToLoad = false;
+      if (payload.next) moreToLoad = true;
+      if (payload.next && newSessions.length > 0) {
+        offset += sessions.limit;
+      }
+      return {
+        ...sessions,
+        sessionList: [...sessions.sessionList, ...newSessions],
+        offset: offset,
+        moreToLoad: moreToLoad,
+      };
 
     case ADD_SESSION_REQUEST:
       return { ...sessions };
@@ -67,74 +94,85 @@ export default function sessionReducer(
       };
 
     case ADD_EXERCISE_UNIT:
+      // Make sure we update both on selected session and sessionList
+      let sessionId = sessions.selectedSession.id;
+
+      let sessionAddedExerciseUnit = {
+        ...sessions.selectedSession,
+        exercise_unit: [...sessions.selectedSession.exercise_unit, payload],
+      };
+
       return {
         ...sessions,
+        sessionList: [...filteredSessionList, sessionAddedExerciseUnit],
         selectedSession: {
-          ...sessions.selectedSession,
-          exercise_unit: [...sessions.selectedSession.exercise_unit, payload],
+          sessionAddedExerciseUnit,
         },
       };
 
     case DELETE_EXERCISE_UNIT:
+      // Make sure we update both on selected session and sessionList
+      let sessionRemovedExerciseUnit = {
+        ...sessions.selectedSession,
+        exercise_unit: sessions.selectedSession.exercise_unit.filter(
+          (e: any) => e.id !== payload
+        ),
+      };
       return {
         ...sessions,
-        selectedSession: {
-          ...sessions.selectedSession,
-          exercise_unit: sessions.selectedSession.exercise_unit.filter(
-            (e: any) => e.id !== payload
-          ),
-        },
+        sessionList: [...filteredSessionList, sessionRemovedExerciseUnit],
+        selectedSession: sessionRemovedExerciseUnit,
       };
 
     case ADD_SET:
+      let SessionAddSet = {
+        ...sessions.selectedSession,
+        exercise_unit: sessions.selectedSession.exercise_unit.map((e: any) => {
+          return e.id === payload.exercise_unit
+            ? { ...e, set: [...e.set, payload] }
+            : e;
+        }),
+      };
       return {
         ...sessions,
-        selectedSession: {
-          ...sessions.selectedSession,
-          exercise_unit: sessions.selectedSession.exercise_unit.map(
-            (e: any) => {
-              return e.id === payload.exercise_unit
-                ? { ...e, set: [...e.set, payload] }
-                : e;
-            }
-          ),
-        },
+        sessionList: [...filteredSessionList, SessionAddSet],
+        selectedSession: SessionAddSet,
       };
 
     case UPDATE_SET:
+      let sessionUpdateSet = {
+        ...sessions.selectedSession,
+        exercise_unit: sessions.selectedSession.exercise_unit.map((e: any) => {
+          return e.set.map((s: any) => s.id).includes(payload.id)
+            ? {
+                ...e,
+                set: [
+                  ...e.set.filter((s: any) => s.id !== payload.id),
+                  payload,
+                ],
+              }
+            : e;
+        }),
+      };
       return {
         ...sessions,
-        selectedSession: {
-          ...sessions.selectedSession,
-          exercise_unit: sessions.selectedSession.exercise_unit.map(
-            (e: any) => {
-              return e.id === payload.exercise_unit
-                ? {
-                    ...e,
-                    set: [
-                      ...e.set.filter((s: any) => s.id !== payload.id),
-                      payload,
-                    ],
-                  }
-                : e;
-            }
-          ),
-        },
+        sessionList: [...filteredSessionList, sessionUpdateSet],
+        selectedSession: sessionUpdateSet,
       };
 
     case DELETE_SET:
+      let sessionDeleteSet = {
+        ...sessions.selectedSession,
+        exercise_unit: sessions.selectedSession.exercise_unit.map((e: any) => {
+          return e.set.map((s: any) => s.id).includes(payload.id)
+            ? { ...e, set: e.set.filter((s: any) => s.id !== payload.id) }
+            : e;
+        }),
+      };
       return {
         ...sessions,
-        selectedSession: {
-          ...sessions.selectedSession,
-          exercise_unit: sessions.selectedSession.exercise_unit.map(
-            (e: any) => {
-              return e.id === payload.exercise_unit
-                ? { ...e, set: e.set.filter((s: any) => s.id !== payload.id) }
-                : e;
-            }
-          ),
-        },
+        sessionList: [...filteredSessionList, sessionDeleteSet],
+        selectedSession: sessionDeleteSet,
       };
 
     default:
