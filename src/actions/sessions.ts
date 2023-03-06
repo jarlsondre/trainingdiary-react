@@ -10,19 +10,18 @@ import {
 } from "./types";
 import SessionDataService from "../services/session.service";
 
-export const retrieveSessions =
-  (limit: any, offset: any) => async (dispatch: any) => {
-    try {
-      const res = await SessionDataService.getAll(limit, offset);
+export const retrieveSessions = (cursor: any) => async (dispatch: any) => {
+  try {
+    const res = await SessionDataService.getAll(cursor);
 
-      dispatch({
-        type: RETRIEVE_SESSIONS,
-        payload: res.data,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    dispatch({
+      type: RETRIEVE_SESSIONS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export const retrieveSingleSession =
   (id: number, sessionList: any) => async (dispatch: any) => {

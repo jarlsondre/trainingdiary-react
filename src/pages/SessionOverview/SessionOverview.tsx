@@ -24,16 +24,14 @@ export default function SessionOverview() {
   );
 
   // Pagination
-  const offset = useSelector<any>((state: any) => state.sessions.offset);
-  const limit = useSelector<any>((state: any) => state.sessions.limit);
+  const cursor = useSelector<any>((state: any) => state.sessions.cursor);
   const moreToLoad = useSelector<any>(
     (state: any) => state.sessions.moreToLoad
   );
-
   const dispatch = useDispatch();
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    dispatch(retrieveSessions(limit, offset));
+    dispatch(retrieveSessions(cursor));
   }, [dispatch]);
 
   const handleNewSession = () => {
@@ -42,7 +40,7 @@ export default function SessionOverview() {
   };
 
   const handleLoadMore = () => {
-    dispatch(retrieveSessions(limit, offset));
+    dispatch(retrieveSessions(cursor));
   };
 
   return (

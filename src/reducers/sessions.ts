@@ -24,8 +24,6 @@ const initialState: any = {
   selectedSession: {
     isLoading: false,
   },
-  offset: 0,
-  limit: 10,
   moreToLoad: true,
 };
 
@@ -50,17 +48,19 @@ export default function sessionReducer(
         if (existingSessionIds.includes(session.id)) continue;
         newSessions.push(session);
       }
-      let offset = sessions.offset;
       let moreToLoad = false;
-      if (payload.next) moreToLoad = true;
-      if (payload.next && newSessions.length > 0) {
-        offset += sessions.limit;
+      let cursor: any = "";
+      if (payload.next) {
+        let url = new URLSearchParams(payload.next.split("?")[1]);
+        console.log(url);
+        cursor = url.get("cursor");
+        moreToLoad = true;
       }
       return {
         ...sessions,
         sessionList: [...sessions.sessionList, ...newSessions],
-        offset: offset,
         moreToLoad: moreToLoad,
+        cursor: cursor,
       };
 
     case ADD_SESSION_REQUEST:
