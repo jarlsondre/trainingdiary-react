@@ -9,11 +9,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
+  max-width: 400px;
 }
 
 .new-session-button {
   background-color: #4caf50; /* Green */
-  border-radius: 10px;
+  border-radius: 4px;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -26,8 +28,8 @@
 }
 
 .load-more-button {
-  background-color: orange; /* Green */
-  border-radius: 10px;
+  background-color: orange;
+  border-radius: 4px;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -37,6 +39,7 @@
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  margin-bottom: 20px;
 }
 .more-to-load:hover {
   background-color: darkorange;
