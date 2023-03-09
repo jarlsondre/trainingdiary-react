@@ -38,6 +38,9 @@ function DetailOverview(props: any) {
     props.onDeleteSession(Number(sessionId));
     navigate("/");
   };
+  const compareExerciseNames = (a: any, b: any) => {
+    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+  };
 
   let date = new Date(props.selectedSession.datetime);
 
@@ -70,13 +73,15 @@ function DetailOverview(props: any) {
               setSelectedExercise(parseInt(event.target.value));
             }}
           >
-            {props.exercises.map((exercise: any, key: number) => {
-              return (
-                <option key={key} value={exercise.id}>
-                  {exercise.name}
-                </option>
-              );
-            })}
+            {props.exercises
+              .sort(compareExerciseNames)
+              .map((exercise: any, key: number) => {
+                return (
+                  <option key={key} value={exercise.id}>
+                    {exercise.name}
+                  </option>
+                );
+              })}
           </select>
           <button onClick={handleAddExercise}>Add Exercise</button>
         </div>
