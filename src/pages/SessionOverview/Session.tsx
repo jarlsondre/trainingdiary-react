@@ -44,10 +44,12 @@ export default function Session(props: Props) {
           : "session-container"
       }
     >
-      <h3 className="session-header">{date.toLocaleDateString()}</h3>
-      <button>
-        <Link to={"session/" + props.session.id}>Open</Link>
-      </button>
+      <div className="session-header-container">
+        <h3 className="session-header">{date.toLocaleDateString()}</h3>
+        <button>
+          <Link to={"session/" + props.session.id}>Open</Link>
+        </button>
+      </div>
       <div className="username-container">User: {props.session.username}</div>
       <div>
         {props.session.exercise_unit.map((exerciseUnit, key) => {

@@ -12,6 +12,12 @@
   border: 1px solid black;
 }
 
+.session-header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .session-header {
   margin: 0px;
   display: inline-block;
