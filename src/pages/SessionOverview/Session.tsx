@@ -40,21 +40,29 @@ export default function Session(props: Props) {
     <div
       className={
         user.username === props.session.username
-          ? "session-container personal-session"
-          : "session-container"
+          ? "session-container-wrap personal-session-container-wrap"
+          : "session-container-wrap"
       }
     >
-      <div className="session-header-container">
-        <h3 className="session-header">{date.toLocaleDateString()}</h3>
-        <button>
-          <Link to={"session/" + props.session.id}>Open</Link>
-        </button>
-      </div>
-      <div className="username-container">User: {props.session.username}</div>
-      <div>
-        {props.session.exercise_unit.map((exerciseUnit, key) => {
-          return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
-        })}
+      <div
+        className={
+          user.username === props.session.username
+            ? "session-container personal-session"
+            : "session-container"
+        }
+      >
+        <div className="session-header-container">
+          <h3 className="session-header">{date.toLocaleDateString()}</h3>
+          <button>
+            <Link to={"session/" + props.session.id}>Open</Link>
+          </button>
+        </div>
+        <div className="username-container">User: {props.session.username}</div>
+        <div>
+          {props.session.exercise_unit.map((exerciseUnit, key) => {
+            return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
+          })}
+        </div>
       </div>
     </div>
   );

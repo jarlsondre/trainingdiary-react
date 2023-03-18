@@ -1,15 +1,22 @@
 .session-container {
-  margin: 10px;
-  /* border: 1px solid grey; */
   border-radius: 4px;
-  padding: 10px;
   background-color: white;
-  box-shadow: 1px 1px 1px gray;
-  border: 1px solid lightgrey;
+  padding: 5px;
 }
 
-.personal-session {
-  border: 1px solid black;
+.session-container-wrap {
+  padding-top: 2px;
+  box-shadow: 1px 1px 1px gray;
+  margin: 5px;
+  border-radius: 4px;
+  border: 1px solid lightgray;
+}
+.personal-session-container-wrap {
+  padding-top: 3px;
+  padding-left: 2px;
+  border-radius: 4px;
+  border: 0px solid gray;
+  background: linear-gradient(to bottom right, green, 20%, white);
 }
 
 .session-header-container {

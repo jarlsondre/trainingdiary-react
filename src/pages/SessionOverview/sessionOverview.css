@@ -17,11 +17,10 @@
 .new-session-button {
   background-color: #4caf50; /* Green */
   border-radius: 4px;
+  margin: 5px;
   border: none;
   color: white;
   padding: 15px 32px;
-  margin-left: 10px;
-  margin-right: 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
