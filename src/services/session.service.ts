@@ -16,6 +16,10 @@ class SessionDataService {
   deleteSession(id: number) {
     return http.delete("/session/" + id + "/");
   }
+
+  likeSession(id: number) {
+    return http.post("/session/" + id + "/like_session/");
+  }
 }
 
 export default new SessionDataService();

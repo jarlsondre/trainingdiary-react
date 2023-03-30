@@ -1,8 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
+import { likeSession } from "../../actions/sessions";
 
 export interface SetInterface {
   id: number;
@@ -37,15 +38,25 @@ type Props = {
 export default function Session(props: Props) {
   let date = new Date(props.session.datetime);
   const user = useSelector((state: any) => state.user);
+  const dispatch = useDispatch();
   function get_likes_string(username: string) {
     if (props.session.liked_by_usernames.length == 0) return "No likes yet";
-    let result = "Liked by " + props.session.liked_by_usernames[0];
-    if (props.session.liked_by_usernames.length > 1) {
-      result +=
-        " and " + (props.session.liked_by_usernames.length - 1) + " more";
+    let usernames = [];
+    if (props.session.liked_by_usernames.includes(user.username)) {
+      usernames = props.session.liked_by_usernames.sort((x, y) => {
+        return x == user.username ? -1 : y == user.username ? 1 : 0;
+      });
+    } else usernames = props.session.liked_by_usernames;
+    let result = "Liked by " + usernames[0];
+    if (usernames.length > 1) {
+      result += " and " + (usernames.length - 1) + " more";
     }
     return result;
   }
+  const handleLikeSession = () => {
+    let id = props.session.id;
+    dispatch(likeSession(id));
+  };
   return (
     <div
       className={
@@ -73,9 +84,12 @@ export default function Session(props: Props) {
             return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
           })}
         </div>
-        {user.username !== props.session.username ? (
+        {user.username !== props.session.username &&
+        !props.session.liked_by_usernames.includes(user.username) ? (
           <div className="like-container">
-            <button className="like-button">Like</button>
+            <button onClick={handleLikeSession} className="like-button">
+              Like
+            </button>
             {get_likes_string(user.username)}
           </div>
         ) : (

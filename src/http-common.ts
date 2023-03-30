@@ -5,6 +5,7 @@ import store from "./store";
 import { AUTH_ERROR } from "./actions/types";
 
 export const baseURL = "https://api.jarlstrainingdiary.com";
+// export const baseURL = "http://localhost:8000";
 
 let authToken = localStorage.getItem("authToken")
   ? JSON.parse(localStorage.getItem("authToken")!)

@@ -3,6 +3,9 @@ import {
   ADD_SESSION_REQUEST,
   ADD_SESSION_SUCCESS,
   DELETE_SESSION,
+  LIKE_SESSION_FAIL,
+  LIKE_SESSION_REQUEST,
+  LIKE_SESSION_SUCCESS,
   RETRIEVE_SESSIONS,
   RETRIEVE_SINGLE_SESSION_FAIL,
   RETRIEVE_SINGLE_SESSION_REQUEST,
@@ -96,4 +99,24 @@ export const deleteSession = (id: number) => async (dispatch: any) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+export const likeSession = (id: number) => async (dispatch: any) => {
+  dispatch({
+    type: LIKE_SESSION_REQUEST,
+    payload: id,
+  });
+  await SessionDataService.likeSession(id)
+    .then((res: any) => {
+      dispatch({
+        type: LIKE_SESSION_SUCCESS,
+        payload: res.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: LIKE_SESSION_FAIL,
+        payload: null,
+      });
+    });
 };

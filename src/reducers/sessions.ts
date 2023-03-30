@@ -7,6 +7,9 @@ import {
   DELETE_EXERCISE_UNIT,
   DELETE_SESSION,
   DELETE_SET,
+  LIKE_SESSION_FAIL,
+  LIKE_SESSION_REQUEST,
+  LIKE_SESSION_SUCCESS,
   RETRIEVE_SESSIONS,
   RETRIEVE_SINGLE_SESSION_FAIL,
   RETRIEVE_SINGLE_SESSION_REQUEST,
@@ -173,6 +176,23 @@ export default function sessionReducer(
         sessionList: [...filteredSessionList, sessionDeleteSet],
         selectedSession: sessionDeleteSet,
       };
+    case LIKE_SESSION_REQUEST:
+      return { ...sessions };
+
+    case LIKE_SESSION_SUCCESS:
+      console.log(payload);
+      return {
+        ...sessions,
+        sessionList: [
+          ...sessions.sessionList.filter(
+            (session: any) => session.id !== payload.id
+          ),
+          payload,
+        ],
+      };
+
+    case LIKE_SESSION_FAIL:
+      return { ...sessions };
 
     default:
       return sessions;
