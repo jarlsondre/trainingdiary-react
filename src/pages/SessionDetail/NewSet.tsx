@@ -45,7 +45,9 @@ export default function NewSet(props: Props) {
           setRepetitions(parseInt(event.target.value));
         }}
       ></input>
-      <button onClick={handleAddSet}>Add Set</button>
+      <button className="add-set-button" onClick={handleAddSet}>
+        Save
+      </button>
     </div>
   );
 }

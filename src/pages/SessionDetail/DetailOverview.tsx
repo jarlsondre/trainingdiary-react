@@ -11,12 +11,18 @@ import { addExerciseUnit } from "../../actions/exerciseUnits";
 import { retrieveExercises } from "../../actions/exercises";
 import { connect, useSelector } from "react-redux";
 
+const compareExerciseNames = (a: any, b: any) => {
+  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+};
+
 function DetailOverview(props: any) {
   let { sessionId } = useParams();
   const navigate = useNavigate();
   const sessionList = useSelector((state: any) => state.sessions.sessionList);
 
-  const [selectedExercise, setSelectedExercise] = useState<number>(1);
+  const [selectedExercise, setSelectedExercise] = useState<number>(
+    props.exercises.sort(compareExerciseNames)[0].id
+  );
   const [keyValue, setKeyValue] = useState<number>(0);
   const [description, setDescription] = useState<string>(
     props.selectedSession.description
@@ -54,10 +60,6 @@ function DetailOverview(props: any) {
     props.onUpdateSession(Number(sessionId), data);
   };
 
-  const compareExerciseNames = (a: any, b: any) => {
-    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-  };
-
   let date = new Date(props.selectedSession.datetime);
 
   let editable = username === props.selectedSession.username;
@@ -66,20 +68,18 @@ function DetailOverview(props: any) {
   return (
     <div key={keyValue} className="detail-overview-container">
       <div className="detail-overview-inner-container">
+        {editable && (
+          <button className="delete-session-button" onClick={handleDelete}>
+            Delete Session
+          </button>
+        )}
         <label htmlFor="session-date" style={{ display: "block" }}>
           Session Date
         </label>
         <input type="date" id="session-date" name="session-date"></input>
-        {props.selectedSession.username === username && (
-          <button>Update Date [in progress]</button>
-        )}
-        {props.selectedSession.username === username && (
-          <button className="delete-session-button" onClick={handleDelete}>
-            Remove Session
-          </button>
-        )}
+        {editable && <button>Update Date [in progress]</button>}
         <div>User: {props.selectedSession.username}</div>
-        <div>
+        <div className="description-container">
           <textarea
             rows={3}
             cols={40}
@@ -89,8 +89,11 @@ function DetailOverview(props: any) {
               setDescription(event.target.value);
             }}
           ></textarea>
-          {props.selectedSession.username === username && (
-            <button onClick={handleUpdateDescription}>
+          {editable && (
+            <button
+              onClick={handleUpdateDescription}
+              className="update-description-button"
+            >
               Update Description
             </button>
           )}
@@ -130,7 +133,9 @@ function DetailOverview(props: any) {
                   );
                 })}
             </select>
-            <button onClick={handleAddExercise}>Add Exercise</button>
+            <button className="add-exercise-button" onClick={handleAddExercise}>
+              Add Exercise
+            </button>
           </div>
         )}
       </div>

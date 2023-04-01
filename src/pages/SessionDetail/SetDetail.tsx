@@ -55,13 +55,17 @@ export default function SetDetail(props: Props) {
             setRepetitions(parseInt(event.target.value));
           }}
         ></input>
-        <button onClick={handleUpdate}>Update set</button>
-        <button onClick={handleDelete}>Delete set</button>
+        <button className="update-set-button" onClick={handleUpdate}>
+          Update
+        </button>
+        <button className="delete-set-button" onClick={handleDelete}>
+          Delete
+        </button>
       </div>
     );
   else
     return (
-      <div className="set-detail-container-editable">
+      <div className="set-detail-container">
         {Math.round(props.set.weight * (metric ? 1 : 2.2) * 10) / 10}{" "}
         {metric ? "kg x" : "lbs x"} {props.set.repetitions}
       </div>

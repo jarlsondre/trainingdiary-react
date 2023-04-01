@@ -5,20 +5,20 @@ import { connect, useSelector } from "react-redux";
 import { deleteExerciseUnit } from "../../actions/exerciseUnits";
 
 function ExerciseUnitDetail(props: any) {
-  const handleRemoveExercise = () => {
+  const handleDeleteExercise = () => {
     props.onDeleteExerciseUnit(Number(props.exerciseUnit.id));
   };
 
   return (
-    <div key={props.exerciseUnit}>
+    <div key={props.exerciseUnit} className="exercise-unit-container">
       <div className="exercise-name-container">
-        <h2 className="exercise-name">{props.exerciseUnit.exercise_name}</h2>
+        <div className="exercise-name">{props.exerciseUnit.exercise_name}</div>
         {props.editable && (
           <button
-            className="remove-exercise-button"
-            onClick={handleRemoveExercise}
+            className="delete-exercise-button"
+            onClick={handleDeleteExercise}
           >
-            Remove Exercise
+            Delete
           </button>
         )}
       </div>

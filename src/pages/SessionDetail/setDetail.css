@@ -1,6 +1,26 @@
 .set-detail-container {
-  margin-left: 10px;
+  margin-bottom: 3px;
 }
-.set-detail-container-editable {
-  margin-left: 10px;
+.delete-set-button {
+  background-color: #ff4444;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  padding: 3px 6px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  margin-left: 3px;
+}
+
+.update-set-button {
+  background-color: orange;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  padding: 3px 6px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  margin-left: 3px;
 }
