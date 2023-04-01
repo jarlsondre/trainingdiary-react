@@ -182,7 +182,12 @@ export default function sessionReducer(
     case LIKE_SESSION_SUCCESS:
       return {
         ...sessions,
-        sessionList: [filteredSessionList, payload],
+        sessionList: [
+          ...sessions.sessionList.filter(
+            (session: any) => session.id !== payload.id
+          ),
+          payload,
+        ],
       };
 
     case LIKE_SESSION_FAIL:
