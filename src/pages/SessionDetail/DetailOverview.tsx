@@ -20,9 +20,7 @@ function DetailOverview(props: any) {
   const navigate = useNavigate();
   const sessionList = useSelector((state: any) => state.sessions.sessionList);
 
-  const [selectedExercise, setSelectedExercise] = useState<number>(
-    props.exercises.sort(compareExerciseNames)[0].id
-  );
+  const [selectedExercise, setSelectedExercise] = useState<number>(1);
   const [keyValue, setKeyValue] = useState<number>(0);
   const [description, setDescription] = useState<string>(
     props.selectedSession.description
