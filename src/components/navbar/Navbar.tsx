@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
@@ -11,18 +11,34 @@ function Navbar(props: any) {
   const isAuthenticated = useSelector(
     (state: any) => state.authentication.isAuthenticated
   );
+  const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
+    setMenuExpanded(false);
     navigate("/login");
   };
 
   const handleUnitChange = () => {
     props.onToggleMetric(!props.metric);
     navigate("/");
+  };
+
+  const handleMenuToggle = () => {
+    setMenuExpanded(!menuExpanded);
+  };
+
+  const handleCalculatorNavigation = () => {
+    navigate("/calculator");
+    setMenuExpanded(false);
+  };
+
+  const handleHomeNavigation = () => {
+    navigate("/");
+    setMenuExpanded(false);
   };
 
   useEffect(() => {
@@ -46,9 +62,40 @@ function Navbar(props: any) {
         <button onClick={handleUnitChange} className="unit-button">
           {props.metric ? "kg" : "lbs"}
         </button>
-        <button onClick={handleLogout} className="logout-button">
+        <div className="dropdown-menu">
+          <button className="dropdown-button" onClick={handleMenuToggle}>
+            Menu
+          </button>
+          <div
+            className={
+              menuExpanded
+                ? "dropdown-content dropdown-content-expanded"
+                : "dropdown-content"
+            }
+          >
+            <button
+              onClick={handleHomeNavigation}
+              className="menu-button home-button"
+            >
+              Home
+            </button>
+            <button
+              onClick={handleCalculatorNavigation}
+              className="menu-button calculator-button"
+            >
+              Calculator
+            </button>
+            <button
+              onClick={handleLogout}
+              className="menu-button logout-button"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+        {/* <button onClick={handleLogout} className="logout-button">
           Logout
-        </button>
+        </button> */}
       </div>
     );
   return (
