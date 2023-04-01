@@ -6,6 +6,7 @@ import "./setDetail.css";
 
 type Props = {
   set: SetInterface;
+  editable: boolean;
 };
 
 export default function SetDetail(props: Props) {
@@ -27,35 +28,42 @@ export default function SetDetail(props: Props) {
 
     dispatch(updateSet(data));
   };
-
-  return (
-    <div className="set-detail-container">
-      <input
-        itemID={props.set.id.toString()}
-        type="number"
-        id="weight"
-        name="weight"
-        className="weight-input"
-        defaultValue={
-          Math.round(props.set.weight * (metric ? 1 : 2.2) * 10) / 10
-        }
-        onChange={(event) => {
-          setWeight(parseFloat(event.target.value) / (metric ? 1 : 2.2));
-        }}
-      ></input>
-      {metric ? "kg x" : "lbs x"}
-      <input
-        type="number"
-        id="repetitions"
-        name="repetitions"
-        className="repetition-input"
-        defaultValue={props.set.repetitions}
-        onChange={(event) => {
-          setRepetitions(parseInt(event.target.value));
-        }}
-      ></input>
-      <button onClick={handleUpdate}>Update set</button>
-      <button onClick={handleDelete}>Delete set</button>
-    </div>
-  );
+  if (props.editable)
+    return (
+      <div className="set-detail-container">
+        <input
+          itemID={props.set.id.toString()}
+          type="number"
+          id="weight"
+          name="weight"
+          className="weight-input"
+          defaultValue={
+            Math.round(props.set.weight * (metric ? 1 : 2.2) * 10) / 10
+          }
+          onChange={(event) => {
+            setWeight(parseFloat(event.target.value) / (metric ? 1 : 2.2));
+          }}
+        ></input>
+        {metric ? "kg x" : "lbs x"}
+        <input
+          type="number"
+          id="repetitions"
+          name="repetitions"
+          className="repetition-input"
+          defaultValue={props.set.repetitions}
+          onChange={(event) => {
+            setRepetitions(parseInt(event.target.value));
+          }}
+        ></input>
+        <button onClick={handleUpdate}>Update set</button>
+        <button onClick={handleDelete}>Delete set</button>
+      </div>
+    );
+  else
+    return (
+      <div className="set-detail-container-editable">
+        {Math.round(props.set.weight * (metric ? 1 : 2.2) * 10) / 10}{" "}
+        {metric ? "kg x" : "lbs x"} {props.set.repetitions}
+      </div>
+    );
 }

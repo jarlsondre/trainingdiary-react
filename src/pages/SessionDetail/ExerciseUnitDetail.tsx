@@ -13,20 +13,30 @@ function ExerciseUnitDetail(props: any) {
     <div key={props.exerciseUnit}>
       <div className="exercise-name-container">
         <h2 className="exercise-name">{props.exerciseUnit.exercise_name}</h2>
-        <button
-          className="remove-exercise-button"
-          onClick={handleRemoveExercise}
-        >
-          Remove Exercise
-        </button>
+        {props.editable && (
+          <button
+            className="remove-exercise-button"
+            onClick={handleRemoveExercise}
+          >
+            Remove Exercise
+          </button>
+        )}
       </div>
-      {props.exerciseUnit.set.map((set: any, key: number) => {
-        return <SetDetail key={key} set={set} />;
-      })}
-      <NewSet
-        exercise_unit={props.exerciseUnit.id}
-        set_number={props.exerciseUnit.set.length + 1}
-      />
+      {props.exerciseUnit.set.length > 0 ? (
+        props.exerciseUnit.set.map((set: any, key: number) => {
+          return <SetDetail key={key} set={set} editable={props.editable} />;
+        })
+      ) : props.editable ? (
+        ""
+      ) : (
+        <div className="no-sets-yet">No sets yet</div>
+      )}
+      {props.editable && (
+        <NewSet
+          exercise_unit={props.exerciseUnit.id}
+          set_number={props.exerciseUnit.set.length + 1}
+        />
+      )}
     </div>
   );
 }

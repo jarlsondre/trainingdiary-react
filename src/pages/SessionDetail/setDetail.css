@@ -1,3 +1,6 @@
 .set-detail-container {
-  margin-left: 20px;
+  margin-left: 10px;
+}
+.set-detail-container-editable {
+  margin-left: 10px;
 }

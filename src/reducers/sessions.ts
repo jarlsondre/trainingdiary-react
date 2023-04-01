@@ -195,7 +195,6 @@ export default function sessionReducer(
       };
 
     case UPDATE_SESSION_SUCCESS:
-      console.log(payload);
       return {
         ...sessions,
         sessionList: [...filteredSessionList, payload],

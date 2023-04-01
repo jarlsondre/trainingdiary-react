@@ -21,6 +21,7 @@ function DetailOverview(props: any) {
   const [description, setDescription] = useState<string>(
     props.selectedSession.description
   );
+  const username = useSelector((state: any) => state.user.username);
 
   useEffect(() => {
     if (
@@ -59,6 +60,8 @@ function DetailOverview(props: any) {
 
   let date = new Date(props.selectedSession.datetime);
 
+  let editable = username === props.selectedSession.username;
+
   if (props.isLoading) return <div>Loading...</div>;
   return (
     <div key={keyValue} className="detail-overview-container">
@@ -67,10 +70,14 @@ function DetailOverview(props: any) {
           Session Date
         </label>
         <input type="date" id="session-date" name="session-date"></input>
-        <button>Update Date [in progress]</button>
-        <button className="delete-session-button" onClick={handleDelete}>
-          Remove Session
-        </button>
+        {props.selectedSession.username === username && (
+          <button>Update Date [in progress]</button>
+        )}
+        {props.selectedSession.username === username && (
+          <button className="delete-session-button" onClick={handleDelete}>
+            Remove Session
+          </button>
+        )}
         <div>User: {props.selectedSession.username}</div>
         <div>
           <textarea
@@ -82,36 +89,50 @@ function DetailOverview(props: any) {
               setDescription(event.target.value);
             }}
           ></textarea>
-          <button onClick={handleUpdateDescription}>Update Description</button>
+          {props.selectedSession.username === username && (
+            <button onClick={handleUpdateDescription}>
+              Update Description
+            </button>
+          )}
         </div>
         {props.selectedSession.exercise_unit &&
-          props.selectedSession.exercise_unit.map(
-            (exerciseUnit: any, key: number) => {
-              return (
-                <ExerciseUnitDetail key={key} exerciseUnit={exerciseUnit} />
-              );
-            }
-          )}
-        <div className="add-exercise-container">
-          <select
-            name="exercises"
-            id="exercises"
-            onChange={(event) => {
-              setSelectedExercise(parseInt(event.target.value));
-            }}
-          >
-            {props.exercises
-              .sort(compareExerciseNames)
-              .map((exercise: any, key: number) => {
+        props.selectedSession.exercise_unit.length > 0
+          ? props.selectedSession.exercise_unit.map(
+              (exerciseUnit: any, key: number) => {
                 return (
-                  <option key={key} value={exercise.id}>
-                    {exercise.name}
-                  </option>
+                  <ExerciseUnitDetail
+                    key={key}
+                    exerciseUnit={exerciseUnit}
+                    editable={editable}
+                  />
                 );
-              })}
-          </select>
-          <button onClick={handleAddExercise}>Add Exercise</button>
-        </div>
+              }
+            )
+          : editable
+          ? ""
+          : "No exercises yet"}
+        {editable && (
+          <div className="add-exercise-container">
+            <select
+              name="exercises"
+              id="exercises"
+              onChange={(event) => {
+                setSelectedExercise(parseInt(event.target.value));
+              }}
+            >
+              {props.exercises
+                .sort(compareExerciseNames)
+                .map((exercise: any, key: number) => {
+                  return (
+                    <option key={key} value={exercise.id}>
+                      {exercise.name}
+                    </option>
+                  );
+                })}
+            </select>
+            <button onClick={handleAddExercise}>Add Exercise</button>
+          </div>
+        )}
       </div>
     </div>
   );
