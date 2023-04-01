@@ -1,0 +1,19 @@
+.calculator-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.explanatory-text {
+  margin: 10px;
+}
+
+.calculator-weight-input {
+  width: 40px;
+  margin-bottom: 5px;
+}
+
+.calculator-repetition-input {
+  width: 40px;
+  margin-bottom: 5px;
+}
