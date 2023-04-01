@@ -31,7 +31,7 @@ export default function SessionOverview() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    dispatch(retrieveSessions(cursor));
+    if ((reduxSessions as any).length == 0) dispatch(retrieveSessions(cursor));
   }, [dispatch]);
 
   const handleNewSession = () => {
