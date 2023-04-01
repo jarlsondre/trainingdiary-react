@@ -93,15 +93,12 @@ function Navbar(props: any) {
             </button>
           </div>
         </div>
-        {/* <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button> */}
       </div>
     );
   return (
     <div className="navbar-container">
-      <Link to="/login" className="link-element">
-        Login
+      <Link to="/login">
+        <img src={logo} alt="logo" className="logo" />
       </Link>
     </div>
   );

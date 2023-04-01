@@ -13,3 +13,18 @@
 .remember-me-container {
   align-self: center;
 }
+
+.login-button {
+  background-color: #4caf50;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  padding: 10px 0px;
+  margin-top: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  max-width: 100px;
+  width: 100%;
+}
