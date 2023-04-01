@@ -60,8 +60,10 @@ function DetailOverview(props: any) {
   };
 
   const handleUpdateDate = () => {
+    // Setting time to noon as otherwise
+    // the date is displayed as the day before
     const data = {
-      datetime: date,
+      datetime: date + "T12:00:00",
     };
     props.onUpdateSession(Number(sessionId), data);
   };
