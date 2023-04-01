@@ -24,3 +24,14 @@
   font-size: 12px;
   margin-left: 3px;
 }
+/* Remove the button parts of the input fields with number type */
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+/* ---- */
