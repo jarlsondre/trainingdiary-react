@@ -24,6 +24,7 @@ function Navbar(props: any) {
 
   const handleUnitChange = () => {
     props.onToggleMetric(!props.metric);
+    setMenuExpanded(false);
     navigate("/");
   };
 
@@ -59,9 +60,6 @@ function Navbar(props: any) {
         <div>
           Logged in as: <br /> {user.username}
         </div>
-        <button onClick={handleUnitChange} className="unit-button">
-          {props.metric ? "kg" : "lbs"}
-        </button>
         <div className="dropdown-menu">
           <button className="dropdown-button" onClick={handleMenuToggle}>
             Menu
@@ -84,6 +82,12 @@ function Navbar(props: any) {
               className="menu-button calculator-button"
             >
               Calculator
+            </button>
+            <button
+              onClick={handleUnitChange}
+              className="menu-button unit-button"
+            >
+              Change units
             </button>
             <button
               onClick={handleLogout}

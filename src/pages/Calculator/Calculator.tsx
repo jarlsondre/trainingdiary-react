@@ -33,7 +33,7 @@ export default function Calculator(props: Props) {
         ></input>
       </div>
       <div>
-        Reptitions:{" "}
+        Repetitions:{" "}
         <input
           onChange={(event: any) => {
             setRepetitions(event.target.value);
