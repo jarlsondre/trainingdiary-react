@@ -14,6 +14,9 @@ import {
   RETRIEVE_SINGLE_SESSION_FAIL,
   RETRIEVE_SINGLE_SESSION_REQUEST,
   RETRIEVE_SINGLE_SESSION_SUCCESS,
+  UPDATE_SESSION_FAIL,
+  UPDATE_SESSION_REQUEST,
+  UPDATE_SESSION_SUCCESS,
   UPDATE_SET,
 } from "../actions/types";
 
@@ -96,9 +99,6 @@ export default function sessionReducer(
       };
 
     case ADD_EXERCISE_UNIT:
-      // Make sure we update both on selected session and sessionList
-      let sessionId = sessions.selectedSession.id;
-
       let sessionAddedExerciseUnit = {
         ...sessions.selectedSession,
         exercise_unit: [...sessions.selectedSession.exercise_unit, payload],
@@ -180,19 +180,33 @@ export default function sessionReducer(
       return { ...sessions };
 
     case LIKE_SESSION_SUCCESS:
-      console.log(payload);
       return {
         ...sessions,
-        sessionList: [
-          ...sessions.sessionList.filter(
-            (session: any) => session.id !== payload.id
-          ),
-          payload,
-        ],
+        sessionList: [filteredSessionList, payload],
       };
 
     case LIKE_SESSION_FAIL:
       return { ...sessions };
+
+    case UPDATE_SESSION_REQUEST:
+      return {
+        ...sessions,
+        selectedSession: { ...sessions.selectedSession, isLoading: true },
+      };
+
+    case UPDATE_SESSION_SUCCESS:
+      console.log(payload);
+      return {
+        ...sessions,
+        sessionList: [...filteredSessionList, payload],
+        selectedSession: { ...payload, isLoading: false },
+      };
+
+    case UPDATE_SESSION_FAIL:
+      return {
+        ...sessions,
+        selectedSession: { ...sessions.selectedSession, isLoading: false },
+      };
 
     default:
       return sessions;

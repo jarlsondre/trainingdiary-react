@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
-import { deleteSession, retrieveSingleSession } from "../../actions/sessions";
+import {
+  deleteSession,
+  retrieveSingleSession,
+  updateSesssion,
+} from "../../actions/sessions";
 import { addExerciseUnit } from "../../actions/exerciseUnits";
 import { retrieveExercises } from "../../actions/exercises";
 import { connect, useSelector } from "react-redux";
@@ -14,6 +18,9 @@ function DetailOverview(props: any) {
 
   const [selectedExercise, setSelectedExercise] = useState<number>(1);
   const [keyValue, setKeyValue] = useState<number>(0);
+  const [description, setDescription] = useState<string>(
+    props.selectedSession.description
+  );
 
   useEffect(() => {
     if (
@@ -38,6 +45,14 @@ function DetailOverview(props: any) {
     props.onDeleteSession(Number(sessionId));
     navigate("/");
   };
+
+  const handleUpdateDescription = () => {
+    const data = {
+      description: description,
+    };
+    props.onUpdateSession(Number(sessionId), data);
+  };
+
   const compareExerciseNames = (a: any, b: any) => {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
   };
@@ -57,6 +72,18 @@ function DetailOverview(props: any) {
           Remove Session
         </button>
         <div>User: {props.selectedSession.username}</div>
+        <div>
+          <textarea
+            rows={3}
+            cols={40}
+            id="description"
+            defaultValue={props.selectedSession.description}
+            onChange={(event) => {
+              setDescription(event.target.value);
+            }}
+          ></textarea>
+          <button onClick={handleUpdateDescription}>Update Description</button>
+        </div>
         {props.selectedSession.exercise_unit &&
           props.selectedSession.exercise_unit.map(
             (exerciseUnit: any, key: number) => {
@@ -103,6 +130,9 @@ const mapDispatchToProps = (dispatch: any) => {
     },
     onDeleteSession: (id: number) => {
       dispatch(deleteSession(id));
+    },
+    onUpdateSession: (id: number, data: any) => {
+      dispatch(updateSesssion(id, data));
     },
   };
 };

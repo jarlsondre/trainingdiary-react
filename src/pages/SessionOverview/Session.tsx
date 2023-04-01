@@ -79,6 +79,11 @@ export default function Session(props: Props) {
           </button>
         </div>
         <div className="username-container">User: {props.session.username}</div>
+        {props.session.description && (
+          <div className="description-container">
+            {props.session.description}
+          </div>
+        )}
         <div>
           {props.session.exercise_unit.map((exerciseUnit, key) => {
             return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;

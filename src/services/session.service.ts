@@ -20,6 +20,10 @@ class SessionDataService {
   likeSession(id: number) {
     return http.post("/session/" + id + "/like_session/");
   }
+
+  updateSession(id: number, data: any) {
+    return http.patch("/session/" + id + "/", data);
+  }
 }
 
 export default new SessionDataService();

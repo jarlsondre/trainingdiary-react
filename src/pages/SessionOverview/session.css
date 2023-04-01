@@ -64,6 +64,13 @@
   font-size: 16px;
 }
 
+.description-container {
+  font-size: 14px;
+  margin-left: 3px;
+  margin-bottom: 10px;
+  color: #474747;
+}
+
 @media only screen and (min-device-width: 480px) {
   .session-container {
     max-width: 400px;

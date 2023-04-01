@@ -10,6 +10,9 @@ import {
   RETRIEVE_SINGLE_SESSION_FAIL,
   RETRIEVE_SINGLE_SESSION_REQUEST,
   RETRIEVE_SINGLE_SESSION_SUCCESS,
+  UPDATE_SESSION_FAIL,
+  UPDATE_SESSION_REQUEST,
+  UPDATE_SESSION_SUCCESS,
 } from "./types";
 import SessionDataService from "../services/session.service";
 
@@ -120,3 +123,24 @@ export const likeSession = (id: number) => async (dispatch: any) => {
       });
     });
 };
+
+export const updateSesssion =
+  (id: number, data: any) => async (dispatch: any) => {
+    dispatch({
+      type: UPDATE_SESSION_REQUEST,
+      payload: { id: id, data: data },
+    });
+    await SessionDataService.updateSession(id, data)
+      .then((res: any) => {
+        dispatch({
+          type: UPDATE_SESSION_SUCCESS,
+          payload: res.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: UPDATE_SESSION_FAIL,
+          payload: null,
+        });
+      });
+  };
