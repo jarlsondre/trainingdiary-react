@@ -25,6 +25,7 @@ function DetailOverview(props: any) {
   const [description, setDescription] = useState<string>(
     props.selectedSession.description
   );
+  const [date, setDate] = useState<string>("");
   const username = useSelector((state: any) => state.user.username);
 
   useEffect(() => {
@@ -58,7 +59,17 @@ function DetailOverview(props: any) {
     props.onUpdateSession(Number(sessionId), data);
   };
 
-  let date = new Date(props.selectedSession.datetime);
+  const handleUpdateDate = () => {
+    const data = {
+      datetime: date,
+    };
+    props.onUpdateSession(Number(sessionId), data);
+  };
+
+  let datetimeString = "";
+  if (props.selectedSession.datetime) {
+    datetimeString = props.selectedSession.datetime.substring(0, 10);
+  }
 
   let editable = username === props.selectedSession.username;
 
@@ -74,8 +85,20 @@ function DetailOverview(props: any) {
         <label htmlFor="session-date" style={{ display: "block" }}>
           Session Date
         </label>
-        <input type="date" id="session-date" name="session-date"></input>
-        {editable && <button>Update Date [in progress]</button>}
+        <input
+          type="date"
+          id="session-date"
+          name="session-date"
+          defaultValue={datetimeString}
+          onChange={(event) => {
+            setDate(event.target.value);
+          }}
+        ></input>
+        {editable && (
+          <button className="update-date-button" onClick={handleUpdateDate}>
+            Update Date
+          </button>
+        )}
         <div>User: {props.selectedSession.username}</div>
         <div className="description-container">
           <textarea

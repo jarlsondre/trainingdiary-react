@@ -35,10 +35,36 @@ type Props = {
   session: SessionInterface;
 };
 
+let months: { [key: number]: string } = {
+  0: "January",
+  1: "February",
+  2: "March",
+  3: "April",
+  4: "May",
+  5: "June",
+  6: "July",
+  7: "August",
+  8: "September",
+  9: "October",
+  10: "November",
+  11: "December",
+};
+
 export default function Session(props: Props) {
   let date = new Date(props.session.datetime);
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
+
+  function getDateString(date: Date) {
+    let year = date.getFullYear();
+    let monthNum: number = date.getMonth();
+    let month = months[monthNum];
+    let dayNumber: number = date.getDate();
+    let datestring: string =
+      month + " " + dayNumber.toString() + ", " + year.toString();
+    return datestring;
+  }
+
   function get_likes_string(username: string) {
     if (props.session.liked_by_usernames.length == 0) return "No likes yet";
     let usernames = [];
@@ -53,6 +79,7 @@ export default function Session(props: Props) {
     }
     return result;
   }
+
   const handleLikeSession = () => {
     let id = props.session.id;
     dispatch(likeSession(id));
@@ -73,7 +100,7 @@ export default function Session(props: Props) {
         }
       >
         <div className="session-header-container">
-          <h3 className="session-header">{date.toLocaleDateString()}</h3>
+          <h3 className="session-header">{getDateString(date)}</h3>
           <button>
             <Link to={"session/" + props.session.id}>Open</Link>
           </button>
