@@ -84,9 +84,7 @@ function DetailOverview(props: any) {
             Delete Session
           </button>
         )}
-        <label htmlFor="session-date" style={{ display: "block" }}>
-          Session Date
-        </label>
+        <div>User: {props.selectedSession.username}</div>
         <input
           type="date"
           id="session-date"
@@ -101,8 +99,7 @@ function DetailOverview(props: any) {
             Update Date
           </button>
         )}
-        <div>User: {props.selectedSession.username}</div>
-        <div className="description-container">
+        <div className="description-detail-container">
           <textarea
             rows={3}
             cols={40}
