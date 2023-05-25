@@ -15,7 +15,7 @@ class UserService {
 
   async fetchUser() {
     return await http
-      .get(baseURL + "/accounts/")
+      .get(baseURL + "/accounts/get-personal-account/")
       .then((res) => {
         return res;
       })

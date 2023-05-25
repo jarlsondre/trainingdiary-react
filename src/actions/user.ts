@@ -2,6 +2,7 @@ import { RETRIEVE_USER } from "./types";
 import userService from "../services/user.service";
 
 export const fetchUser = () => async (dispatch: any) => {
+  // NOTE: This is never being used atm
   try {
     userService
       .fetchUser()

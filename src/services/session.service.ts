@@ -23,7 +23,7 @@ class SessionDataService {
   }
 
   likeSession(id: number) {
-    return http.post("/session/" + id + "/like_session/");
+    return http.post("/session/" + id + "/like-session/");
   }
 
   updateSession(id: number, data: any) {
