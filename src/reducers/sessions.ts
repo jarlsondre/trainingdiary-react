@@ -23,6 +23,7 @@ import {
 type ActionType = {
   type: string;
   payload: any;
+  replaceStore: boolean;
 };
 
 const initialState: any = {
@@ -46,24 +47,37 @@ export default function sessionReducer(
   switch (type) {
     case RETRIEVE_SESSIONS:
       // Pagination stuff
+      const { replaceStore } = action;
+
       let newSessions = [];
-      let existingSessionIds = sessions.sessionList.map(
-        (session: any) => session.id
-      );
-      for (const session of payload.results) {
-        if (existingSessionIds.includes(session.id)) continue;
-        newSessions.push(session);
-      }
+      let updatedSessionList = [];
       let moreToLoad = false;
       let cursor: any = "";
+
+      if (replaceStore) {
+        updatedSessionList = payload.results;
+      } else {
+        // Only care about the existing IDs if we aren't replacing the store
+        let existingSessionIds = sessions.sessionList.map(
+          (session: any) => session.id
+        );
+        for (const session of payload.results) {
+          if (existingSessionIds.includes(session.id)) continue;
+          newSessions.push(session);
+        }
+        updatedSessionList = [...sessions.sessionList, ...newSessions];
+      }
+
+      // Cursor stuff
       if (payload.next) {
         let url = new URLSearchParams(payload.next.split("?")[1]);
         cursor = url.get("cursor");
         moreToLoad = true;
       }
+
       return {
         ...sessions,
-        sessionList: [...sessions.sessionList, ...newSessions],
+        sessionList: updatedSessionList,
         moreToLoad: moreToLoad,
         cursor: cursor,
       };

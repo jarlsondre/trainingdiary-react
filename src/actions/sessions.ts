@@ -16,18 +16,29 @@ import {
 } from "./types";
 import SessionDataService from "../services/session.service";
 
-export const retrieveSessions = (cursor: any) => async (dispatch: any) => {
-  try {
-    const res = await SessionDataService.getAll(cursor);
+export const retrieveSessions =
+  (
+    cursor: any,
+    filterPersonal: boolean = false,
+    replaceStore: boolean = false
+  ) =>
+  async (dispatch: any) => {
+    try {
+      if (replaceStore) cursor = "";
+      const res = await SessionDataService.getAll(
+        (cursor = cursor),
+        (filterPersonal = filterPersonal)
+      );
 
-    dispatch({
-      type: RETRIEVE_SESSIONS,
-      payload: res.data,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
+      dispatch({
+        type: RETRIEVE_SESSIONS,
+        payload: res.data,
+        replaceStore: replaceStore,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
 export const retrieveSingleSession =
   (id: number, sessionList: any) => async (dispatch: any) => {
@@ -35,25 +46,6 @@ export const retrieveSingleSession =
       type: RETRIEVE_SINGLE_SESSION_REQUEST,
       payload: null,
     });
-
-    // let selectedSession = null;
-    // for (const session of sessionList) {
-    //   if (session.id === id) {
-    //     selectedSession = session;
-    //     break;
-    //   }
-    // }
-    // if (!selectedSession) {
-    //   dispatch({
-    //     type: RETRIEVE_SINGLE_SESSION_FAIL,
-    //     payload: null,
-    //   });
-    // } else {
-    //   dispatch({
-    //     type: RETRIEVE_SINGLE_SESSION_SUCCESS,
-    //     payload: selectedSession,
-    //   });
-    // }
 
     await SessionDataService.getOne(id)
       .then((res: any) => {

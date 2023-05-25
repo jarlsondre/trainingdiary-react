@@ -1,8 +1,13 @@
 import http from "../http-common";
 
 class SessionDataService {
-  getAll(cursor: any) {
-    return http.get("/session/?cursor=" + cursor);
+  getAll(cursor: any, filterPersonal: boolean = false) {
+    return http.get(
+      "/session/?cursor=" +
+        cursor +
+        "&filter_personal=" +
+        filterPersonal.toString()
+    );
   }
 
   getOne(id: number) {

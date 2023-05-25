@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./sessionOverview.css";
 import Session from "./Session";
 import { SessionInterface } from "./Session";
@@ -6,10 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addSession, retrieveSessions } from "../../actions/sessions";
 
-interface sessions {
-  sessionList: any[];
-  selectedSession: any;
-}
 const compareDates = (a: SessionInterface, b: SessionInterface) => {
   return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();
 };
@@ -22,6 +18,7 @@ export default function SessionOverview() {
   const reduxSessions = useSelector<any[]>((state: any) =>
     state.sessions.sessionList.sort(compareDates)
   );
+  const [filterPersonal, setFilterPersonal] = useState<boolean>(false);
 
   // Pagination
   const cursor = useSelector<any>((state: any) => state.sessions.cursor);
@@ -31,7 +28,8 @@ export default function SessionOverview() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    if ((reduxSessions as any).length == 0) dispatch(retrieveSessions(cursor));
+    if ((reduxSessions as any).length == 0)
+      dispatch(retrieveSessions(cursor, filterPersonal));
   }, [dispatch]);
 
   const handleNewSession = () => {
@@ -40,11 +38,34 @@ export default function SessionOverview() {
   };
 
   const handleLoadMore = () => {
-    dispatch(retrieveSessions(cursor));
+    dispatch(retrieveSessions(cursor, filterPersonal));
+  };
+
+  const handleSetFilterPersonal = (val: boolean) => {
+    if (val !== filterPersonal) {
+      // Since we are changing filter type, we now have to
+      // replace the store
+      const replaceStore = true;
+      setFilterPersonal(val);
+      dispatch(retrieveSessions(cursor, val, replaceStore));
+    }
   };
 
   return (
     <div className="container">
+      <div className="filter-container">
+        <input
+          type="checkbox"
+          name="filter-personal"
+          onChange={(event) => {
+            handleSetFilterPersonal(event.target.checked);
+          }}
+          className="checkbox "
+        ></input>
+        <label htmlFor="filter-personal" className="checkbox-label">
+          Personal Sessions
+        </label>
+      </div>
       <div>
         <h2>Sessions</h2>
       </div>
