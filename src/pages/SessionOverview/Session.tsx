@@ -97,7 +97,6 @@ export default function Session(props: Props) {
           ? "session-container-wrap personal-session-container-wrap"
           : "session-container-wrap"
       }
-      onClick={handleOpenSession}
     >
       <div
         className={
@@ -105,6 +104,7 @@ export default function Session(props: Props) {
             ? "session-container personal-session"
             : "session-container"
         }
+        onClick={handleOpenSession}
       >
         <div className="session-header-container">
           <h3 className="session-header">{getDateString(date)}</h3>
@@ -120,20 +120,20 @@ export default function Session(props: Props) {
             return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
           })}
         </div>
-        {user.username !== props.session.username &&
-        !props.session.liked_by_usernames.includes(user.username) ? (
-          <div className="like-container">
-            <button onClick={handleLikeSession} className="like-button">
-              Like
-            </button>
-            {get_likes_string(user.username)}
-          </div>
-        ) : (
-          <div className="like-container personal-like-container">
-            {get_likes_string(user.username)}
-          </div>
-        )}
       </div>
+      {user.username !== props.session.username &&
+      !props.session.liked_by_usernames.includes(user.username) ? (
+        <div className="like-container">
+          <button onClick={handleLikeSession} className="like-button">
+            Like
+          </button>
+          {get_likes_string(user.username)}
+        </div>
+      ) : (
+        <div className="like-container personal-like-container">
+          {get_likes_string(user.username)}
+        </div>
+      )}
     </div>
   );
 }
