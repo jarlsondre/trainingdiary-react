@@ -44,14 +44,7 @@ function Navbar(props: any) {
     setMenuExpanded(false);
   };
 
-  const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchTerm(event.target.value); // Step 2: Update the search input value
-  };
-
-  const handleSearch = () => {
-    dispatch(searchUsers("", searchTerm)); // Step 3: Pass the search input value to searchUsers
+  const handleSearchNavigation = () => {
     navigate("/search");
     setMenuExpanded(false);
   };
@@ -71,17 +64,6 @@ function Navbar(props: any) {
         <Link to="/">
           <img src={logo} alt="logo" className="logo" />
         </Link>
-        <div>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchInputChange}
-          />
-          <button onClick={handleSearch}>Search</button>
-        </div>
-        <div>
-          Logged in as: <br /> {user.username}
-        </div>
         <div className="dropdown-menu">
           <button className="dropdown-button" onClick={handleMenuToggle}>
             Menu
@@ -98,6 +80,12 @@ function Navbar(props: any) {
               className="menu-button home-button"
             >
               Home
+            </button>
+            <button
+              onClick={handleSearchNavigation}
+              className="menu-button home-button"
+            >
+              Search
             </button>
             <button
               onClick={handleCalculatorNavigation}
