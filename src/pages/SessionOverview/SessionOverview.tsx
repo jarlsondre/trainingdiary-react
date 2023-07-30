@@ -5,6 +5,7 @@ import { SessionInterface } from "./Session";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addSession, retrieveSessions } from "../../actions/sessions";
+import { CLEAR_SEARCH_USERS } from "../../actions/types";
 
 const compareDates = (a: SessionInterface, b: SessionInterface) => {
   return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();
@@ -30,6 +31,13 @@ export default function SessionOverview() {
     if (!isAuthenticated) navigate("/login");
     if ((reduxSessions as any).length == 0)
       dispatch(retrieveSessions(cursor, filterPersonal));
+    dispatch({
+      type: CLEAR_SEARCH_USERS,
+      payload: {
+        searchResults: [], // Initialize searchResults as an empty array
+        searchCursor: "", // Initialize searchCursor as an empty string
+      },
+    });
   }, [dispatch]);
 
   const handleNewSession = () => {

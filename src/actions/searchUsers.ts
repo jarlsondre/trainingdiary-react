@@ -14,7 +14,10 @@ export const searchUsers =
     } catch (err) {
       dispatch({
         type: SEARCH_USERS_FAILURE,
-        payload: [],
+        payload: {
+          searchResults: [], // Initialize searchResults as an empty array
+          searchCursor: "", // Initialize searchCursor as an empty string
+        },
       });
       console.log("Searching for users failed, err:", err);
     }

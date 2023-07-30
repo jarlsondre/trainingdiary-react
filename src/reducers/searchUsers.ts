@@ -1,4 +1,8 @@
-import { SEARCH_USERS_FAILURE, SEARCH_USERS_SUCCESS } from "../actions/types";
+import {
+  CLEAR_SEARCH_USERS,
+  SEARCH_USERS_FAILURE,
+  SEARCH_USERS_SUCCESS,
+} from "../actions/types";
 
 type ActionType = {
   type: string;
@@ -18,6 +22,10 @@ export default function searchedUsersReducer(
       };
 
     case SEARCH_USERS_FAILURE:
+      // Payload will be []
+      return payload;
+
+    case CLEAR_SEARCH_USERS:
       // Payload will be []
       return payload;
 
