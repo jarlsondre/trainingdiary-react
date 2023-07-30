@@ -18,10 +18,16 @@ export default function UserDetail(props: Props) {
   return (
     <div className="user-details-container">
       <h1>
-        {user.first_name} {user.last_name}
+        {user.first_name ? user.first_name : "Anonymous"}{" "}
+        {user.last_name ? user.last_name : "Gymrat"}
       </h1>
-      <h2>@{user.username}</h2>
-      <p>{user.bio}</p>
+      @{user.username}
+      <p>
+        Bio:{" "}
+        {user.bio
+          ? user.bio
+          : "Frankly, I don't have that much to share about myself..."}
+      </p>
     </div>
   );
 }
