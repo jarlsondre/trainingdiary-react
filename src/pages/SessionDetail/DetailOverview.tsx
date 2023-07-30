@@ -20,7 +20,7 @@ function DetailOverview(props: any) {
   const navigate = useNavigate();
   const sessionList = useSelector((state: any) => state.sessions.sessionList);
 
-  const [selectedExercise, setSelectedExercise] = useState<number>(1);
+  const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
   const [keyValue, setKeyValue] = useState<number>(0);
   const [description, setDescription] = useState<string>(
     props.selectedSession.description
@@ -36,7 +36,11 @@ function DetailOverview(props: any) {
     )
       props.onRetrieveSingleSession(Number(sessionId), sessionList);
     if (props.exercises.length === 0) props.onRetrieveExercises();
-  }, [props.isLoading]);
+    else {
+      const sortedExercises = [...props.exercises].sort(compareExerciseNames);
+      setSelectedExercise(sortedExercises[0]?.id);
+    }
+  }, [props.isLoading, props.exercises]);
 
   const handleAddExercise = () => {
     const data = {
