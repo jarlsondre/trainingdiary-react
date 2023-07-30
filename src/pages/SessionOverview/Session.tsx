@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
 import { likeSession } from "../../actions/sessions";
@@ -54,6 +54,7 @@ export default function Session(props: Props) {
   let date = new Date(props.session.datetime);
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function getDateString(date: Date) {
     let year = date.getFullYear();
@@ -84,6 +85,11 @@ export default function Session(props: Props) {
     let id = props.session.id;
     dispatch(likeSession(id));
   };
+
+  const handleOpenSession = () => {
+    navigate("session/" + props.session.id);
+  };
+
   return (
     <div
       className={
@@ -91,6 +97,7 @@ export default function Session(props: Props) {
           ? "session-container-wrap personal-session-container-wrap"
           : "session-container-wrap"
       }
+      onClick={handleOpenSession}
     >
       <div
         className={
@@ -101,9 +108,6 @@ export default function Session(props: Props) {
       >
         <div className="session-header-container">
           <h3 className="session-header">{getDateString(date)}</h3>
-          <button>
-            <Link to={"session/" + props.session.id}>Open</Link>
-          </button>
         </div>
         <div className="username-container">User: {props.session.username}</div>
         {props.session.description && (
