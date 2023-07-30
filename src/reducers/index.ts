@@ -5,6 +5,7 @@ import exercises from "./exercises";
 import authentication from "./authentication";
 import settings from "./settings";
 import user from "./user";
+import searchUsers from "./searchUsers";
 
 export default combineReducers({
   sessions,
@@ -12,4 +13,5 @@ export default combineReducers({
   settings,
   authentication,
   user,
+  searchUsers,
 });

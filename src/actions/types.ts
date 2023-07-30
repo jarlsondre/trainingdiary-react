@@ -43,6 +43,9 @@ export const LOGOUT = "LOGOUT";
 
 // User
 export const RETRIEVE_USER = "RETRIEVE_USER";
+export const SEARCH_USERS = "SEARCH_USERS";
+export const SEARCH_USERS_SUCCESS = "SEARCH_USERS_SUCCESS";
+export const SEARCH_USERS_FAILURE = "SEARCH_USERS_FAILURE";
 
 // metric
 export const TOGGLE_METRIC = "TOGGLE_METRIC";

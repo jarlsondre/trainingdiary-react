@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
+import { searchUsers } from "../../actions/searchUsers";
 import "./navbar.css";
 import logo from "./logo.jpg";
 import { toggleMetric } from "../../actions/settings";
@@ -12,6 +13,7 @@ function Navbar(props: any) {
     (state: any) => state.authentication.isAuthenticated
   );
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>(""); // Step 1: State to hold the search input value
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,6 +44,18 @@ function Navbar(props: any) {
     setMenuExpanded(false);
   };
 
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchTerm(event.target.value); // Step 2: Update the search input value
+  };
+
+  const handleSearch = () => {
+    dispatch(searchUsers("", searchTerm)); // Step 3: Pass the search input value to searchUsers
+    navigate("/search");
+    setMenuExpanded(false);
+  };
+
   useEffect(() => {
     let authToken = localStorage.getItem("authToken")
       ? JSON.parse(localStorage.getItem("authToken")!)
@@ -57,6 +71,14 @@ function Navbar(props: any) {
         <Link to="/">
           <img src={logo} alt="logo" className="logo" />
         </Link>
+        <div>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchInputChange}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </div>
         <div>
           Logged in as: <br /> {user.username}
         </div>

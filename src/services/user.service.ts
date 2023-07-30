@@ -24,6 +24,18 @@ class UserService {
       });
   }
 
+  async searchUsers(cursor: string | null, searchString: string | null) {
+    return await http
+      .get(baseURL + "/accounts/?cursor=" + cursor + "&search=" + searchString)
+
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   async refresh(token: string) {
     return await axios
       .post(baseURL + "/api/token/refresh/", {

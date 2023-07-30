@@ -6,6 +6,8 @@ import DetailOverview from "./pages/SessionDetail/DetailOverview";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/navbar/Navbar";
 import Calculator from "./pages/Calculator/Calculator";
+import Search from "./pages/Search/Search";
+import UserDetail from "./pages/Search/UserDetail";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="session/:sessionId" element={<DetailOverview />}></Route>
         <Route path="login" element={<Login />}></Route>
         <Route path="calculator" element={<Calculator />}></Route>
+        <Route path="search" element={<Search />}></Route>
+        <Route path="/user/:username" element={<UserDetail />} />
       </Routes>
     </div>
   );
