@@ -1,27 +1,7 @@
-import {
-  ADD_EXERCISE_UNIT,
-  ADD_SESSION_FAIL,
-  ADD_SESSION_REQUEST,
-  ADD_SESSION_SUCCESS,
-  ADD_SET,
-  DELETE_EXERCISE_UNIT,
-  DELETE_SESSION,
-  DELETE_SET,
-  LIKE_SESSION_FAIL,
-  LIKE_SESSION_REQUEST,
-  LIKE_SESSION_SUCCESS,
-  RETRIEVE_SESSIONS,
-  RETRIEVE_SINGLE_SESSION_FAIL,
-  RETRIEVE_SINGLE_SESSION_REQUEST,
-  RETRIEVE_SINGLE_SESSION_SUCCESS,
-  UPDATE_SESSION_FAIL,
-  UPDATE_SESSION_REQUEST,
-  UPDATE_SESSION_SUCCESS,
-  UPDATE_SET,
-} from "../actions/types";
+import * as Actions from "../actions/types";
 
 type ActionType = {
-  type: string;
+  type: keyof typeof Actions;
   payload: any;
   replaceStore: boolean;
 };
@@ -32,40 +12,108 @@ const initialState: any = {
     isLoading: false,
   },
   moreToLoad: true,
+  profileSessions: {
+    results: [],
+    moreToLoad: true,
+    cursor: "",
+    username: "",
+  },
+};
+
+const ExerciseUnitMapForUpdateSet = (exerciseUnit: any, payload: any) => {
+  return exerciseUnit.set.map((set: any) => set.id).includes(payload.id)
+    ? {
+        ...exerciseUnit,
+        set: [
+          ...exerciseUnit.set.filter((set: any) => set.id !== payload.id),
+          payload,
+        ],
+      }
+    : exerciseUnit;
+};
+
+const ExerciseUnitMapForAddSet = (exerciseUnit: any, payload: any) => {
+  return exerciseUnit.id === payload.exercise_unit
+    ? { ...exerciseUnit, set: [...exerciseUnit.set, payload] }
+    : exerciseUnit;
+};
+
+const ExerciseUnitMapForDeleteSet = (exerciseUnit: any, payload: any) => {
+  return exerciseUnit.set.map((set: any) => set.id).includes(payload.id)
+    ? {
+        ...exerciseUnit,
+        set: exerciseUnit.set.filter((set: any) => set.id !== payload.id),
+      }
+    : exerciseUnit;
+};
+
+const updateSessionWithSet = (state: any, payload: any, actionType: any) => {
+  let sessionId = state.selectedSession.id;
+  let filteredSessionList = [
+    ...state.sessionList.filter((session: any) => session.id !== sessionId),
+  ];
+  let mapFunction: any;
+
+  // Choosing the correct function for the task
+  if (actionType === Actions.ADD_SET) {
+    mapFunction = ExerciseUnitMapForAddSet;
+  } else if (actionType === Actions.UPDATE_SET) {
+    mapFunction = ExerciseUnitMapForUpdateSet;
+  } else if (actionType === Actions.DELETE_SET) {
+    mapFunction = ExerciseUnitMapForDeleteSet;
+  }
+
+  // Filtering choosing the new set
+  let newSet = {
+    ...state.selectedSession,
+    exercise_unit: state.selectedSession.exercise_unit.map(
+      (exerciseUnit: any) => mapFunction(exerciseUnit, payload)
+    ),
+  };
+  return {
+    ...state,
+    sessionList: [...filteredSessionList, newSet],
+    selectedSession: newSet,
+  };
+};
+
+const getUpdatedSessionList = (sessionList: any, payload: any) => {
+  let newSessions = [];
+  let existingSessionIds = sessionList.map((session: any) => session.id);
+  for (const session of payload.results) {
+    if (existingSessionIds.includes(session.id)) continue;
+    newSessions.push(session);
+  }
+  return [...sessionList, ...newSessions];
 };
 
 export default function sessionReducer(
   sessions = initialState,
   action: ActionType
 ) {
-  const { type, payload } = action;
+  const { payload } = action;
   let sessionId = sessions.selectedSession.id;
   let filteredSessionList = [
     ...sessions.sessionList.filter((session: any) => session.id !== sessionId),
   ];
+  let moreToLoad = false;
+  let cursor: string | null = null;
+  let updatedSessionList = [];
+  let replaceStore: boolean = false;
 
-  switch (type) {
-    case RETRIEVE_SESSIONS:
+  switch (action.type) {
+    case Actions.RETRIEVE_SESSIONS:
       // Pagination stuff
-      const { replaceStore } = action;
-
-      let newSessions = [];
-      let updatedSessionList = [];
-      let moreToLoad = false;
-      let cursor: any = "";
+      replaceStore = action.replaceStore;
+      cursor = "";
 
       if (replaceStore) {
         updatedSessionList = payload.results;
       } else {
-        // Only care about the existing IDs if we aren't replacing the store
-        let existingSessionIds = sessions.sessionList.map(
-          (session: any) => session.id
+        updatedSessionList = getUpdatedSessionList(
+          sessions.sessionList,
+          payload
         );
-        for (const session of payload.results) {
-          if (existingSessionIds.includes(session.id)) continue;
-          newSessions.push(session);
-        }
-        updatedSessionList = [...sessions.sessionList, ...newSessions];
       }
 
       // Cursor stuff
@@ -82,56 +130,92 @@ export default function sessionReducer(
         cursor: cursor,
       };
 
-    case ADD_SESSION_REQUEST:
+    case Actions.FETCH_USER_SESSIONS:
+      replaceStore = action.replaceStore;
+      if (payload.next) {
+        let url = new URLSearchParams(payload.next.split("?")[1]);
+        cursor = url.get("cursor");
+        moreToLoad = true;
+      }
+      if (replaceStore) {
+        updatedSessionList = payload.results;
+      } else {
+        updatedSessionList = getUpdatedSessionList(
+          sessions.profileSessions.results,
+          payload
+        );
+      }
+      return {
+        ...sessions,
+        profileSessions: {
+          ...sessions.profileSessions,
+          results: updatedSessionList,
+          moreToLoad: moreToLoad,
+          cursor: cursor,
+        },
+      };
+
+    case Actions.UPDATE_PROFILE_USERNAME:
+      return {
+        ...sessions,
+        profileSessions: {
+          ...sessions.profileSessions,
+          username: payload,
+          moreToLoad: true,
+          cursor: "",
+        },
+      };
+
+    case Actions.ADD_SESSION_REQUEST:
+    case Actions.ADD_SESSION_FAIL:
       return { ...sessions };
 
-    case ADD_SESSION_SUCCESS:
+    case Actions.ADD_SESSION_SUCCESS:
       return { ...sessions, sessionList: [...sessions.sessionList, payload] };
 
-    case ADD_SESSION_FAIL:
-      return { ...sessions };
-
-    case RETRIEVE_SINGLE_SESSION_REQUEST:
+    case Actions.RETRIEVE_SINGLE_SESSION_REQUEST:
       return {
         ...sessions,
         selectedSession: { ...sessions.selectedSession, isLoading: true },
       };
 
-    case RETRIEVE_SINGLE_SESSION_SUCCESS:
+    case Actions.RETRIEVE_SINGLE_SESSION_SUCCESS:
       return { ...sessions, selectedSession: { ...payload, isLoading: false } };
 
-    case RETRIEVE_SINGLE_SESSION_FAIL:
+    case Actions.RETRIEVE_SINGLE_SESSION_FAIL:
       return {
         ...sessions,
         selectedSession: { ...sessions.selectedSession, isLoading: false },
       };
 
-    case DELETE_SESSION:
+    case Actions.DELETE_SESSION:
       return {
         ...sessions,
-        sessionList: sessions.sessionList.filter((s: any) => s.id !== payload),
+        sessionList: sessions.sessionList.filter(
+          (session: any) => session.id !== payload
+        ),
       };
 
-    case ADD_EXERCISE_UNIT:
-      let sessionAddedExerciseUnit = {
+    case Actions.ADD_EXERCISE_UNIT:
+      let updatedSelectedSession = {
         ...sessions.selectedSession,
         exercise_unit: [...sessions.selectedSession.exercise_unit, payload],
       };
 
       return {
         ...sessions,
-        sessionList: [...filteredSessionList, sessionAddedExerciseUnit],
+        sessionList: [...filteredSessionList, updatedSelectedSession],
         selectedSession: {
-          sessionAddedExerciseUnit,
+          sessionAddedExerciseUnit: updatedSelectedSession,
         },
       };
 
-    case DELETE_EXERCISE_UNIT:
+    case Actions.DELETE_EXERCISE_UNIT:
       // Make sure we update both on selected session and sessionList
       let sessionRemovedExerciseUnit = {
         ...sessions.selectedSession,
         exercise_unit: sessions.selectedSession.exercise_unit.filter(
-          (e: any) => e.id !== payload
+          (exerciseUnit: any) => exerciseUnit.id !== payload
         ),
       };
       return {
@@ -140,60 +224,16 @@ export default function sessionReducer(
         selectedSession: sessionRemovedExerciseUnit,
       };
 
-    case ADD_SET:
-      let SessionAddSet = {
-        ...sessions.selectedSession,
-        exercise_unit: sessions.selectedSession.exercise_unit.map((e: any) => {
-          return e.id === payload.exercise_unit
-            ? { ...e, set: [...e.set, payload] }
-            : e;
-        }),
-      };
-      return {
-        ...sessions,
-        sessionList: [...filteredSessionList, SessionAddSet],
-        selectedSession: SessionAddSet,
-      };
+    case Actions.ADD_SET:
+    case Actions.UPDATE_SET:
+    case Actions.DELETE_SET:
+      return updateSessionWithSet(sessions, payload, action.type);
 
-    case UPDATE_SET:
-      let sessionUpdateSet = {
-        ...sessions.selectedSession,
-        exercise_unit: sessions.selectedSession.exercise_unit.map((e: any) => {
-          return e.set.map((s: any) => s.id).includes(payload.id)
-            ? {
-                ...e,
-                set: [
-                  ...e.set.filter((s: any) => s.id !== payload.id),
-                  payload,
-                ],
-              }
-            : e;
-        }),
-      };
-      return {
-        ...sessions,
-        sessionList: [...filteredSessionList, sessionUpdateSet],
-        selectedSession: sessionUpdateSet,
-      };
-
-    case DELETE_SET:
-      let sessionDeleteSet = {
-        ...sessions.selectedSession,
-        exercise_unit: sessions.selectedSession.exercise_unit.map((e: any) => {
-          return e.set.map((s: any) => s.id).includes(payload.id)
-            ? { ...e, set: e.set.filter((s: any) => s.id !== payload.id) }
-            : e;
-        }),
-      };
-      return {
-        ...sessions,
-        sessionList: [...filteredSessionList, sessionDeleteSet],
-        selectedSession: sessionDeleteSet,
-      };
-    case LIKE_SESSION_REQUEST:
+    case Actions.LIKE_SESSION_REQUEST:
+    case Actions.LIKE_SESSION_FAIL:
       return { ...sessions };
 
-    case LIKE_SESSION_SUCCESS:
+    case Actions.LIKE_SESSION_SUCCESS:
       return {
         ...sessions,
         sessionList: [
@@ -204,23 +244,20 @@ export default function sessionReducer(
         ],
       };
 
-    case LIKE_SESSION_FAIL:
-      return { ...sessions };
-
-    case UPDATE_SESSION_REQUEST:
+    case Actions.UPDATE_SESSION_REQUEST:
       return {
         ...sessions,
         selectedSession: { ...sessions.selectedSession, isLoading: true },
       };
 
-    case UPDATE_SESSION_SUCCESS:
+    case Actions.UPDATE_SESSION_SUCCESS:
       return {
         ...sessions,
         sessionList: [...filteredSessionList, payload],
         selectedSession: { ...payload, isLoading: false },
       };
 
-    case UPDATE_SESSION_FAIL:
+    case Actions.UPDATE_SESSION_FAIL:
       return {
         ...sessions,
         selectedSession: { ...sessions.selectedSession, isLoading: false },

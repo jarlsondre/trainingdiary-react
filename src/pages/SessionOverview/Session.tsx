@@ -87,7 +87,7 @@ export default function Session(props: Props) {
   };
 
   const handleOpenSession = () => {
-    navigate("session/" + props.session.id);
+    navigate("/session/" + props.session.id);
   };
 
   return (

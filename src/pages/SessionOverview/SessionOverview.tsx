@@ -7,26 +7,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSession, retrieveSessions } from "../../actions/sessions";
 import { CLEAR_SEARCH_USERS } from "../../actions/types";
 
-const compareDates = (a: SessionInterface, b: SessionInterface) => {
-  return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();
+const compareDates = (
+  firstSession: SessionInterface,
+  secondSession: SessionInterface
+) => {
+  return (
+    new Date(secondSession.datetime).getTime() -
+    new Date(firstSession.datetime).getTime()
+  );
 };
 
 export default function SessionOverview() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [filterPersonal, setFilterPersonal] = useState<boolean>(false);
+
   const isAuthenticated = useSelector<any>(
     (state) => state.authentication.isAuthenticated
   );
   const reduxSessions = useSelector<any[]>((state: any) =>
     state.sessions.sessionList.sort(compareDates)
   );
-  const [filterPersonal, setFilterPersonal] = useState<boolean>(false);
 
   // Pagination
   const cursor = useSelector<any>((state: any) => state.sessions.cursor);
   const moreToLoad = useSelector<any>(
     (state: any) => state.sessions.moreToLoad
   );
-  const dispatch = useDispatch();
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
     if ((reduxSessions as any).length == 0)
@@ -49,14 +56,14 @@ export default function SessionOverview() {
     dispatch(retrieveSessions(cursor, filterPersonal));
   };
 
-  const handleSetFilterPersonal = (val: boolean) => {
-    if (val !== filterPersonal) {
-      // Since we are changing filter type, we now have to
-      // replace the store
-      const replaceStore = true;
-      setFilterPersonal(val);
-      dispatch(retrieveSessions(cursor, val, replaceStore));
-    }
+  const handleSetFilterPersonal = (newFilterPersonalValue: boolean) => {
+    if (newFilterPersonalValue === filterPersonal) return;
+
+    // Since we are changing filter type, we now have to
+    // replace the store
+    const replaceStore = true;
+    setFilterPersonal(newFilterPersonalValue);
+    dispatch(retrieveSessions(cursor, newFilterPersonalValue, replaceStore));
   };
 
   return (

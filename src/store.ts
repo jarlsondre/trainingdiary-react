@@ -12,6 +12,12 @@ const initialState = {
     },
     moreToLoad: true,
     cursor: "",
+    profileSessions: {
+      results: [],
+      moreToLoad: true,
+      cursor: "",
+      username: "",
+    },
   },
   exercises: [],
   user: {},

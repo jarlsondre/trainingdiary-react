@@ -10,6 +10,10 @@ class SessionDataService {
     );
   }
 
+  getUserSessions(username: string, cursor: any) {
+    return http.get(`/sessions/user/${username}/` + "?cursor=" + cursor);
+  }
+
   getOne(id: number) {
     return http.get("/session/" + id + "/");
   }
