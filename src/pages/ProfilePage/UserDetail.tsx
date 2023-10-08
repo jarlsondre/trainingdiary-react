@@ -9,7 +9,11 @@ export default function UserDetail(props: Props) {
   const {} = props;
   const { username } = useParams() as { username: string };
   const users = useSelector((state: any) => state.searchUsers.searchResults);
-  const user = users.find((user: any) => user.username === username);
+  const personalUser = useSelector((state: any) => state.user);
+  let user = users.find((user: any) => user.username === username);
+  if (username === personalUser.username) {
+    user = personalUser;
+  }
 
   if (!user) {
     return <h1>User not found</h1>;

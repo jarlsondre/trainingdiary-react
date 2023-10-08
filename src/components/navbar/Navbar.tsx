@@ -39,8 +39,8 @@ function Navbar(props: any) {
     setMenuExpanded(false);
   };
 
-  const handleHomeNavigation = () => {
-    navigate("/");
+  const handleProfileNavigation = () => {
+    navigate(`/user/${user.username}`);
     setMenuExpanded(false);
   };
 
@@ -76,10 +76,10 @@ function Navbar(props: any) {
             }
           >
             <button
-              onClick={handleHomeNavigation}
+              onClick={handleProfileNavigation}
               className="menu-button home-button"
             >
-              Home
+              Profile
             </button>
             <button
               onClick={handleSearchNavigation}

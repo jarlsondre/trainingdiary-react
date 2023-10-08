@@ -7,7 +7,7 @@ import Login from "./pages/Login/Login";
 import Navbar from "./components/navbar/Navbar";
 import Calculator from "./pages/Calculator/Calculator";
 import Search from "./pages/Search/Search";
-import UserDetail from "./pages/Search/UserDetail";
+import UserDetail from "./pages/ProfilePage/UserDetail";
 
 function App() {
   return (
