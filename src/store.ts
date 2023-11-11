@@ -21,9 +21,6 @@ const initialState = {
   },
   exercises: [],
   user: {},
-  settings: {
-    metric: false,
-  },
   searchUsers: {
     searchResults: [], // Initialize searchResults as an empty array
     searchCursor: "", // Initialize searchCursor as an empty string

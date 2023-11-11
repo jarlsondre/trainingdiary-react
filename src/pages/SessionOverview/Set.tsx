@@ -8,7 +8,8 @@ type Props = {
 };
 
 export default function Set(props: Props) {
-  const metric = useSelector((state: any) => state.settings.metric);
+  const unit = useSelector((state: any) => state.user.unit_system);
+  const metric = unit === "kg";
   function getWeight(metric: boolean) {
     let multiplier = metric ? 1 : 2.2;
     return Math.round(props.set.weight * multiplier * 10) / 10;

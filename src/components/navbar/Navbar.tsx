@@ -2,18 +2,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
-import { searchUsers } from "../../actions/searchUsers";
 import "./navbar.css";
 import logo from "./logo.jpg";
-import { toggleMetric } from "../../actions/settings";
-import { connect } from "react-redux";
 
-function Navbar(props: any) {
+export default function Navbar(props: any) {
   const isAuthenticated = useSelector(
     (state: any) => state.authentication.isAuthenticated
   );
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Step 1: State to hold the search input value
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -117,18 +113,3 @@ function Navbar(props: any) {
     </div>
   );
 }
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    onToggleMetric: (value: boolean) => {
-      dispatch(toggleMetric(value));
-    },
-  };
-};
-const mapStateToProps = (state: any) => {
-  return {
-    metric: state.settings.metric,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

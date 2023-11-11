@@ -13,7 +13,8 @@ export default function SetDetail(props: Props) {
   const [weight, setWeight] = useState(props.set.weight);
   const [repetitions, setRepetitions] = useState(props.set.repetitions);
   const dispatch = useDispatch();
-  const metric = useSelector((state: any) => state.settings.metric);
+  const unit = useSelector((state: any) => state.user.unit_system);
+  const metric = unit === "kg";
 
   const handleDelete = () => {
     dispatch(deleteSet(props.set));
