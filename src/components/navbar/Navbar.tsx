@@ -20,12 +20,6 @@ export default function Navbar(props: any) {
     navigate("/login");
   };
 
-  const handleUnitChange = () => {
-    props.onToggleMetric(!props.metric);
-    setMenuExpanded(false);
-    navigate("/");
-  };
-
   const handleMenuToggle = () => {
     setMenuExpanded(!menuExpanded);
   };
@@ -88,12 +82,6 @@ export default function Navbar(props: any) {
               className="menu-button calculator-button"
             >
               Calculator
-            </button>
-            <button
-              onClick={handleUnitChange}
-              className="menu-button unit-button"
-            >
-              Change units
             </button>
             <button
               onClick={handleLogout}
