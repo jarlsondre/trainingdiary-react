@@ -5,7 +5,7 @@ import "./detailOverview.css";
 import {
   deleteSession,
   retrieveSingleSession,
-  updateSesssion,
+  updateSession,
 } from "../../actions/sessions";
 import { addExerciseUnit } from "../../actions/exerciseUnits";
 import { retrieveExercises } from "../../actions/exercises";
@@ -13,6 +13,15 @@ import { connect, useSelector } from "react-redux";
 
 const compareExerciseNames = (a: any, b: any) => {
   return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+};
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
 function DetailOverview(props: any) {
@@ -25,8 +34,11 @@ function DetailOverview(props: any) {
   const [description, setDescription] = useState<string>(
     props.selectedSession.description
   );
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<string>(props.selectedSession.datetime);
+  const [isEditingInfo, setIsEditingInfo] = useState(false);
   const username = useSelector((state: any) => state.user.username);
+  const maxLineCount = 4;
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     if (
@@ -56,70 +68,114 @@ function DetailOverview(props: any) {
     navigate("/");
   };
 
-  const handleUpdateDescription = () => {
+  const toggleIsEditingInfo = () => {
+    setIsEditingInfo(!isEditingInfo);
+  };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const handleSave = () => {
+    const newDate = new Date(date);
+    if (newDate.getHours() === 0) newDate.setHours(12);
     const data = {
+      datetime: newDate.toISOString(),
       description: description,
     };
     props.onUpdateSession(Number(sessionId), data);
+    toggleIsEditingInfo();
   };
 
-  const handleUpdateDate = () => {
-    // Setting time to noon as otherwise
-    // the date is displayed as the day before
-    const data = {
-      datetime: date + "T12:00:00",
-    };
-    props.onUpdateSession(Number(sessionId), data);
+  const renderDescriptionLine = (line: string, index: number) => {
+    // If the line is empty, render a blank space for an extra line break
+    if (line === "") {
+      return <div key={index} style={{ height: "1em" }}></div>;
+    }
+    return <div key={index}>{line}</div>;
   };
+
+  const descriptionLines = props.selectedSession.description
+    ? props.selectedSession.description.split("\n")
+    : "";
 
   let datetimeString = "";
   if (props.selectedSession.datetime) {
     datetimeString = props.selectedSession.datetime.substring(0, 10);
   }
-
   let editable = username === props.selectedSession.username;
 
   if (props.isLoading) return <div>Loading...</div>;
   return (
     <div key={keyValue} className="detail-overview-container">
       <div className="detail-overview-inner-container">
-        {editable && (
-          <button className="delete-session-button" onClick={handleDelete}>
-            Delete Session
-          </button>
-        )}
-        <div>User: {props.selectedSession.username}</div>
-        <input
-          type="date"
-          id="session-date"
-          name="session-date"
-          defaultValue={datetimeString}
-          onChange={(event) => {
-            setDate(event.target.value);
-          }}
-        ></input>
-        {editable && (
-          <button className="update-date-button" onClick={handleUpdateDate}>
-            Update Date
-          </button>
-        )}
-        <div className="description-detail-container">
-          <textarea
-            rows={3}
-            cols={40}
-            id="description"
-            defaultValue={props.selectedSession.description}
-            onChange={(event) => {
-              setDescription(event.target.value);
-            }}
-          ></textarea>
-          {editable && (
-            <button
-              onClick={handleUpdateDescription}
-              className="update-description-button"
-            >
-              Update Description
-            </button>
+        <div className="session-info-container">
+          {isEditingInfo && editable ? (
+            <>
+              <button className="delete-session-button" onClick={handleDelete}>
+                Delete Session
+              </button>
+              <div>User: {props.selectedSession.username}</div>
+              <input
+                type="date"
+                id="session-date"
+                name="session-date"
+                defaultValue={datetimeString}
+                onChange={(event) => {
+                  setDate(event.target.value);
+                }}
+              ></input>
+              <div className="text-area-container">
+                <textarea
+                  rows={3}
+                  cols={40}
+                  id="description"
+                  defaultValue={props.selectedSession.description}
+                  onChange={(event) => {
+                    setDescription(event.target.value);
+                  }}
+                ></textarea>
+                <button
+                  onClick={handleSave}
+                  className="update-description-button"
+                >
+                  Save
+                </button>
+              </div>
+            </>
+          ) : (
+            <div>
+              {editable && (
+                <button
+                  className="edit-session-info-button"
+                  onClick={toggleIsEditingInfo}
+                >
+                  Edit
+                </button>
+              )}
+              <div>
+                <b>User</b>: {props.selectedSession.username}
+              </div>
+              <div>
+                <b>Date</b>: {formatDate(props.selectedSession.datetime)}
+              </div>
+              <div className="description-detail-container">
+                {descriptionLines !== "" &&
+                  descriptionLines
+                    .slice(
+                      0,
+                      showFullDescription
+                        ? descriptionLines.length
+                        : maxLineCount
+                    )
+                    .map(renderDescriptionLine)}
+                {descriptionLines.length > maxLineCount && (
+                  <span className="show-more-text" onClick={toggleDescription}>
+                    {showFullDescription ? "Show Less" : "Show More"}
+                  </span>
+                )}
+              </div>
+            </div>
           )}
         </div>
         {props.selectedSession.exercise_unit &&
@@ -182,7 +238,7 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(deleteSession(id));
     },
     onUpdateSession: (id: number, data: any) => {
-      dispatch(updateSesssion(id, data));
+      dispatch(updateSession(id, data));
     },
   };
 };

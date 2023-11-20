@@ -1,8 +1,11 @@
 .login-page {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  background-color: #f9f9f9; /* subtle background color */
+  height: 100vh; /* Full viewport height */
+  padding-top: 20px; /* Add padding at the top to push the form down slightly */
 }
 
 .input-container {
@@ -10,8 +13,23 @@
   flex-direction: column;
 }
 
-.remember-me-container {
-  align-self: center;
+.input-container input {
+  padding: 5px; /* More padding for a larger click area */
+  margin: 5px 0; /* Add space between inputs */
+  border-radius: 5px; /* Rounded corners for inputs */
+  font-size: 16px; /* Larger font size for better readability */
+}
+
+.input-container input:focus {
+  outline: none; /* Removes the default focus outline */
+  border-color: #4caf50; /* Green border to match your color theme */
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.25); /* Adds a glow effect */
+}
+
+h1 {
+  color: #333; /* Dark grey color for the title */
+  font-size: 2.5rem; /* 40px font size for the title */
+  margin-bottom: 20px; /* Space below the title */
 }
 
 .login-button {
@@ -24,7 +42,8 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 12px;
+  font-size: 16px;
   max-width: 100px;
   width: 100%;
+  cursor: pointer;
 }

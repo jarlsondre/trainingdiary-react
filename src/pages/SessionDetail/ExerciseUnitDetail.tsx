@@ -23,9 +23,11 @@ function ExerciseUnitDetail(props: any) {
         )}
       </div>
       {props.exerciseUnit.set.length > 0 ? (
-        props.exerciseUnit.set.map((set: any, key: number) => {
-          return <SetDetail key={key} set={set} editable={props.editable} />;
-        })
+        [...props.exerciseUnit.set]
+          .sort((a, b) => a.set_number - b.set_number)
+          .map((set: any, key: number) => {
+            return <SetDetail key={key} set={set} editable={props.editable} />;
+          })
       ) : props.editable ? (
         ""
       ) : (
@@ -34,7 +36,11 @@ function ExerciseUnitDetail(props: any) {
       {props.editable && (
         <NewSet
           exercise_unit={props.exerciseUnit.id}
-          set_number={props.exerciseUnit.set.length + 1}
+          set_number={
+            Math.max(
+              ...props.exerciseUnit.set.map((set: any) => set.set_number)
+            ) + 1
+          }
         />
       )}
     </div>

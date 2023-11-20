@@ -7,7 +7,6 @@ import { login } from "../../actions/authentication";
 export default function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [remember, setRemember] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -47,18 +46,12 @@ export default function Login() {
           onChange={(event) => {
             setPassword(event.target.value);
           }}
-        ></input>
-      </div>
-      <div className="remember-me-container">
-        <input
-          type="checkbox"
-          id="remember-me"
-          name="remember-me"
-          onChange={(event) => {
-            setRemember(!remember);
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              handleLogin();
+            }
           }}
         ></input>
-        <label htmlFor="remember-me">Remember me</label>
       </div>
 
       <button className="login-button" onClick={handleLogin}>

@@ -2,15 +2,29 @@
   margin-top: 30px;
 }
 
-.description-detail-container {
-  margin-bottom: 30px;
-}
-
 .detail-overview-container {
   margin-bottom: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.description-detail-container {
+  margin-top: 5px;
+}
+
+.session-info-container {
+  box-sizing: border-box;
+  background-color: #eeeeee;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.edit-session-info-button {
+  float: right;
 }
 
 .delete-session-button {
@@ -64,6 +78,28 @@
   text-align: center;
   text-decoration: none;
   font-size: 12px;
+}
+
+.show-more-text {
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.detail-overview-inner-container {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 10px;
+  padding: 10px;
+}
+
+.text-area-container {
+  width: 100%;
+}
+
+textarea {
+  box-sizing: border-box;
+  width: 100%;
 }
 
 @media only screen and (min-width: 640px) {

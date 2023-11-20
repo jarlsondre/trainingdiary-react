@@ -141,7 +141,7 @@ export const likeSession = (id: number) => async (dispatch: any) => {
     });
 };
 
-export const updateSesssion =
+export const updateSession =
   (id: number, data: any) => async (dispatch: any) => {
     dispatch({
       type: UPDATE_SESSION_REQUEST,
