@@ -77,7 +77,9 @@ function DetailOverview(props: any) {
   };
 
   const handleSave = () => {
-    const newDate = new Date(date);
+    let newDate;
+    if (date) newDate = new Date(date);
+    else newDate = new Date();
     if (newDate.getHours() === 0) newDate.setHours(12);
     const data = {
       datetime: newDate.toISOString(),
