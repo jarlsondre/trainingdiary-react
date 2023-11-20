@@ -41,13 +41,13 @@
 
 .weight-and-repetition-container {
   display: inline-block;
-  width: 140px;
+  min-width: 135px;
 }
 
 .weight-number {
   display: inline-block;
   text-align: right;
-  width: 45px;
+  min-width: 45px;
 }
 
 .big-number {
