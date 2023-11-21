@@ -37,9 +37,11 @@ function ExerciseUnitDetail(props: any) {
         <NewSet
           exercise_unit={props.exerciseUnit.id}
           set_number={
-            Math.max(
-              ...props.exerciseUnit.set.map((set: any) => set.set_number)
-            ) + 1
+            props.exerciseUnit.set.length > 0
+              ? Math.max(
+                  ...props.exerciseUnit.set.map((set: any) => set.set_number)
+                ) + 1
+              : 1
           }
         />
       )}
