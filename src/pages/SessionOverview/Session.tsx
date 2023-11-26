@@ -90,6 +90,11 @@ export default function Session(props: Props) {
     navigate("/session/" + props.session.id);
   };
 
+  const handleUsernameClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    navigate("/user/" + props.session.username);
+  };
+
   return (
     <div
       className={
@@ -109,7 +114,12 @@ export default function Session(props: Props) {
         <div className="session-header-container">
           <h3 className="session-header">{getDateString(date)}</h3>
         </div>
-        <div className="username-container">User: {props.session.username}</div>
+        <div className="username-container">
+          User:{" "}
+          <span onClick={handleUsernameClick} className="username-text">
+            {props.session.username}
+          </span>
+        </div>
         {props.session.description && (
           <div className="description-container">
             {props.session.description}

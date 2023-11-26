@@ -37,6 +37,7 @@ export default function UserDetail(props: Props) {
     (state: any) => state.sessions.profileSessions.moreToLoad
   );
 
+  // This is a buggy way of dealing with it when you have multiple users, no?
   React.useEffect(() => {
     if (username !== profileUsername) {
       replaceStore = true;
@@ -53,6 +54,7 @@ export default function UserDetail(props: Props) {
     dispatch(fetchUserSessions(username, cursor));
   };
 
+  // Bases choice of user on personal user and search results
   let user;
   if (isPersonalProfile) {
     user = personalUser;
@@ -61,7 +63,12 @@ export default function UserDetail(props: Props) {
   }
 
   if (!user) {
-    return <h1>User not found</h1>;
+    return (
+      <div>
+        <h1>User not found</h1> Or you clicked via overview page. This part is
+        not fully implemented yet...
+      </div>
+    );
   }
 
   return (
