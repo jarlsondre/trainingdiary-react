@@ -25,6 +25,15 @@ const initialState = {
     searchResults: [], // Initialize searchResults as an empty array
     searchCursor: "", // Initialize searchCursor as an empty string
   },
+  authentication: {
+    isAuthenticated: false,
+    isLoading: false,
+    loginFailed: false,
+    resetPasswordSuccess: false,
+    resetPasswordFail: false,
+    confirmPasswordSuccess: false,
+    confirmPasswordFail: false,
+  },
 };
 
 const middleware = [thunk];

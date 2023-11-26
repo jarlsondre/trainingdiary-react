@@ -48,6 +48,42 @@ class UserService {
         console.log(err);
       });
   }
+
+  async resetPassword(email: string) {
+    return await axios
+      .post(baseURL + "/account/password-reset-request/", {
+        email: email,
+      })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw err;
+      });
+  }
+
+  async confirmPassword(username: string, token: string, newPassword: string) {
+    return await axios
+      .post(
+        baseURL +
+          "/account/password-reset-confirm/" +
+          username +
+          "/" +
+          token +
+          "/",
+        {
+          new_password: newPassword,
+        }
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw err;
+      });
+  }
 }
 
 export default new UserService();

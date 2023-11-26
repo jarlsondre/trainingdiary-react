@@ -8,6 +8,8 @@ import Navbar from "./components/navbar/Navbar";
 import Calculator from "./pages/Calculator/Calculator";
 import Search from "./pages/Search/Search";
 import UserDetail from "./pages/ProfilePage/UserDetail";
+import PasswordReset from "./components/passwordReset/PasswordReset";
+import PasswordResetConfirm from "./components/passwordReset/PasswordResetConfirm";
 
 function App() {
   return (
@@ -15,6 +17,11 @@ function App() {
       <Navbar></Navbar>
       <Routes>
         <Route path="/" element={<SessionOverview />}></Route>
+        <Route path="password-reset" element={<PasswordReset />}></Route>
+        <Route
+          path="password-reset-confirm/:username/:token"
+          element={<PasswordResetConfirm />}
+        ></Route>
         <Route path="session/:sessionId" element={<DetailOverview />}></Route>
         <Route path="login" element={<Login />}></Route>
         <Route path="calculator" element={<Calculator />}></Route>

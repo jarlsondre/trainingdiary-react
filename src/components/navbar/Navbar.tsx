@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
 import "./navbar.css";
 import logo from "./logo.jpg";
@@ -11,8 +11,10 @@ export default function Navbar(props: any) {
   );
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
   const user = useSelector((state: any) => state.user);
+  const isLoading = useSelector((state: any) => state.authentication.isLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -43,9 +45,15 @@ export default function Navbar(props: any) {
     let authToken = localStorage.getItem("authToken")
       ? JSON.parse(localStorage.getItem("authToken")!)
       : null;
+
+    const pathname = location.pathname;
+    const isPasswordResetRoute =
+      pathname.startsWith("/password-reset") ||
+      pathname.startsWith("/password-reset-confirm");
     if (authToken && authToken.refresh && !isAuthenticated) {
       dispatch(refresh(authToken!.refresh));
-    } else navigate("/login");
+    } else if (!isLoading && !isAuthenticated && !isPasswordResetRoute)
+      navigate("/login");
   }, [isAuthenticated]);
 
   if (isAuthenticated)

@@ -15,6 +15,11 @@ export default function Login() {
     (state: any) => state.authentication.isAuthenticated
   );
 
+  const isLoading = useSelector((state: any) => state.authentication.isLoading);
+  const loginFailed = useSelector(
+    (state: any) => state.authentication.loginFailed
+  );
+
   const handleLogin = async () => {
     const data = {
       username: username,
@@ -22,6 +27,11 @@ export default function Login() {
     };
     dispatch(login(data));
   };
+
+  const handleReset = () => {
+    navigate("/password-reset");
+  };
+
   useEffect(() => {
     if (isAuthenticated) navigate("/");
   }, [isAuthenticated]);
@@ -54,8 +64,14 @@ export default function Login() {
         ></input>
       </div>
 
+      {isLoading && <p>Logging in...</p>}
+      {loginFailed && <p>Wrong username or password</p>}
+
       <button className="login-button" onClick={handleLogin}>
         Login
+      </button>
+      <button className="reset-button" onClick={handleReset}>
+        Reset Password
       </button>
     </div>
   );

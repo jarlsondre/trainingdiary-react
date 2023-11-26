@@ -5,6 +5,12 @@ import {
   LOGIN_SUCCESS,
   LOGOUT,
   RETRIEVE_USER,
+  RESET_PASSWORD_FAIL,
+  RESET_PASSWORD_REQUEST,
+  RESET_PASSWORD_SUCCESS,
+  CONFIRM_PASSWORD_FAIL,
+  CONFIRM_PASSWORD_REQUEST,
+  CONFIRM_PASSWORD_SUCCESS,
 } from "./types";
 import userService from "../services/user.service";
 
@@ -13,6 +19,7 @@ export const login = (data: any) => async (dispatch: any) => {
     type: LOGIN_REQUEST,
     payload: null,
   });
+
   userService
     .login(data)
     .then((res: any) => {
@@ -21,13 +28,12 @@ export const login = (data: any) => async (dispatch: any) => {
         type: LOGIN_SUCCESS,
         payload: null,
       });
+      return userService.fetchUser();
     })
-    .then(() => {
-      userService.fetchUser().then((res: any) => {
-        dispatch({
-          type: RETRIEVE_USER,
-          payload: res.data,
-        });
+    .then((res: any) => {
+      dispatch({
+        type: RETRIEVE_USER,
+        payload: res.data,
       });
     })
     .catch((err) => {
@@ -35,6 +41,7 @@ export const login = (data: any) => async (dispatch: any) => {
         type: LOGIN_FAIL,
         payload: null,
       });
+      throw err;
     });
 };
 
@@ -74,3 +81,47 @@ export const logout = () => async (dispatch: any) => {
 
   localStorage.setItem("authToken", "");
 };
+
+export const resetPassword = (email: string) => async (dispatch: any) => {
+  dispatch({
+    type: RESET_PASSWORD_REQUEST,
+    payload: null,
+  });
+  userService
+    .resetPassword(email)
+    .then((res: any) => {
+      dispatch({
+        type: RESET_PASSWORD_SUCCESS,
+        payload: res,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: RESET_PASSWORD_FAIL,
+        payload: null,
+      });
+    });
+};
+
+export const confirmPassword =
+  (username: string, token: string, newPassword: string) =>
+  async (dispatch: any) => {
+    dispatch({
+      type: CONFIRM_PASSWORD_REQUEST,
+      payload: null,
+    });
+    userService
+      .confirmPassword(username, token, newPassword)
+      .then((res: any) => {
+        dispatch({
+          type: CONFIRM_PASSWORD_SUCCESS,
+          payload: res,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: CONFIRM_PASSWORD_FAIL,
+          payload: null,
+        });
+      });
+  };

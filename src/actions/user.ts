@@ -1,4 +1,4 @@
-import { RETRIEVE_USER, SEARCH_USERS } from "./types";
+import { RETRIEVE_USER } from "./types";
 import userService from "../services/user.service";
 
 export const fetchUser = () => async (dispatch: any) => {
