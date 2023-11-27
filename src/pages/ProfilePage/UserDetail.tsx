@@ -78,16 +78,20 @@ export default function UserDetail(props: Props) {
               </div>
             );
           })}
+
+        {moreToLoad ? (
+          <button
+            className="profile-load-more-button profile-more-to-load"
+            onClick={handleLoadMore}
+          >
+            Load more
+          </button>
+        ) : (
+          <button className="profile-load-more-button" disabled>
+            Nothing more to load
+          </button>
+        )}
       </div>
-      {moreToLoad ? (
-        <button className="load-more-button" onClick={handleLoadMore}>
-          Load more
-        </button>
-      ) : (
-        <button className="load-more-button" disabled>
-          Nothing more to load
-        </button>
-      )}
     </div>
   );
 }

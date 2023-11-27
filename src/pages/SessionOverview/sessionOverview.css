@@ -50,19 +50,25 @@
 }
 
 .load-more-button {
-  background-color: orange;
+  background-color: white;
   border-radius: 4px;
-  border: none;
-  color: white;
+  border: orange solid 2px;
+  color: orange;
   padding: 15px 32px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-top: 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
   margin-bottom: 20px;
 }
+
+.more-to-load {
+  background-color: orange;
+  color: white;
+  cursor: pointer;
+}
+
 .more-to-load:hover {
   background-color: darkorange;
 }
