@@ -20,7 +20,14 @@ const initialState = {
     },
   },
   exercises: [],
-  user: {},
+  user: {
+    personalUser: {},
+    otherUser: {
+      fetchUserLoading: false,
+      fetchUserFail: false,
+      fetchUserSuccess: false,
+    },
+  },
   searchUsers: {
     searchResults: [], // Initialize searchResults as an empty array
     searchCursor: "", // Initialize searchCursor as an empty string

@@ -14,7 +14,7 @@ export default function SetDetail(props: Props) {
   const [repetitions, setRepetitions] = useState(props.set.repetitions);
   const [isEditing, setIsEditing] = useState(false);
   const dispatch = useDispatch();
-  const unit = useSelector((state: any) => state.user.unit_system);
+  const unit = useSelector((state: any) => state.user.personalUser.unit_system);
   const metric = unit === "kg";
 
   const toggleIsEditing = () => {

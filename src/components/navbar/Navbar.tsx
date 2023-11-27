@@ -10,7 +10,7 @@ export default function Navbar(props: any) {
     (state: any) => state.authentication.isAuthenticated
   );
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
-  const user = useSelector((state: any) => state.user);
+  const user = useSelector((state: any) => state.user.personalUser);
   const isLoading = useSelector((state: any) => state.authentication.isLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();

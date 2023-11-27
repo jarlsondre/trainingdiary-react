@@ -76,6 +76,7 @@ export const fetchUserSessions =
         type: FETCH_USER_SESSIONS,
         payload: response.data,
         replaceStore: replaceStore,
+        username: username,
       });
     } catch (error) {
       console.error("Failed to fetch user sessions:", error);

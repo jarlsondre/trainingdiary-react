@@ -36,7 +36,12 @@ function DetailOverview(props: any) {
   );
   const [date, setDate] = useState<string>(props.selectedSession.datetime);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
-  const username = useSelector((state: any) => state.user.username);
+  const sessionUsername = useSelector(
+    (state: any) => state.sessions.selectedSession.username
+  );
+  const personalUsername = useSelector(
+    (state: any) => state.user.personalUser.username
+  );
   const maxLineCount = 4;
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -105,7 +110,7 @@ function DetailOverview(props: any) {
   if (props.selectedSession.datetime) {
     datetimeString = props.selectedSession.datetime.substring(0, 10);
   }
-  let editable = username === props.selectedSession.username;
+  let editable = sessionUsername === personalUsername;
 
   if (props.isLoading) return <div>Loading...</div>;
   return (

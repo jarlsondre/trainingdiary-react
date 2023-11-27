@@ -52,7 +52,7 @@ let months: { [key: number]: string } = {
 
 export default function Session(props: Props) {
   let date = new Date(props.session.datetime);
-  const user = useSelector((state: any) => state.user);
+  const personalUser = useSelector((state: any) => state.user.personalUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -69,9 +69,13 @@ export default function Session(props: Props) {
   function get_likes_string(username: string) {
     if (props.session.liked_by_usernames.length == 0) return "No likes yet";
     let usernames = [];
-    if (props.session.liked_by_usernames.includes(user.username)) {
+    if (props.session.liked_by_usernames.includes(personalUser.username)) {
       usernames = props.session.liked_by_usernames.sort((x, y) => {
-        return x == user.username ? -1 : y == user.username ? 1 : 0;
+        return x == personalUser.username
+          ? -1
+          : y == personalUser.username
+          ? 1
+          : 0;
       });
     } else usernames = props.session.liked_by_usernames;
     let result = "Liked by " + usernames[0];
@@ -98,14 +102,14 @@ export default function Session(props: Props) {
   return (
     <div
       className={
-        user.username === props.session.username
+        personalUser.username === props.session.username
           ? "session-container-wrap personal-session-container-wrap"
           : "session-container-wrap"
       }
     >
       <div
         className={
-          user.username === props.session.username
+          personalUser.username === props.session.username
             ? "session-container personal-session"
             : "session-container"
         }
@@ -131,17 +135,17 @@ export default function Session(props: Props) {
           })}
         </div>
       </div>
-      {user.username !== props.session.username &&
-      !props.session.liked_by_usernames.includes(user.username) ? (
+      {personalUser.username !== props.session.username &&
+      !props.session.liked_by_usernames.includes(personalUser.username) ? (
         <div className="like-container">
           <button onClick={handleLikeSession} className="like-button">
             Like
           </button>
-          {get_likes_string(user.username)}
+          {get_likes_string(personalUser.username)}
         </div>
       ) : (
         <div className="like-container personal-like-container">
-          {get_likes_string(user.username)}
+          {get_likes_string(personalUser.username)}
         </div>
       )}
     </div>

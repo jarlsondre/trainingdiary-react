@@ -5,10 +5,6 @@
   margin: 10px;
 }
 
-.user-details-container h1 {
-  margin-bottom: 0;
-}
-
 .load-more-button {
   background-color: orange;
   border-radius: 4px;
@@ -30,4 +26,23 @@
   justify-content: center;
   width: 100%;
   max-width: 400px;
+}
+
+.user-info-container {
+  box-sizing: border-box;
+  background-color: #eeeeee;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  padding: 5px;
+}
+
+.user-name-container {
+  display: block;
+  font-size: 30px;
+}
+
+.follow-button {
+  float: right;
 }

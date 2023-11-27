@@ -4,6 +4,7 @@ type ActionType = {
   type: keyof typeof Actions;
   payload: any;
   replaceStore: boolean;
+  username: string | null;
 };
 
 const initialState: any = {
@@ -152,6 +153,7 @@ export default function sessionReducer(
           results: updatedSessionList,
           moreToLoad: moreToLoad,
           cursor: cursor,
+          username: action.username,
         },
       };
 

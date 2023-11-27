@@ -1,22 +1,26 @@
-import { RETRIEVE_USER } from "./types";
+import {
+  FETCH_USER_FAIL,
+  FETCH_USER_REQUEST,
+  FETCH_USER_SUCCESS,
+} from "./types";
 import userService from "../services/user.service";
 
-export const fetchUser = () => async (dispatch: any) => {
-  // NOTE: This is never being used atm
+export const fetchUser = (username: string) => async (dispatch: any) => {
+  dispatch({
+    type: FETCH_USER_REQUEST,
+    payload: null,
+  });
   try {
-    userService
-      .fetchUser()
-      .then((res: any) => {
-        dispatch({
-          type: RETRIEVE_USER,
-          payload: res,
-        });
-      })
-      .catch((err) => {
-        dispatch({
-          type: RETRIEVE_USER,
-          payload: null,
-        });
-      });
-  } catch (err) {}
+    const result: any = await userService.fetchUser(username);
+    dispatch({
+      type: FETCH_USER_SUCCESS,
+      payload: result.data,
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_USER_FAIL,
+      payload: null,
+    });
+    console.log(error);
+  }
 };

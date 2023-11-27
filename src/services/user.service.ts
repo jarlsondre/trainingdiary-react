@@ -13,9 +13,20 @@ class UserService {
       });
   }
 
-  async fetchUser() {
+  async fetchPersonalUser() {
     return await http
       .get(baseURL + "/accounts/get-personal-account/")
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async fetchUser(username: string) {
+    return await http
+      .get(baseURL + "/accounts/get-account/?username=" + username)
       .then((res) => {
         return res;
       })

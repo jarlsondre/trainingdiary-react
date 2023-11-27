@@ -2,19 +2,15 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import "./userDetail.css";
-import {
-  fetchUserSessions,
-  updateProfileUsername,
-} from "../../actions/sessions";
+import { fetchUserSessions } from "../../actions/sessions";
+import { fetchUser } from "../../actions/user";
 import Session, { SessionInterface } from "../SessionOverview/Session";
 
 interface Props {}
 
 export default function UserDetail(props: Props) {
-  const {} = props;
   const { username } = useParams() as { username: string };
-  const users = useSelector((state: any) => state.searchUsers.searchResults);
-  const profileUsername = useSelector(
+  const previousProfileUsername = useSelector(
     (state: any) => state.sessions.profileSessions.username
   );
   const dispatch = useDispatch();
@@ -23,13 +19,6 @@ export default function UserDetail(props: Props) {
     (state: any) => state.sessions.profileSessions.results
   );
 
-  let replaceStore: boolean = false;
-
-  // Figuring out if it is someone else's profile or not
-  const personalUser = useSelector((state: any) => state.user);
-  let isPersonalProfile = false;
-  if (username == personalUser.username) isPersonalProfile = true;
-
   let cursor = useSelector<any>(
     (state: any) => state.sessions.profileSessions.cursor
   );
@@ -37,53 +26,48 @@ export default function UserDetail(props: Props) {
     (state: any) => state.sessions.profileSessions.moreToLoad
   );
 
-  // This is a buggy way of dealing with it when you have multiple users, no?
+  // Selecting the correct user
+  let userState: any = useSelector<any>((state: any) => state.user);
+  const isPersonalProfile = username === userState.personalUser.username;
+  let user = userState.otherUser;
+  if (isPersonalProfile) {
+    user = userState.personalUser;
+  }
+
   React.useEffect(() => {
-    if (username !== profileUsername) {
-      replaceStore = true;
+    const newUser = username !== previousProfileUsername;
+    dispatch(fetchUser(username));
+    if (!cursor || newUser) {
       cursor = "";
-      moreToLoad = true;
-      dispatch(updateProfileUsername(username));
-    } else replaceStore = false;
-    if (((userSessions as any).length == 0 || replaceStore) && moreToLoad) {
-      dispatch(fetchUserSessions(username, cursor, replaceStore));
     }
-  }, [dispatch, username, replaceStore]);
+    if ((userSessions as any).length === 0 || newUser) {
+      dispatch(fetchUserSessions(username, cursor, newUser));
+    }
+  }, [dispatch, username]);
 
   const handleLoadMore = () => {
     dispatch(fetchUserSessions(username, cursor));
   };
 
-  // Bases choice of user on personal user and search results
-  let user;
-  if (isPersonalProfile) {
-    user = personalUser;
-  } else {
-    user = users.find((user: any) => user.username === username);
-  }
-
-  if (!user) {
-    return (
-      <div>
-        <h1>User not found</h1> Or you clicked via overview page. This part is
-        not fully implemented yet...
-      </div>
-    );
-  }
-
   return (
     <div className="user-details-container">
-      <h1>
-        {user.first_name ? user.first_name : "Anonymous"}{" "}
-        {user.last_name ? user.last_name : "Gymrat"}
-      </h1>
-      @{user.username}
-      <p>
-        Bio:{" "}
-        {user.bio
-          ? user.bio
-          : "Frankly, I don't have that much to share about myself..."}
-      </p>
+      <div className="user-info-container">
+        {!isPersonalProfile && (
+          <button className="follow-button">Follow</button>
+        )}
+        <span className="user-name-container">
+          {user.first_name ? user.first_name : "Anonymous"}{" "}
+          {user.last_name ? user.last_name : "Gymrat"}
+        </span>
+        @{user.username}
+        <p>
+          "
+          {user.bio
+            ? user.bio
+            : "Frankly, I don't have that much to share about myself..."}
+          "
+        </p>
+      </div>
       <h2>Sessions</h2>
       <div className="session-list">
         {(userSessions as any[]).length > 0 &&

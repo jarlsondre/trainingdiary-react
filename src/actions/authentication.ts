@@ -28,7 +28,7 @@ export const login = (data: any) => async (dispatch: any) => {
         type: LOGIN_SUCCESS,
         payload: null,
       });
-      return userService.fetchUser();
+      return userService.fetchPersonalUser();
     })
     .then((res: any) => {
       dispatch({
@@ -57,7 +57,7 @@ export const refresh = (token: any) => async (dispatch: any) => {
         });
       })
       .then(() => {
-        userService.fetchUser().then((res: any) => {
+        userService.fetchPersonalUser().then((res: any) => {
           dispatch({
             type: RETRIEVE_USER,
             payload: res.data,

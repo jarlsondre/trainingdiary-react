@@ -12,7 +12,7 @@ export default function NewSet(props: Props) {
   const [weight, setWeight] = useState(0);
   const [repetitions, setRepetitions] = useState(0);
 
-  const unit = useSelector((state: any) => state.user.unit_system);
+  const unit = useSelector((state: any) => state.user.personalUser.unit_system);
   const metric = unit === "kg";
   const dispatch = useDispatch();
 
