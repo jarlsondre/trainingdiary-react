@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchUserSessions } from "../../actions/sessions";
@@ -41,11 +41,6 @@ export default function UserDetail(props: Props) {
   }
 
   React.useEffect(() => {
-    setFirstName(user.first_name || "");
-    setLastName(user.last_name || "");
-    setEmail(user.email || "");
-    setBio(user.bio || "");
-    setUnitSystem(user.unit_system || "kg");
     const newUser = username !== previousProfileUsername;
     dispatch(fetchUser(username));
     if (!cursor || newUser) {
@@ -54,7 +49,17 @@ export default function UserDetail(props: Props) {
     if ((userSessions as any).length === 0 || newUser) {
       dispatch(fetchUserSessions(username, cursor, newUser));
     }
-  }, [dispatch, username, user]);
+  }, [dispatch, username]);
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.first_name || "");
+      setLastName(user.last_name || "");
+      setEmail(user.email || "");
+      setBio(user.bio || "");
+      setUnitSystem(user.unit_system || "kg");
+    }
+  }, [user]);
 
   const handleLoadMore = () => {
     dispatch(fetchUserSessions(username, cursor));
