@@ -45,12 +45,45 @@
   padding: 5px;
 }
 
+.editing-user-info-container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: #eeeeee;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  padding: 5px;
+}
+
+.editing-user-info-container input {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding-right: 5px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.editing-user-info-container textarea {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding-right: 5px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
 .user-name-container {
   display: block;
   font-size: 30px;
 }
 
 .follow-button {
+  float: right;
+  cursor: pointer;
+}
+
+.edit-profile-button {
   float: right;
   cursor: pointer;
 }

@@ -1,24 +1,25 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import "./userDetail.css";
 import { fetchUserSessions } from "../../actions/sessions";
 import { fetchUser } from "../../actions/user";
 import Session, { SessionInterface } from "../SessionOverview/Session";
+import "./userDetail.css";
 
 interface Props {}
 
 export default function UserDetail(props: Props) {
+  const dispatch = useDispatch();
   const { username } = useParams() as { username: string };
+
+  const [isEditingProfile, setIsEditingProfile] = React.useState(false);
+
   const previousProfileUsername = useSelector(
     (state: any) => state.sessions.profileSessions.username
   );
-  const dispatch = useDispatch();
-
   const userSessions = useSelector<any[]>(
     (state: any) => state.sessions.profileSessions.results
   );
-
   let cursor = useSelector<any>(
     (state: any) => state.sessions.profileSessions.cursor
   );
@@ -49,25 +50,59 @@ export default function UserDetail(props: Props) {
     dispatch(fetchUserSessions(username, cursor));
   };
 
+  const handleToggleEditProfile = () => {
+    if (isPersonalProfile) {
+      setIsEditingProfile(!isEditingProfile);
+    }
+  };
+
+  const handleSaveProfile = () => {
+    setIsEditingProfile(!isEditingProfile);
+  };
+
   return (
     <div className="user-details-container">
-      <div className="user-info-container">
-        {!isPersonalProfile && (
-          <button className="follow-button">Follow</button>
-        )}
-        <span className="user-name-container">
-          {user.first_name ? user.first_name : "Anonymous"}{" "}
-          {user.last_name ? user.last_name : "Gymrat"}
-        </span>
-        @{user.username}
-        <p>
-          "
-          {user.bio
-            ? user.bio
-            : "Frankly, I don't have that much to share about myself..."}
-          "
-        </p>
-      </div>
+      {isEditingProfile ? (
+        <div className="editing-user-info-container">
+          <p>Warning! This is under construction, does not work yet!</p>
+          First name:
+          <input type="text" placeholder="First name" />
+          Last name:
+          <input type="text" placeholder="Last name" />
+          Email:
+          <input type="email" placeholder="example@example.com" />
+          Bio:
+          <textarea placeholder="Bio" />
+          <button className="save-profile-button" onClick={handleSaveProfile}>
+            Save
+          </button>
+        </div>
+      ) : (
+        <div className="user-info-container">
+          {isPersonalProfile ? (
+            <button
+              className="edit-profile-button"
+              onClick={handleToggleEditProfile}
+            >
+              Edit profile
+            </button>
+          ) : (
+            <button className="follow-button">Follow</button>
+          )}
+          <span className="user-name-container">
+            {user.first_name ? user.first_name : "Anonymous"}{" "}
+            {user.last_name ? user.last_name : "Gymrat"}
+          </span>
+          @{user.username}
+          <p>
+            "
+            {user.bio
+              ? user.bio
+              : "Frankly, I don't have that much to share about myself..."}
+            "
+          </p>
+        </div>
+      )}
       <h2>Sessions</h2>
       <div className="session-list">
         {(userSessions as any[]).length > 0 &&
