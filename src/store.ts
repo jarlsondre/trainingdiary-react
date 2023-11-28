@@ -21,7 +21,11 @@ const initialState = {
   },
   exercises: [],
   user: {
-    personalUser: {},
+    personalUser: {
+      updateUserFail: false,
+      updateUserLoading: false,
+      updateUserSuccess: false,
+    },
     otherUser: {
       fetchUserLoading: false,
       fetchUserFail: false,

@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchUserSessions } from "../../actions/sessions";
-import { fetchUser } from "../../actions/user";
+import { fetchUser, updateUser } from "../../actions/user";
 import Session, { SessionInterface } from "../SessionOverview/Session";
 import "./userDetail.css";
 
@@ -13,6 +13,11 @@ export default function UserDetail(props: Props) {
   const { username } = useParams() as { username: string };
 
   const [isEditingProfile, setIsEditingProfile] = React.useState(false);
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [bio, setBio] = React.useState("");
+  const [unitSystem, setUnitSystem] = React.useState("kg");
 
   const previousProfileUsername = useSelector(
     (state: any) => state.sessions.profileSessions.username
@@ -36,6 +41,11 @@ export default function UserDetail(props: Props) {
   }
 
   React.useEffect(() => {
+    setFirstName(user.first_name || "");
+    setLastName(user.last_name || "");
+    setEmail(user.email || "");
+    setBio(user.bio || "");
+    setUnitSystem(user.unit_system || "kg");
     const newUser = username !== previousProfileUsername;
     dispatch(fetchUser(username));
     if (!cursor || newUser) {
@@ -44,7 +54,7 @@ export default function UserDetail(props: Props) {
     if ((userSessions as any).length === 0 || newUser) {
       dispatch(fetchUserSessions(username, cursor, newUser));
     }
-  }, [dispatch, username]);
+  }, [dispatch, username, user]);
 
   const handleLoadMore = () => {
     dispatch(fetchUserSessions(username, cursor));
@@ -57,6 +67,15 @@ export default function UserDetail(props: Props) {
   };
 
   const handleSaveProfile = () => {
+    const id = user.id;
+    const updatedUser = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      bio: bio,
+      unit_system: unitSystem,
+    };
+    dispatch(updateUser(id, updatedUser));
     setIsEditingProfile(!isEditingProfile);
   };
 
@@ -64,15 +83,54 @@ export default function UserDetail(props: Props) {
     <div className="user-details-container">
       {isEditingProfile ? (
         <div className="editing-user-info-container">
-          <h1>Warning! This is under construction, does not work yet!</h1>
           First name:
-          <input type="text" placeholder="First name" />
+          <input
+            type="text"
+            placeholder="First name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
           Last name:
-          <input type="text" placeholder="Last name" />
+          <input
+            type="text"
+            placeholder="Last name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
           Email:
-          <input type="email" placeholder="example@example.com" />
+          <input
+            type="email"
+            placeholder="example@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           Bio:
-          <textarea placeholder="Bio" />
+          <textarea
+            placeholder="Bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+          <div>
+            Unit:
+            <label>
+              <input
+                type="radio"
+                value="kg"
+                checked={unitSystem === "kg"}
+                onChange={(e) => setUnitSystem(e.target.value)}
+              />
+              kg
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="lbs"
+                checked={unitSystem === "lbs"}
+                onChange={(e) => setUnitSystem(e.target.value)}
+              />
+              lbs
+            </label>
+          </div>
           <button className="save-profile-button" onClick={handleSaveProfile}>
             Save
           </button>
@@ -94,6 +152,10 @@ export default function UserDetail(props: Props) {
             {user.last_name ? user.last_name : "Gymrat"}
           </span>
           @{user.username}
+          <span className="unit-system-container">
+            Units:{" "}
+            {user.unit_system === "kg" ? "Metric (kg)" : "Freedom units (lbs)"}
+          </span>
           <p>
             "
             {user.bio

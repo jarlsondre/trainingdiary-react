@@ -78,6 +78,10 @@
   font-size: 30px;
 }
 
+.unit-system-container {
+  display: block;
+}
+
 .follow-button {
   float: right;
   cursor: pointer;

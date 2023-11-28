@@ -35,6 +35,17 @@ class UserService {
       });
   }
 
+  async updateUser(id: string, data: any) {
+    return await http
+      .patch(baseURL + "/accounts/" + id + "/", data)
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   async searchUsers(cursor: string | null, searchString: string | null) {
     return await http
       .get(baseURL + "/accounts/?cursor=" + cursor + "&search=" + searchString)
