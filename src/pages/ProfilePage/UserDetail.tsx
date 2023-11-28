@@ -64,7 +64,7 @@ export default function UserDetail(props: Props) {
     <div className="user-details-container">
       {isEditingProfile ? (
         <div className="editing-user-info-container">
-          <p>Warning! This is under construction, does not work yet!</p>
+          <h1>Warning! This is under construction, does not work yet!</h1>
           First name:
           <input type="text" placeholder="First name" />
           Last name:
