@@ -25,6 +25,7 @@
   text-decoration: none;
   font-size: 12px;
   margin-left: 3px;
+  cursor: pointer;
 }
 
 .update-set-button {
@@ -37,6 +38,7 @@
   text-decoration: none;
   font-size: 12px;
   margin-left: 3px;
+  cursor: pointer;
 }
 
 .weight-and-repetition-container {

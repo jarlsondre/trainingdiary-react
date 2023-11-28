@@ -128,6 +128,7 @@ function DetailOverview(props: any) {
                 id="session-date"
                 name="session-date"
                 defaultValue={datetimeString}
+                className="date-input-field"
                 onChange={(event) => {
                   setDate(event.target.value);
                 }}
@@ -142,10 +143,7 @@ function DetailOverview(props: any) {
                     setDescription(event.target.value);
                   }}
                 ></textarea>
-                <button
-                  onClick={handleSave}
-                  className="update-description-button"
-                >
+                <button onClick={handleSave} className="save-info-button">
                   Save
                 </button>
               </div>

@@ -52,4 +52,5 @@
 
 .follow-button {
   float: right;
+  cursor: pointer;
 }
