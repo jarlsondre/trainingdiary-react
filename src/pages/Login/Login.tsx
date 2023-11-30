@@ -44,6 +44,7 @@ export default function Login() {
           type="text"
           id="username"
           name="username"
+          autoCapitalize="none"
           onChange={(event) => {
             setUsername(event.target.value);
           }}
