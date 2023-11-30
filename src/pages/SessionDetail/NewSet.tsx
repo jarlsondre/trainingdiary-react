@@ -32,6 +32,10 @@ export default function NewSet(props: Props) {
         id="weight"
         name="weight"
         className="weight-input"
+        onClick={(event: any) => {
+          event.target.value = "";
+          setWeight(0);
+        }}
         onChange={(event) => {
           setWeight(parseFloat(event.target.value) / (metric ? 1 : 2.2));
         }}
@@ -42,6 +46,10 @@ export default function NewSet(props: Props) {
         id="repetitions"
         name="repetitions"
         className="repetition-input"
+        onClick={(event: any) => {
+          event.target.value = "";
+          setRepetitions(0);
+        }}
         onChange={(event) => {
           setRepetitions(parseInt(event.target.value));
         }}
