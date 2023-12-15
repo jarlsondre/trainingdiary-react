@@ -16,7 +16,11 @@ function ExerciseUnitDetail(props: any) {
           <div className="exercise-name">
             {props.exerciseUnit.exercise_name}
           </div>
-          {props.exerciseUnit.comment && props.exerciseUnit.comment}
+          {props.exerciseUnit.comment && (
+            <span className="exercise-unit-comment">
+              ({props.exerciseUnit.comment})
+            </span>
+          )}
         </div>
         {props.editable && (
           <button

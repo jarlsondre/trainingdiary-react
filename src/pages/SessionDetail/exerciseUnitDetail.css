@@ -12,6 +12,7 @@
 .exercise-name {
   font-size: 20px;
   font-weight: bold;
+  display: inline-block;
 }
 
 .delete-exercise-button {
@@ -32,4 +33,10 @@
 
 .no-sets-yet {
   margin-left: 10px;
+}
+
+.exercise-unit-comment {
+  font-size: 12px;
+  margin: 0px;
+  margin-left: 5px;
 }

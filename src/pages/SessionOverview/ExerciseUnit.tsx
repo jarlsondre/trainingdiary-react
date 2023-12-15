@@ -10,9 +10,16 @@ type Props = {
 export default function ExerciseUnit(props: Props) {
   return (
     <div className="exercise-unit-container">
-      <h4 className="exercise-unit-header">
-        {props.exerciseUnit.exercise_name}
-      </h4>
+      <div className="exercise-unit-header-container">
+        <h4 className="exercise-unit-header">
+          {props.exerciseUnit.exercise_name}
+        </h4>
+        {props.exerciseUnit.comment && (
+          <span className="exercise-unit-header-comment">
+            ({props.exerciseUnit.comment})
+          </span>
+        )}
+      </div>
       <div>
         {props.exerciseUnit.set.map((set, key) => {
           return (

@@ -5,7 +5,7 @@ import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
 import { likeSession } from "../../actions/sessions";
 
-import { compareExerciseUnitIds } from "../../utils/utils";
+import { compareExerciseUnitIds, months } from "../../utils/utils";
 
 export interface SetInterface {
   id: number;
@@ -21,6 +21,7 @@ export interface ExerciseUnitInterface {
   exercise_name: string;
   session: number;
   exercise: number;
+  comment: string | null;
 }
 
 export interface SessionInterface {
@@ -35,21 +36,6 @@ export interface SessionInterface {
 
 type Props = {
   session: SessionInterface;
-};
-
-let months: { [key: number]: string } = {
-  0: "January",
-  1: "February",
-  2: "March",
-  3: "April",
-  4: "May",
-  5: "June",
-  6: "July",
-  7: "August",
-  8: "September",
-  9: "October",
-  10: "November",
-  11: "December",
 };
 
 export default function Session(props: Props) {

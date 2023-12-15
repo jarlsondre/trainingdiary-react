@@ -5,5 +5,17 @@
 .exercise-unit-header {
   font-weight: 700;
   margin: 0px;
+  padding: 0px;
+  display: inline-block;
+}
+
+.exercise-unit-header-container {
   border-bottom: 1px solid black;
+  margin: 0px;
+}
+
+.exercise-unit-header-comment {
+  font-size: 12px;
+  margin: 0px;
+  margin-left: 5px;
 }
