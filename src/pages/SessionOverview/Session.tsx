@@ -5,6 +5,8 @@ import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
 import { likeSession } from "../../actions/sessions";
 
+import { compareExerciseUnitIds } from "../../utils/utils";
+
 export interface SetInterface {
   id: number;
   weight: number;
@@ -130,9 +132,11 @@ export default function Session(props: Props) {
           </div>
         )}
         <div>
-          {props.session.exercise_unit.map((exerciseUnit, key) => {
-            return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
-          })}
+          {props.session.exercise_unit
+            .sort(compareExerciseUnitIds)
+            .map((exerciseUnit: any, key: number) => {
+              return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
+            })}
         </div>
       </div>
       {personalUser.username !== props.session.username &&

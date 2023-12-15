@@ -10,14 +10,10 @@ import {
 import { addExerciseUnit } from "../../actions/exerciseUnits";
 import { retrieveExercises } from "../../actions/exercises";
 import { connect, useSelector } from "react-redux";
-
-const compareExerciseNames = (a: any, b: any) => {
-  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-};
-
-const compareExerciseUnitIds = (a: any, b: any) => {
-  return a.id - b.id;
-};
+import {
+  compareExerciseUnitIds,
+  compareExerciseNames,
+} from "../../utils/utils";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
