@@ -15,6 +15,10 @@ const compareExerciseNames = (a: any, b: any) => {
   return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 };
 
+const compareExerciseUnitIds = (a: any, b: any) => {
+  return a.id - b.id;
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
@@ -27,8 +31,8 @@ const formatDate = (dateString: string) => {
 function DetailOverview(props: any) {
   let { sessionId } = useParams();
   const navigate = useNavigate();
-  const sessionList = useSelector((state: any) => state.sessions.sessionList);
 
+  // State variables
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
   const [keyValue, setKeyValue] = useState<number>(0);
   const [description, setDescription] = useState<string>(
@@ -36,6 +40,10 @@ function DetailOverview(props: any) {
   );
   const [date, setDate] = useState<string>(props.selectedSession.datetime);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
+  // Redux variables
+  const sessionList = useSelector((state: any) => state.sessions.sessionList);
   const sessionUsername = useSelector(
     (state: any) => state.sessions.selectedSession.username
   );
@@ -43,7 +51,6 @@ function DetailOverview(props: any) {
     (state: any) => state.user.personalUser.username
   );
   const maxLineCount = 4;
-  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     if (
@@ -59,6 +66,7 @@ function DetailOverview(props: any) {
     }
   }, [props.isLoading, props.exercises]);
 
+  // Handle buttons
   const handleAddExercise = () => {
     const data = {
       exercise: selectedExercise,
@@ -73,14 +81,6 @@ function DetailOverview(props: any) {
     navigate("/");
   };
 
-  const toggleIsEditingInfo = () => {
-    setIsEditingInfo(!isEditingInfo);
-  };
-
-  const toggleDescription = () => {
-    setShowFullDescription(!showFullDescription);
-  };
-
   const handleSave = () => {
     let newDate;
     if (date) newDate = new Date(date);
@@ -92,6 +92,15 @@ function DetailOverview(props: any) {
     };
     props.onUpdateSession(Number(sessionId), data);
     toggleIsEditingInfo();
+  };
+
+  // Toggle functions
+  const toggleIsEditingInfo = () => {
+    setIsEditingInfo(!isEditingInfo);
+  };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
   };
 
   const renderDescriptionLine = (line: string, index: number) => {
@@ -185,8 +194,9 @@ function DetailOverview(props: any) {
         </div>
         {props.selectedSession.exercise_unit &&
         props.selectedSession.exercise_unit.length > 0
-          ? props.selectedSession.exercise_unit.map(
-              (exerciseUnit: any, key: number) => {
+          ? props.selectedSession.exercise_unit
+              .sort(compareExerciseUnitIds)
+              .map((exerciseUnit: any, key: number) => {
                 return (
                   <ExerciseUnitDetail
                     key={key}
@@ -194,8 +204,7 @@ function DetailOverview(props: any) {
                     editable={editable}
                   />
                 );
-              }
-            )
+              })
           : editable
           ? ""
           : "No exercises yet"}
