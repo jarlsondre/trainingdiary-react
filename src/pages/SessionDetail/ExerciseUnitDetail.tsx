@@ -12,7 +12,12 @@ function ExerciseUnitDetail(props: any) {
   return (
     <div key={props.exerciseUnit} className="exercise-unit-detail-container">
       <div className="exercise-name-container">
-        <div className="exercise-name">{props.exerciseUnit.exercise_name}</div>
+        <div>
+          <div className="exercise-name">
+            {props.exerciseUnit.exercise_name}
+          </div>
+          {props.exerciseUnit.comment && props.exerciseUnit.comment}
+        </div>
         {props.editable && (
           <button
             className="delete-exercise-button"
