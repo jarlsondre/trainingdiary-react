@@ -101,6 +101,7 @@ export default function sessionReducer(
   let cursor: string | null = null;
   let updatedSessionList = [];
   let replaceStore: boolean = false;
+  let updatedSelectedSession: any;
 
   switch (action.type) {
     case Actions.RETRIEVE_SESSIONS:
@@ -199,7 +200,7 @@ export default function sessionReducer(
       };
 
     case Actions.ADD_EXERCISE_UNIT:
-      let updatedSelectedSession = {
+      updatedSelectedSession = {
         ...sessions.selectedSession,
         exercise_unit: [...sessions.selectedSession.exercise_unit, payload],
       };
@@ -224,6 +225,20 @@ export default function sessionReducer(
         ...sessions,
         sessionList: [...filteredSessionList, sessionRemovedExerciseUnit],
         selectedSession: sessionRemovedExerciseUnit,
+      };
+
+    case Actions.UPDATE_EXERCISE_UNIT:
+      updatedSelectedSession = {
+        ...sessions.selectedSession,
+        exercise_unit: sessions.selectedSession.exercise_unit.map(
+          (exerciseUnit: any) =>
+            exerciseUnit.id === payload.id ? payload : exerciseUnit
+        ),
+      };
+      return {
+        ...sessions,
+        sessionList: [...filteredSessionList, updatedSelectedSession],
+        selectedSession: updatedSelectedSession,
       };
 
     case Actions.ADD_SET:

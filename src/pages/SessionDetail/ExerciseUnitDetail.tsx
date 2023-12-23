@@ -1,15 +1,22 @@
 import NewSet from "./NewSet";
 import SetDetail from "./SetDetail";
 import "./exerciseUnitDetail.css";
-import { connect, useSelector } from "react-redux";
-import { deleteExerciseUnit } from "../../actions/exerciseUnits";
+import { connect } from "react-redux";
+import {
+  deleteExerciseUnit,
+  updateExerciseUnit,
+} from "../../actions/exerciseUnits";
 import { useState } from "react";
 
 function ExerciseUnitDetail(props: any) {
   const [isEditing, setIsEditing] = useState(false);
+  const [comment, setComment] = useState(props.exerciseUnit.comment);
 
   const toggleIsEditing = () => {
     setIsEditing(!isEditing);
+  };
+  const handleCommentChange = (e: any) => {
+    setComment(e.target.value);
   };
   const handleDeleteExercise = () => {
     setIsEditing(false);
@@ -17,7 +24,9 @@ function ExerciseUnitDetail(props: any) {
   };
   const handleUpdateExercise = () => {
     setIsEditing(false);
-    console.log("update exercise");
+    props.onUpdateExerciseUnit(Number(props.exerciseUnit.id), {
+      comment: comment,
+    });
   };
 
   return (
@@ -32,6 +41,7 @@ function ExerciseUnitDetail(props: any) {
               <input
                 type="text"
                 defaultValue={props.exerciseUnit.comment}
+                onChange={handleCommentChange}
               ></input>
             </div>
           ) : (
@@ -97,6 +107,9 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     onDeleteExerciseUnit: (id: number) => {
       dispatch(deleteExerciseUnit(id));
+    },
+    onUpdateExerciseUnit: (id: number, data: any) => {
+      dispatch(updateExerciseUnit(id, data));
     },
   };
 };

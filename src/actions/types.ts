@@ -26,6 +26,7 @@ export const DELETE_SESSION = "DELETE_SESSION";
 // Exercise Units
 export const ADD_EXERCISE_UNIT = "ADD_EXERCISE_UNIT";
 export const DELETE_EXERCISE_UNIT = "DELETE_EXERCISE_UNIT";
+export const UPDATE_EXERCISE_UNIT = "UPDATE_EXERCISE_UNIT";
 
 // Sets
 export const ADD_SET = "ADD_SET";

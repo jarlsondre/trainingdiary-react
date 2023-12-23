@@ -8,6 +8,10 @@ class ExerciseUnitDataService {
   deleteExerciseUnit(id: any) {
     return http.delete("/exercise-unit/" + id + "/");
   }
+
+  updateExerciseUnit(id: any, data: any) {
+    return http.patch("/exercise-unit/" + id + "/", data);
+  }
 }
 
 export default new ExerciseUnitDataService();
