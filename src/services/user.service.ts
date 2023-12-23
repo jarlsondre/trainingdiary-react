@@ -58,6 +58,28 @@ class UserService {
       });
   }
 
+  async followUser(id: string) {
+    return await http
+      .post(baseURL + "/accounts/" + id + "/follow/")
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async unfollowUser(id: string) {
+    return await http
+      .post(baseURL + "/accounts/" + id + "/unfollow/")
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   async refresh(token: string) {
     return await axios
       .post(baseURL + "/api/token/refresh/", {

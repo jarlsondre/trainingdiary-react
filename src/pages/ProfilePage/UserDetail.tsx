@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchUserSessions } from "../../actions/sessions";
-import { fetchUser, updateUser } from "../../actions/user";
+import {
+  fetchUser,
+  updateUser,
+  followUser,
+  unfollowUser,
+} from "../../actions/user";
 import Session, { SessionInterface } from "../SessionOverview/Session";
 import "./userDetail.css";
 
@@ -84,6 +89,14 @@ export default function UserDetail(props: Props) {
     setIsEditingProfile(!isEditingProfile);
   };
 
+  const handleFollowProfile = () => {
+    dispatch(followUser(user.id, user.username));
+  };
+
+  const handleUnfollowProfile = () => {
+    dispatch(unfollowUser(user.id, user.username));
+  };
+
   return (
     <div className="user-details-container">
       {isEditingProfile ? (
@@ -152,9 +165,13 @@ export default function UserDetail(props: Props) {
           ) : userState.personalUser.following.some(
               (userObject: any) => userObject.username === username
             ) ? (
-            <button className="unfollow-button">Unfollow</button>
+            <button className="unfollow-button" onClick={handleUnfollowProfile}>
+              Unfollow
+            </button>
           ) : (
-            <button className="follow-button">Follow</button>
+            <button className="follow-button" onClick={handleFollowProfile}>
+              Follow
+            </button>
           )}
           <span className="user-name-container">
             {user.first_name ? user.first_name : "Anonymous"}{" "}

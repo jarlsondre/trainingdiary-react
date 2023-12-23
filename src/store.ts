@@ -25,6 +25,8 @@ const initialState = {
       updateUserFail: false,
       updateUserLoading: false,
       updateUserSuccess: false,
+      following: [],
+      followers: [],
     },
     otherUser: {
       fetchUserLoading: false,
