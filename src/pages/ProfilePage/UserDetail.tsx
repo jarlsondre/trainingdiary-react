@@ -189,6 +189,11 @@ export default function UserDetail(props: Props) {
               : "Frankly, I don't have that much to share about myself..."}
             "
           </p>
+          <div className="user-statistics-container">
+            <div># Sessions: TODO</div>
+            <div>Followers: {user.followers ? user.followers.length : 0}</div>
+            <div>Following: {user.following ? user.following.length : 0}</div>
+          </div>
         </div>
       )}
       <h2>Sessions</h2>
