@@ -149,6 +149,10 @@ export default function UserDetail(props: Props) {
             >
               Edit profile
             </button>
+          ) : userState.personalUser.following.some(
+              (userObject: any) => userObject.username === username
+            ) ? (
+            <button className="unfollow-button">Unfollow</button>
           ) : (
             <button className="follow-button">Follow</button>
           )}

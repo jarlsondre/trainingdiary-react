@@ -87,6 +87,11 @@
   cursor: pointer;
 }
 
+.unfollow-button {
+  float: right;
+  cursor: pointer;
+}
+
 .edit-profile-button {
   float: right;
   cursor: pointer;
