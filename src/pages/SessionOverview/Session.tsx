@@ -32,6 +32,7 @@ export interface SessionInterface {
   user: number;
   username: string;
   liked_by_usernames: string[];
+  comments: any[];
 }
 
 type Props = {
@@ -132,10 +133,14 @@ export default function Session(props: Props) {
             Like
           </button>
           {get_likes_string(personalUser.username)}
+          {props.session.comments.length > 0 &&
+            ", " + props.session.comments.length + " comments"}{" "}
         </div>
       ) : (
         <div className="like-container personal-like-container">
           {get_likes_string(personalUser.username)}
+          {props.session.comments.length > 0 &&
+            ", " + props.session.comments.length + " comments"}{" "}
         </div>
       )}
     </div>

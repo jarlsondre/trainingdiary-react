@@ -75,7 +75,7 @@ export default function SessionOverview() {
           onChange={(event) => {
             handleSetFilterPersonal(event.target.checked);
           }}
-          className="checkbox "
+          className="checkbox"
         ></input>
         <label htmlFor="filter-personal" className="checkbox-label">
           Personal Sessions

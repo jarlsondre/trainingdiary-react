@@ -13,16 +13,9 @@ import { connect, useSelector } from "react-redux";
 import {
   compareExerciseUnitIds,
   compareExerciseNames,
+  formatDate,
 } from "../../utils/utils";
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
+import SessionComment from "./SessionComment";
 
 function DetailOverview(props: any) {
   let { sessionId } = useParams();
@@ -45,6 +38,9 @@ function DetailOverview(props: any) {
   );
   const personalUsername = useSelector(
     (state: any) => state.user.personalUser.username
+  );
+  const comments = useSelector(
+    (state: any) => state.sessions.selectedSession.comments
   );
   const maxLineCount = 4;
 
@@ -226,6 +222,23 @@ function DetailOverview(props: any) {
             <button className="add-exercise-button" onClick={handleAddExercise}>
               Add Exercise
             </button>
+          </div>
+        )}
+        {comments && comments.length > 0 && (
+          <div className="comment-section-container">
+            <span className="comment-section-header">
+              {comments.length} comments
+            </span>
+            {comments.map((comment: any) => {
+              return (
+                <SessionComment
+                  key={comment.id}
+                  username={comment.username}
+                  text={comment.text}
+                  datetime={comment.datetime}
+                />
+              );
+            })}
           </div>
         )}
       </div>

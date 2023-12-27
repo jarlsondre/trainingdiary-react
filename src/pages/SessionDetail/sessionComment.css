@@ -1,0 +1,23 @@
+.session-comment-container {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 5px;
+}
+
+.comment-detail-container {
+  display: block;
+  overflow: auto;
+}
+
+.comment-username-container {
+  float: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+.comment-datetime-container {
+  float: right;
+  font-size: small;
+  font-style: italic;
+}

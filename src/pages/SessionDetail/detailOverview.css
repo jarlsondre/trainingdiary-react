@@ -23,6 +23,18 @@
   border-radius: 10px;
 }
 
+.comment-section-container {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+.comment-section-header {
+  font-size: large;
+  font-weight: bold;
+}
+
 .edit-session-info-button {
   float: right;
   cursor: pointer;
