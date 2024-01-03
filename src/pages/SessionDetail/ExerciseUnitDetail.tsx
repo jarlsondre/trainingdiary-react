@@ -40,6 +40,7 @@ function ExerciseUnitDetail(props: any) {
             <div>
               <input
                 type="text"
+                maxLength={100}
                 defaultValue={props.exerciseUnit.comment}
                 onChange={handleCommentChange}
               ></input>
