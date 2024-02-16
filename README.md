@@ -1,6 +1,7 @@
 # TrainingDiary frontend
 
-This is the frontend part of the TrainingDiary app. It is coded in React with Typescript and uses Redux. It fetches the data from my backend that is currently not open,
+This is the frontend part of the TrainingDiary app. It is coded in React with
+Typescript and uses Redux. It fetches the data from my backend that is currently not open,
 but probably will be. The frontend (i.e. this repo) is hosted on Netflify and
 the backend is hosted on a DigitalOcean server.
 
