@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import type { AuthTokens } from "../../types/models";
 import "./navbar.css";
 import logo from "./logo.jpg";
 
-export default function Navbar(props: any) {
-  const isAuthenticated = useSelector(
-    (state: any) => state.authentication.isAuthenticated
+export default function Navbar() {
+  const isAuthenticated = useAppSelector(
+    (state) => state.authentication.isAuthenticated,
   );
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
-  const user = useSelector((state: any) => state.user.personalUser);
-  const isLoading = useSelector((state: any) => state.authentication.isLoading);
-  const dispatch = useDispatch();
+  const user = useAppSelector((state) => state.user.personalUser);
+  const isLoading = useAppSelector((state) => state.authentication.isLoading);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,17 +42,17 @@ export default function Navbar(props: any) {
     setMenuExpanded(false);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original auth-check timing; dependency cleanup belongs to a behavior pass
   useEffect(() => {
-    let authToken = localStorage.getItem("authToken")
-      ? JSON.parse(localStorage.getItem("authToken")!)
-      : null;
+    const raw = localStorage.getItem("authToken");
+    const authToken: AuthTokens | null = raw ? JSON.parse(raw) : null;
 
     const pathname = location.pathname;
     const isPasswordResetRoute =
       pathname.startsWith("/password-reset") ||
       pathname.startsWith("/password-reset-confirm");
-    if (authToken && authToken.refresh && !isAuthenticated) {
-      dispatch(refresh(authToken!.refresh));
+    if (authToken?.refresh && !isAuthenticated) {
+      dispatch(refresh(authToken.refresh));
     } else if (!isLoading && !isAuthenticated && !isPasswordResetRoute)
       navigate("/login");
   }, [isAuthenticated]);

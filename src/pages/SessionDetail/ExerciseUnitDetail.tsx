@@ -1,36 +1,41 @@
 import NewSet from "./NewSet";
 import SetDetail from "./SetDetail";
 import "./exerciseUnitDetail.css";
-import { connect } from "react-redux";
+import { useState } from "react";
 import {
   deleteExerciseUnit,
   updateExerciseUnit,
 } from "../../actions/exerciseUnits";
-import { useState } from "react";
+import { useAppDispatch } from "../../hooks";
+import type { ExerciseUnitInterface } from "../../types/models";
 
-function ExerciseUnitDetail(props: any) {
+type Props = {
+  exerciseUnit: ExerciseUnitInterface;
+  editable: boolean;
+};
+
+export default function ExerciseUnitDetail(props: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [comment, setComment] = useState(props.exerciseUnit.comment);
+  const dispatch = useAppDispatch();
 
   const toggleIsEditing = () => {
     setIsEditing(!isEditing);
   };
-  const handleCommentChange = (e: any) => {
+  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
   const handleDeleteExercise = () => {
     setIsEditing(false);
-    props.onDeleteExerciseUnit(Number(props.exerciseUnit.id));
+    dispatch(deleteExerciseUnit(props.exerciseUnit.id));
   };
   const handleUpdateExercise = () => {
     setIsEditing(false);
-    props.onUpdateExerciseUnit(Number(props.exerciseUnit.id), {
-      comment: comment,
-    });
+    dispatch(updateExerciseUnit(props.exerciseUnit.id, { comment: comment }));
   };
 
   return (
-    <div key={props.exerciseUnit} className="exercise-unit-detail-container">
+    <div className="exercise-unit-detail-container">
       <div className="exercise-info-container">
         <div className="exercise-name-comment-container">
           <div className="exercise-name">
@@ -80,8 +85,10 @@ function ExerciseUnitDetail(props: any) {
       {props.exerciseUnit.set.length > 0 ? (
         [...props.exerciseUnit.set]
           .sort((a, b) => a.set_number - b.set_number)
-          .map((set: any, key: number) => {
-            return <SetDetail key={key} set={set} editable={props.editable} />;
+          .map((set) => {
+            return (
+              <SetDetail key={set.id} set={set} editable={props.editable} />
+            );
           })
       ) : props.editable ? (
         ""
@@ -94,7 +101,7 @@ function ExerciseUnitDetail(props: any) {
           set_number={
             props.exerciseUnit.set.length > 0
               ? Math.max(
-                  ...props.exerciseUnit.set.map((set: any) => set.set_number)
+                  ...props.exerciseUnit.set.map((set) => set.set_number),
                 ) + 1
               : 1
           }
@@ -103,16 +110,3 @@ function ExerciseUnitDetail(props: any) {
     </div>
   );
 }
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    onDeleteExerciseUnit: (id: number) => {
-      dispatch(deleteExerciseUnit(id));
-    },
-    onUpdateExerciseUnit: (id: number, data: any) => {
-      dispatch(updateExerciseUnit(id, data));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(ExerciseUnitDetail);

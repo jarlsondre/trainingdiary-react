@@ -1,35 +1,38 @@
+import type { AnyAction } from "@reduxjs/toolkit";
+
 import {
   CLEAR_SEARCH_USERS,
   SEARCH_USERS_FAILURE,
   SEARCH_USERS_SUCCESS,
 } from "../actions/types";
+import type { AccountSummaryInterface } from "../types/models";
 
-type ActionType = {
-  type: string;
-  payload: any;
+export interface SearchUsersState {
+  searchResults: AccountSummaryInterface[];
+  searchCursor: string;
+}
+
+const initialState: SearchUsersState = {
+  searchResults: [],
+  searchCursor: "",
 };
 
 export default function searchedUsersReducer(
-  defaultUsers = [],
-  action: ActionType
-) {
-  const { type, payload } = action;
-  switch (type) {
+  state: SearchUsersState = initialState,
+  action: AnyAction,
+): SearchUsersState {
+  switch (action.type) {
     case SEARCH_USERS_SUCCESS:
       return {
-        searchResults: payload.data.results, // Initialize searchResults as an empty array
-        searchCursor: "", // Initialize searchCursor as an empty string
+        searchResults: action.payload.data.results as AccountSummaryInterface[],
+        searchCursor: "",
       };
 
     case SEARCH_USERS_FAILURE:
-      // Payload will be []
-      return payload;
-
     case CLEAR_SEARCH_USERS:
-      // Payload will be []
-      return payload;
+      return action.payload as SearchUsersState;
 
     default:
-      return defaultUsers;
+      return state;
   }
 }

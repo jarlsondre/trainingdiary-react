@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import { addSet } from "../../actions/sets";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import "./newSet.css";
 
 type Props = {
@@ -12,18 +12,19 @@ export default function NewSet(props: Props) {
   const [weight, setWeight] = useState(0);
   const [repetitions, setRepetitions] = useState(0);
 
-  const unit = useSelector((state: any) => state.user.personalUser.unit_system);
+  const unit = useAppSelector((state) => state.user.personalUser.unit_system);
   const metric = unit === "kg";
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleAddSet = () => {
-    const data = {
-      exercise_unit: props.exercise_unit,
-      set_number: props.set_number,
-      weight: Math.round(weight * 10) / 10,
-      repetitions: repetitions,
-    };
-    dispatch(addSet(data));
+    dispatch(
+      addSet({
+        exercise_unit: props.exercise_unit,
+        set_number: props.set_number,
+        weight: Math.round(weight * 10) / 10,
+        repetitions: repetitions,
+      }),
+    );
   };
   return (
     <div className="new-set-container">
@@ -32,8 +33,8 @@ export default function NewSet(props: Props) {
         id="weight"
         name="weight"
         className="weight-input"
-        onClick={(event: any) => {
-          event.target.value = "";
+        onClick={(event) => {
+          (event.target as HTMLInputElement).value = "";
           setWeight(0);
         }}
         onChange={(event) => {
@@ -46,12 +47,12 @@ export default function NewSet(props: Props) {
         id="repetitions"
         name="repetitions"
         className="repetition-input"
-        onClick={(event: any) => {
-          event.target.value = "";
+        onClick={(event) => {
+          (event.target as HTMLInputElement).value = "";
           setRepetitions(0);
         }}
         onChange={(event) => {
-          setRepetitions(parseInt(event.target.value));
+          setRepetitions(parseInt(event.target.value, 10));
         }}
       ></input>
       <button className="add-set-button" onClick={handleAddSet}>

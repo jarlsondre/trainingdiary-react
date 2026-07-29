@@ -1,20 +1,17 @@
+import type { AnyAction } from "@reduxjs/toolkit";
+
 import { RETRIEVE_EXERCISES } from "../actions/types";
+import type { ExerciseInterface } from "../types/models";
 
-const initialState: any[] = [];
-
-type ActionType = {
-  type: string;
-  payload: any;
-};
+const initialState: ExerciseInterface[] = [];
 
 export default function exerciseReducer(
-  exercises = initialState,
-  action: ActionType
-) {
-  const { type, payload } = action;
-  switch (type) {
+  exercises: ExerciseInterface[] = initialState,
+  action: AnyAction,
+): ExerciseInterface[] {
+  switch (action.type) {
     case RETRIEVE_EXERCISES:
-      return payload;
+      return action.payload as ExerciseInterface[];
 
     default:
       return exercises;

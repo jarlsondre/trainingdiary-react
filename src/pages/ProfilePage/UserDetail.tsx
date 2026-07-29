@@ -1,20 +1,19 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchUserSessions } from "../../actions/sessions";
 import {
   fetchUser,
-  updateUser,
   followUser,
   unfollowUser,
+  updateUser,
 } from "../../actions/user";
-import Session, { SessionInterface } from "../SessionOverview/Session";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import type { UnitSystem } from "../../types/models";
+import Session from "../SessionOverview/Session";
 import "./userDetail.css";
 
-interface Props {}
-
-export default function UserDetail(props: Props) {
-  const dispatch = useDispatch();
+export default function UserDetail() {
+  const dispatch = useAppDispatch();
   const { username } = useParams() as { username: string };
 
   const [isEditingProfile, setIsEditingProfile] = React.useState(false);
@@ -22,37 +21,33 @@ export default function UserDetail(props: Props) {
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [bio, setBio] = React.useState("");
-  const [unitSystem, setUnitSystem] = React.useState("kg");
+  const [unitSystem, setUnitSystem] = React.useState<UnitSystem>("kg");
 
-  const previousProfileUsername = useSelector(
-    (state: any) => state.sessions.profileSessions.username
+  const previousProfileUsername = useAppSelector(
+    (state) => state.sessions.profileSessions.username,
   );
-  const userSessions = useSelector<any[]>(
-    (state: any) => state.sessions.profileSessions.results
+  const userSessions = useAppSelector(
+    (state) => state.sessions.profileSessions.results,
   );
-  let cursor = useSelector<any>(
-    (state: any) => state.sessions.profileSessions.cursor
+  const cursor = useAppSelector(
+    (state) => state.sessions.profileSessions.cursor,
   );
-  let moreToLoad = useSelector<any>(
-    (state: any) => state.sessions.profileSessions.moreToLoad
+  const moreToLoad = useAppSelector(
+    (state) => state.sessions.profileSessions.moreToLoad,
   );
 
   // Selecting the correct user
-  let userState: any = useSelector<any>((state: any) => state.user);
+  const userState = useAppSelector((state) => state.user);
   const isPersonalProfile = username === userState.personalUser.username;
-  let user = userState.otherUser;
-  if (isPersonalProfile) {
-    user = userState.personalUser;
-  }
+  const user = isPersonalProfile ? userState.personalUser : userState.otherUser;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original fetch-on-navigation timing; dependency cleanup belongs to a behavior pass
   React.useEffect(() => {
     const newUser = username !== previousProfileUsername;
     dispatch(fetchUser(username));
-    if (!cursor || newUser) {
-      cursor = "";
-    }
-    if ((userSessions as any).length === 0 || newUser) {
-      dispatch(fetchUserSessions(username, cursor, newUser));
+    const effectiveCursor = !cursor || newUser ? "" : cursor;
+    if (userSessions.length === 0 || newUser) {
+      dispatch(fetchUserSessions(username, effectiveCursor, newUser));
     }
   }, [dispatch, username]);
 
@@ -77,23 +72,26 @@ export default function UserDetail(props: Props) {
   };
 
   const handleSaveProfile = () => {
-    const id = user.id;
-    const updatedUser = {
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      bio: bio,
-      unit_system: unitSystem,
-    };
-    dispatch(updateUser(id, updatedUser));
+    if (user.id === undefined) return;
+    dispatch(
+      updateUser(user.id, {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        bio: bio,
+        unit_system: unitSystem,
+      }),
+    );
     setIsEditingProfile(!isEditingProfile);
   };
 
   const handleFollowProfile = () => {
+    if (user.id === undefined || user.username === undefined) return;
     dispatch(followUser(user.id, user.username));
   };
 
   const handleUnfollowProfile = () => {
+    if (user.id === undefined || user.username === undefined) return;
     dispatch(unfollowUser(user.id, user.username));
   };
 
@@ -135,7 +133,7 @@ export default function UserDetail(props: Props) {
                 type="radio"
                 value="kg"
                 checked={unitSystem === "kg"}
-                onChange={(e) => setUnitSystem(e.target.value)}
+                onChange={() => setUnitSystem("kg")}
               />
               kg
             </label>
@@ -144,7 +142,7 @@ export default function UserDetail(props: Props) {
                 type="radio"
                 value="lbs"
                 checked={unitSystem === "lbs"}
-                onChange={(e) => setUnitSystem(e.target.value)}
+                onChange={() => setUnitSystem("lbs")}
               />
               lbs
             </label>
@@ -163,7 +161,7 @@ export default function UserDetail(props: Props) {
               Edit profile
             </button>
           ) : userState.personalUser.following.some(
-              (userObject: any) => userObject.username === username
+              (userObject) => userObject.username === username,
             ) ? (
             <button className="unfollow-button" onClick={handleUnfollowProfile}>
               Unfollow
@@ -198,10 +196,10 @@ export default function UserDetail(props: Props) {
       )}
       <h2>Sessions</h2>
       <div className="session-list">
-        {(userSessions as any[]).length > 0 &&
-          (userSessions as any[]).map((session: SessionInterface, key) => {
+        {userSessions.length > 0 &&
+          userSessions.map((session) => {
             return (
-              <div key={key}>
+              <div key={session.id}>
                 <Session session={session} />
               </div>
             );

@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import "./passwordReset.css";
 import { resetPassword } from "../../actions/authentication";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 
 const PasswordReset: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
-  const isLoading = useSelector((state: any) => state.authentication.isLoading);
-  const resetPasswordFail = useSelector(
-    (state: any) => state.authentication.resetPasswordFail
+  const isLoading = useAppSelector((state) => state.authentication.isLoading);
+  const resetPasswordFail = useAppSelector(
+    (state) => state.authentication.resetPasswordFail,
   );
-  const resetPasswordSuccess = useSelector(
-    (state: any) => state.authentication.resetPasswordSuccess
+  const resetPasswordSuccess = useAppSelector(
+    (state) => state.authentication.resetPasswordSuccess,
   );
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

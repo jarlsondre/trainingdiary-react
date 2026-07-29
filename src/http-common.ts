@@ -1,53 +1,60 @@
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
-import store from "./store";
+import jwt_decode from "jwt-decode";
+
 import { AUTH_ERROR } from "./actions/types";
+import store from "./store";
+import type { AuthTokens } from "./types/models";
 
-export const baseURL = "https://api.jarlstrainingdiary.com";
-// export const baseURL = "http://localhost:8000";
+// API base URL: defaults to production so a build is always prod-safe. For local
+// dev, .env.development sets REACT_APP_API_URL=http://localhost:8000 (CRA loads it
+// automatically on `npm start`; production builds fall back to the URL below).
+export const baseURL =
+  process.env.REACT_APP_API_URL ?? "https://api.jarlstrainingdiary.com";
 
-let authToken = localStorage.getItem("authToken")
-  ? JSON.parse(localStorage.getItem("authToken")!)
-  : null;
+const readAuthToken = (): AuthTokens | null => {
+  const raw = localStorage.getItem("authToken");
+  return raw ? (JSON.parse(raw) as AuthTokens) : null;
+};
 
 const axiosInstance = axios.create({
   baseURL,
   headers: {
-    Authorization: `JWT ${authToken?.access}`,
+    Authorization: `JWT ${readAuthToken()?.access}`,
     "Content-type": "application/json",
   },
 });
 
 axiosInstance.interceptors.request.use(async (req) => {
   // always reading the token from localstorage
-  authToken = localStorage.getItem("authToken")
-    ? JSON.parse(localStorage.getItem("authToken")!)
-    : null;
+  const authToken = readAuthToken();
 
-  // if there is no token, we call AUTH_ERROR
-  if (!authToken) store.dispatch({ type: AUTH_ERROR, payload: null });
+  // Logged out: flag it and send the request without credentials. (This used
+  // to fall through into jwt_decode(undefined) and crash every request.)
+  if (!authToken) {
+    store.dispatch({ type: AUTH_ERROR, payload: null });
+    return req;
+  }
 
   // if there is a token, we want to check if it has expired and then
   // try to refresh it
-
-  const user: any = jwt_decode(authToken?.access);
+  const user = jwt_decode<{ exp: number }>(authToken.access);
   const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
 
   if (!isExpired) {
-    req.headers!.Authorization = `JWT ${authToken?.access}`;
+    if (req.headers) req.headers.Authorization = `JWT ${authToken.access}`;
     return req;
   }
 
   await axios
-    .post(`${baseURL}/api/token/refresh/`, {
+    .post<AuthTokens>(`${baseURL}/api/token/refresh/`, {
       refresh: authToken.refresh,
     })
-    .then((res: any) => {
+    .then((res) => {
       localStorage.setItem("authToken", JSON.stringify(res.data));
-      req.headers!.Authorization = `JWT ${res.data.access}`;
+      if (req.headers) req.headers.Authorization = `JWT ${res.data.access}`;
     })
-    .catch((err) => {
+    .catch(() => {
       console.log("refreshing token failed");
       store.dispatch({ type: AUTH_ERROR, payload: null });
     });

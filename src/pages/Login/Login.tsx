@@ -1,37 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
-import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/authentication";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 
 export default function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const isAuthenticated = useSelector(
-    (state: any) => state.authentication.isAuthenticated
+  const isAuthenticated = useAppSelector(
+    (state) => state.authentication.isAuthenticated,
   );
 
-  const isLoading = useSelector((state: any) => state.authentication.isLoading);
-  const loginFailed = useSelector(
-    (state: any) => state.authentication.loginFailed
+  const isLoading = useAppSelector((state) => state.authentication.isLoading);
+  const loginFailed = useAppSelector(
+    (state) => state.authentication.loginFailed,
   );
 
-  const handleLogin = async () => {
-    const data = {
-      username: username,
-      password: password,
-    };
-    dispatch(login(data));
+  const handleLogin = () => {
+    dispatch(login({ username: username, password: password }));
   };
 
   const handleReset = () => {
     navigate("/password-reset");
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: navigate is stable; matching the original redirect timing
   useEffect(() => {
     if (isAuthenticated) navigate("/");
   }, [isAuthenticated]);

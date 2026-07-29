@@ -1,60 +1,19 @@
-import { createStore, applyMiddleware } from "@reduxjs/toolkit";
-import rootReducer from "./reducers";
+import type { AnyAction } from "@reduxjs/toolkit";
+import { applyMiddleware, createStore } from "@reduxjs/toolkit";
+import { composeWithDevTools } from "redux-devtools-extension";
+import type { ThunkDispatch } from "redux-thunk";
 import thunk from "redux-thunk";
 
-import { composeWithDevTools } from "redux-devtools-extension";
-
-const initialState = {
-  sessions: {
-    sessionList: [],
-    selectedSession: {
-      isLoading: false,
-    },
-    moreToLoad: true,
-    cursor: "",
-    profileSessions: {
-      results: [],
-      moreToLoad: true,
-      cursor: "",
-      username: "",
-    },
-  },
-  exercises: [],
-  user: {
-    personalUser: {
-      updateUserFail: false,
-      updateUserLoading: false,
-      updateUserSuccess: false,
-      following: [],
-      followers: [],
-    },
-    otherUser: {
-      fetchUserLoading: false,
-      fetchUserFail: false,
-      fetchUserSuccess: false,
-    },
-  },
-  searchUsers: {
-    searchResults: [], // Initialize searchResults as an empty array
-    searchCursor: "", // Initialize searchCursor as an empty string
-  },
-  authentication: {
-    isAuthenticated: false,
-    isLoading: false,
-    loginFailed: false,
-    resetPasswordSuccess: false,
-    resetPasswordFail: false,
-    confirmPasswordSuccess: false,
-    confirmPasswordFail: false,
-  },
-};
+import rootReducer from "./reducers";
 
 const middleware = [thunk];
 
 const store = createStore(
   rootReducer,
-  initialState,
-  composeWithDevTools(applyMiddleware(...middleware))
+  composeWithDevTools(applyMiddleware(...middleware)),
 );
+
+export type RootState = ReturnType<typeof rootReducer>;
+export type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>;
 
 export default store;

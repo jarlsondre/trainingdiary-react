@@ -1,7 +1,8 @@
-import { RETRIEVE_EXERCISES } from "./types";
 import exerciseService from "../services/exercise.service";
+import type { AppDispatch } from "../store";
+import { RETRIEVE_EXERCISES } from "./types";
 
-export const retrieveExercises = () => async (dispatch: any) => {
+export const retrieveExercises = () => async (dispatch: AppDispatch) => {
   try {
     const res = await exerciseService.getExercises();
 

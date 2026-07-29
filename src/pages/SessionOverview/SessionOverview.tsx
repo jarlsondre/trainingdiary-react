@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import "./sessionOverview.css";
-import Session from "./Session";
-import { SessionInterface } from "./Session";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { addSession, retrieveSessions } from "../../actions/sessions";
 import { CLEAR_SEARCH_USERS } from "../../actions/types";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import type { SessionInterface } from "../../types/models";
+import Session from "./Session";
 
 const compareDates = (
   firstSession: SessionInterface,
-  secondSession: SessionInterface
+  secondSession: SessionInterface,
 ) => {
   return (
     new Date(secondSession.datetime).getTime() -
@@ -19,37 +19,35 @@ const compareDates = (
 
 export default function SessionOverview() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [filterPersonal, setFilterPersonal] = useState<boolean>(false);
 
-  const isAuthenticated = useSelector<any>(
-    (state) => state.authentication.isAuthenticated
+  const isAuthenticated = useAppSelector(
+    (state) => state.authentication.isAuthenticated,
   );
-  const reduxSessions = useSelector<any[]>((state: any) =>
-    state.sessions.sessionList.sort(compareDates)
+  const reduxSessions = useAppSelector((state) =>
+    [...state.sessions.sessionList].sort(compareDates),
   );
 
   // Pagination
-  const cursor = useSelector<any>((state: any) => state.sessions.cursor);
-  const moreToLoad = useSelector<any>(
-    (state: any) => state.sessions.moreToLoad
-  );
+  const cursor = useAppSelector((state) => state.sessions.cursor);
+  const moreToLoad = useAppSelector((state) => state.sessions.moreToLoad);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original mount-only fetch; dependency cleanup belongs to a behavior pass
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    if ((reduxSessions as any).length == 0)
+    if (reduxSessions.length === 0)
       dispatch(retrieveSessions(cursor, filterPersonal));
     dispatch({
       type: CLEAR_SEARCH_USERS,
       payload: {
-        searchResults: [], // Initialize searchResults as an empty array
-        searchCursor: "", // Initialize searchCursor as an empty string
+        searchResults: [],
+        searchCursor: "",
       },
     });
   }, [dispatch]);
 
   const handleNewSession = () => {
-    const data = {};
-    dispatch(addSession(data));
+    dispatch(addSession({}));
   };
 
   const handleLoadMore = () => {
@@ -88,10 +86,10 @@ export default function SessionOverview() {
         <button onClick={handleNewSession} className="new-session-button">
           New Session
         </button>
-        {(reduxSessions as any[]).length > 0 &&
-          (reduxSessions as any[]).map((session: SessionInterface, key) => {
+        {reduxSessions.length > 0 &&
+          reduxSessions.map((session) => {
             return (
-              <div key={key}>
+              <div key={session.id}>
                 <Session session={session} />
               </div>
             );

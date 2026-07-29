@@ -1,15 +1,15 @@
 import "./App.css";
-import SessionOverview from "./pages/SessionOverview/SessionOverview";
 
-import { Routes, Route } from "react-router-dom";
-import DetailOverview from "./pages/SessionDetail/DetailOverview";
-import Login from "./pages/Login/Login";
+import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
-import Calculator from "./pages/Calculator/Calculator";
-import Search from "./pages/Search/Search";
-import UserDetail from "./pages/ProfilePage/UserDetail";
 import PasswordReset from "./components/passwordReset/PasswordReset";
 import PasswordResetConfirm from "./components/passwordReset/PasswordResetConfirm";
+import Calculator from "./pages/Calculator/Calculator";
+import Login from "./pages/Login/Login";
+import UserDetail from "./pages/ProfilePage/UserDetail";
+import Search from "./pages/Search/Search";
+import DetailOverview from "./pages/SessionDetail/DetailOverview";
+import SessionOverview from "./pages/SessionOverview/SessionOverview";
 
 function App() {
   return (

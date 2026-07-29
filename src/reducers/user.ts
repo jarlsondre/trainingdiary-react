@@ -1,3 +1,5 @@
+import type { AnyAction } from "@reduxjs/toolkit";
+
 import {
   FETCH_USER_FAIL,
   FETCH_USER_REQUEST,
@@ -13,17 +15,54 @@ import {
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
 } from "../actions/types";
+import type {
+  AccountInterface,
+  AccountSummaryInterface,
+} from "../types/models";
 
-type ActionType = {
-  type: string;
-  payload: any;
+/** The logged-in user's account, plus flags for profile updates. */
+export type PersonalUserState = Partial<AccountInterface> & {
+  updateUserFail: boolean;
+  updateUserLoading: boolean;
+  updateUserSuccess: boolean;
+  following: AccountSummaryInterface[];
+  followers: AccountSummaryInterface[];
 };
 
-export default function userReducer(user: any = {}, action: ActionType) {
-  const { type, payload } = action;
-  switch (type) {
+/** The account whose profile page is being viewed, plus fetch flags. */
+export type OtherUserState = Partial<AccountInterface> & {
+  fetchUserLoading: boolean;
+  fetchUserFail: boolean;
+  fetchUserSuccess: boolean;
+};
+
+export interface UserState {
+  personalUser: PersonalUserState;
+  otherUser: OtherUserState;
+}
+
+const initialState: UserState = {
+  personalUser: {
+    updateUserFail: false,
+    updateUserLoading: false,
+    updateUserSuccess: false,
+    following: [],
+    followers: [],
+  },
+  otherUser: {
+    fetchUserLoading: false,
+    fetchUserFail: false,
+    fetchUserSuccess: false,
+  },
+};
+
+export default function userReducer(
+  user: UserState = initialState,
+  action: AnyAction,
+): UserState {
+  switch (action.type) {
     case RETRIEVE_USER:
-      return { ...user, personalUser: payload };
+      return { ...user, personalUser: action.payload as PersonalUserState };
 
     case FETCH_USER_FAIL:
       return {
@@ -52,7 +91,7 @@ export default function userReducer(user: any = {}, action: ActionType) {
           fetchUserFail: false,
           fetchUserLoading: false,
           fetchUserSuccess: true,
-          ...payload,
+          ...(action.payload as AccountInterface),
         },
       };
 
@@ -75,7 +114,7 @@ export default function userReducer(user: any = {}, action: ActionType) {
           updateUserFail: false,
           updateUserLoading: false,
           updateUserSuccess: true,
-          ...payload,
+          ...(action.payload as AccountInterface),
         },
       };
 
@@ -96,7 +135,8 @@ export default function userReducer(user: any = {}, action: ActionType) {
     case FOLLOW_USER_REQUEST:
       return user;
 
-    case FOLLOW_USER_SUCCESS:
+    case FOLLOW_USER_SUCCESS: {
+      const payload = action.payload as AccountSummaryInterface;
       return {
         ...user,
         personalUser: {
@@ -106,31 +146,34 @@ export default function userReducer(user: any = {}, action: ActionType) {
         otherUser: {
           ...user.otherUser,
           followers: [
-            ...user.otherUser.followers,
+            ...(user.otherUser.followers ?? []),
             {
-              id: user.personalUser.id,
-              username: user.personalUser.username,
+              id: user.personalUser.id as number,
+              username: user.personalUser.username as string,
             },
           ],
         },
       };
+    }
 
-    case UNFOLLOW_USER_SUCCESS:
+    case UNFOLLOW_USER_SUCCESS: {
+      const payload = action.payload as AccountSummaryInterface;
       return {
         ...user,
         personalUser: {
           ...user.personalUser,
           following: user.personalUser.following.filter(
-            (following: any) => following.id !== payload.id
+            (following) => following.id !== payload.id,
           ),
         },
         otherUser: {
           ...user.otherUser,
-          followers: user.otherUser.followers.filter(
-            (follower: any) => follower.id !== user.personalUser.id
+          followers: (user.otherUser.followers ?? []).filter(
+            (follower) => follower.id !== user.personalUser.id,
           ),
         },
       };
+    }
 
     default:
       return user;

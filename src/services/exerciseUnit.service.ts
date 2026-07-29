@@ -1,16 +1,25 @@
 import http from "../http-common";
+import type { ExerciseUnitInterface } from "../types/models";
+
+export interface NewExerciseUnit {
+  session: number;
+  exercise: number;
+}
 
 class ExerciseUnitDataService {
-  addExerciseUnit(data: any) {
-    return http.post("/exercise-unit/", data);
+  addExerciseUnit(data: NewExerciseUnit) {
+    return http.post<ExerciseUnitInterface>("/exercise-unit/", data);
   }
 
-  deleteExerciseUnit(id: any) {
+  deleteExerciseUnit(id: number) {
     return http.delete("/exercise-unit/" + id + "/");
   }
 
-  updateExerciseUnit(id: any, data: any) {
-    return http.patch("/exercise-unit/" + id + "/", data);
+  updateExerciseUnit(id: number, data: Partial<ExerciseUnitInterface>) {
+    return http.patch<ExerciseUnitInterface>(
+      "/exercise-unit/" + id + "/",
+      data,
+    );
   }
 }
 

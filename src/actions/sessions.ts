@@ -1,3 +1,6 @@
+import SessionDataService from "../services/session.service";
+import type { AppDispatch } from "../store";
+import type { SessionInterface } from "../types/models";
 import {
   ADD_SESSION_FAIL,
   ADD_SESSION_REQUEST,
@@ -16,20 +19,15 @@ import {
   UPDATE_SESSION_REQUEST,
   UPDATE_SESSION_SUCCESS,
 } from "./types";
-import SessionDataService from "../services/session.service";
 
 export const retrieveSessions =
-  (
-    cursor: any,
-    filterPersonal: boolean = false,
-    replaceStore: boolean = false
-  ) =>
-  async (dispatch: any) => {
+  (cursor: string | null, filterPersonal = false, replaceStore = false) =>
+  async (dispatch: AppDispatch) => {
     try {
-      if (replaceStore) cursor = "";
+      const effectiveCursor = replaceStore ? "" : cursor;
       const res = await SessionDataService.getAll(
-        (cursor = cursor),
-        (filterPersonal = filterPersonal)
+        effectiveCursor,
+        filterPersonal,
       );
 
       dispatch({
@@ -43,34 +41,33 @@ export const retrieveSessions =
   };
 
 export const retrieveSingleSession =
-  (id: number, sessionList: any) => async (dispatch: any) => {
+  (id: number) => async (dispatch: AppDispatch) => {
     dispatch({
       type: RETRIEVE_SINGLE_SESSION_REQUEST,
       payload: null,
     });
 
-    await SessionDataService.getOne(id)
-      .then((res: any) => {
-        dispatch({
-          type: RETRIEVE_SINGLE_SESSION_SUCCESS,
-          payload: res.data,
-        });
-      })
-      .catch((err) => {
-        dispatch({
-          type: RETRIEVE_SINGLE_SESSION_FAIL,
-          payload: null,
-        });
+    try {
+      const res = await SessionDataService.getOne(id);
+      dispatch({
+        type: RETRIEVE_SINGLE_SESSION_SUCCESS,
+        payload: res.data,
       });
+    } catch (_err) {
+      dispatch({
+        type: RETRIEVE_SINGLE_SESSION_FAIL,
+        payload: null,
+      });
+    }
   };
 
 export const fetchUserSessions =
-  (username: string, cursor: any, replaceStore: boolean = false) =>
-  async (dispatch: any) => {
+  (username: string, cursor: string | null, replaceStore = false) =>
+  async (dispatch: AppDispatch) => {
     try {
       const response = await SessionDataService.getUserSessions(
         username,
-        cursor
+        cursor,
       );
       dispatch({
         type: FETCH_USER_SESSIONS,
@@ -84,32 +81,32 @@ export const fetchUserSessions =
   };
 
 export const updateProfileUsername =
-  (username: string) => async (dispatch: any) => {
+  (username: string) => async (dispatch: AppDispatch) => {
     dispatch({ type: UPDATE_PROFILE_USERNAME, payload: username });
   };
 
-export const addSession = (data: any) => async (dispatch: any) => {
-  dispatch({
-    type: ADD_SESSION_REQUEST,
-    payload: data,
-  });
+export const addSession =
+  (data: Partial<SessionInterface>) => async (dispatch: AppDispatch) => {
+    dispatch({
+      type: ADD_SESSION_REQUEST,
+      payload: data,
+    });
 
-  await SessionDataService.addSession(data)
-    .then((res: any) => {
+    try {
+      const res = await SessionDataService.addSession(data);
       dispatch({
         type: ADD_SESSION_SUCCESS,
         payload: res.data,
       });
-    })
-    .catch((err) => {
+    } catch (_err) {
       dispatch({
         type: ADD_SESSION_FAIL,
         payload: null,
       });
-    });
-};
+    }
+  };
 
-export const deleteSession = (id: number) => async (dispatch: any) => {
+export const deleteSession = (id: number) => async (dispatch: AppDispatch) => {
   try {
     await SessionDataService.deleteSession(id);
 
@@ -122,43 +119,42 @@ export const deleteSession = (id: number) => async (dispatch: any) => {
   }
 };
 
-export const likeSession = (id: number) => async (dispatch: any) => {
+export const likeSession = (id: number) => async (dispatch: AppDispatch) => {
   dispatch({
     type: LIKE_SESSION_REQUEST,
     payload: id,
   });
-  await SessionDataService.likeSession(id)
-    .then((res: any) => {
-      dispatch({
-        type: LIKE_SESSION_SUCCESS,
-        payload: res.data,
-      });
-    })
-    .catch((err) => {
-      dispatch({
-        type: LIKE_SESSION_FAIL,
-        payload: null,
-      });
+  try {
+    const res = await SessionDataService.likeSession(id);
+    dispatch({
+      type: LIKE_SESSION_SUCCESS,
+      payload: res.data,
     });
+  } catch (_err) {
+    dispatch({
+      type: LIKE_SESSION_FAIL,
+      payload: null,
+    });
+  }
 };
 
 export const updateSession =
-  (id: number, data: any) => async (dispatch: any) => {
+  (id: number, data: Partial<SessionInterface>) =>
+  async (dispatch: AppDispatch) => {
     dispatch({
       type: UPDATE_SESSION_REQUEST,
       payload: { id: id, data: data },
     });
-    await SessionDataService.updateSession(id, data)
-      .then((res: any) => {
-        dispatch({
-          type: UPDATE_SESSION_SUCCESS,
-          payload: res.data,
-        });
-      })
-      .catch((err) => {
-        dispatch({
-          type: UPDATE_SESSION_FAIL,
-          payload: null,
-        });
+    try {
+      const res = await SessionDataService.updateSession(id, data);
+      dispatch({
+        type: UPDATE_SESSION_SUCCESS,
+        payload: res.data,
       });
+    } catch (_err) {
+      dispatch({
+        type: UPDATE_SESSION_FAIL,
+        payload: null,
+      });
+    }
   };

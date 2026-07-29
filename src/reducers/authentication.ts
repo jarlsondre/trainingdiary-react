@@ -1,30 +1,44 @@
+import type { AnyAction } from "@reduxjs/toolkit";
+
 import {
+  AUTH_ERROR,
+  CONFIRM_PASSWORD_FAIL,
+  CONFIRM_PASSWORD_REQUEST,
+  CONFIRM_PASSWORD_SUCCESS,
   LOGIN_FAIL,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
-  AUTH_ERROR,
   LOGOUT,
-  RESET_PASSWORD_REQUEST,
-  CONFIRM_PASSWORD_REQUEST,
-  CONFIRM_PASSWORD_SUCCESS,
-  RESET_PASSWORD_SUCCESS,
-  CONFIRM_PASSWORD_FAIL,
   RESET_PASSWORD_FAIL,
+  RESET_PASSWORD_REQUEST,
+  RESET_PASSWORD_SUCCESS,
 } from "../actions/types";
 
-const initialState: any = {
+export interface AuthenticationState {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  loginFailed: boolean;
+  resetPasswordSuccess: boolean;
+  resetPasswordFail: boolean;
+  confirmPasswordSuccess: boolean;
+  confirmPasswordFail: boolean;
+}
+
+const initialState: AuthenticationState = {
   isAuthenticated: false,
   isLoading: false,
+  loginFailed: false,
+  resetPasswordSuccess: false,
+  resetPasswordFail: false,
+  confirmPasswordSuccess: false,
+  confirmPasswordFail: false,
 };
 
-type ActionType = {
-  type: string;
-  payload: any;
-};
-
-export default function authReducer(state = initialState, action: ActionType) {
-  const { type } = action;
-  switch (type) {
+export default function authReducer(
+  state: AuthenticationState = initialState,
+  action: AnyAction,
+): AuthenticationState {
+  switch (action.type) {
     case LOGIN_REQUEST:
       return {
         ...state,
@@ -39,6 +53,7 @@ export default function authReducer(state = initialState, action: ActionType) {
         isAuthenticated: true,
         loginFailed: false,
       };
+
     case AUTH_ERROR:
     case LOGOUT:
       return {

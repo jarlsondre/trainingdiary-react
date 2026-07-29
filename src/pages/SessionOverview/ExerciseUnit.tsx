@@ -1,6 +1,5 @@
-import React from "react";
-import { ExerciseUnitInterface } from "./Session";
-import Set from "./Set";
+import type { ExerciseUnitInterface } from "../../types/models";
+import SetItem from "./Set";
 import "./exerciseUnit.css";
 
 type Props = {
@@ -23,9 +22,9 @@ export default function ExerciseUnit(props: Props) {
       <div>
         {props.exerciseUnit.set.map((set, key) => {
           return (
-            <span key={key}>
+            <span key={set.id}>
               {key > 0 && ", "}
-              <Set set={set} key={key} />
+              <SetItem set={set} />
             </span>
           );
         })}

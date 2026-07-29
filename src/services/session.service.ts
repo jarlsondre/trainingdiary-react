@@ -1,25 +1,28 @@
 import http from "../http-common";
+import type { CursorPage, SessionInterface } from "../types/models";
 
 class SessionDataService {
-  getAll(cursor: any, filterPersonal: boolean = false) {
-    return http.get(
+  getAll(cursor: string | null, filterPersonal = false) {
+    return http.get<CursorPage<SessionInterface>>(
       "/session/?cursor=" +
         cursor +
         "&filter_personal=" +
-        filterPersonal.toString()
+        filterPersonal.toString(),
     );
   }
 
-  getUserSessions(username: string, cursor: any) {
-    return http.get(`/sessions/user/${username}/` + "?cursor=" + cursor);
+  getUserSessions(username: string, cursor: string | null) {
+    return http.get<CursorPage<SessionInterface>>(
+      `/sessions/user/${username}/?cursor=` + cursor,
+    );
   }
 
   getOne(id: number) {
-    return http.get("/session/" + id + "/");
+    return http.get<SessionInterface>("/session/" + id + "/");
   }
 
-  addSession(data: any) {
-    return http.post("/session/", data);
+  addSession(data: Partial<SessionInterface>) {
+    return http.post<SessionInterface>("/session/", data);
   }
 
   deleteSession(id: number) {
@@ -27,11 +30,11 @@ class SessionDataService {
   }
 
   likeSession(id: number) {
-    return http.post("/session/" + id + "/like-session/");
+    return http.post<SessionInterface>("/session/" + id + "/like-session/");
   }
 
-  updateSession(id: number, data: any) {
-    return http.patch("/session/" + id + "/", data);
+  updateSession(id: number, data: Partial<SessionInterface>) {
+    return http.patch<SessionInterface>("/session/" + id + "/", data);
   }
 }
 

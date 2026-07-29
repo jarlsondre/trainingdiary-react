@@ -1,30 +1,28 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import type React from "react";
+import { useState } from "react";
 import "./search.css";
 import { useNavigate } from "react-router-dom";
 import { searchUsers } from "../../actions/searchUsers";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 
-interface Props {}
-
-export default function Search(props: Props) {
-  const {} = props;
-  const users = useSelector((state: any) => state.searchUsers.searchResults);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Step 1: State to hold the search input value
+export default function Search() {
+  const users = useAppSelector((state) => state.searchUsers.searchResults);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleUserClick = (username: string) => {
     navigate(`/user/${username}`);
   };
 
   const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setSearchTerm(event.target.value); // Step 2: Update the search input value
+    setSearchTerm(event.target.value);
   };
 
   const handleSearch = () => {
-    dispatch(searchUsers("", searchTerm)); // Step 3: Pass the search input value to searchUsers
+    dispatch(searchUsers("", searchTerm));
   };
 
   return (
@@ -40,9 +38,9 @@ export default function Search(props: Props) {
       <h1>Search Results</h1>
       <div>
         {users.length > 0
-          ? users.map((user: any, key: number) => (
+          ? users.map((user) => (
               <div
-                key={key}
+                key={user.id}
                 className="user-frame"
                 onClick={() => handleUserClick(user.username)}
               >

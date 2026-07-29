@@ -1,3 +1,6 @@
+import userService from "../services/user.service";
+import type { AppDispatch } from "../store";
+import type { AccountInterface } from "../types/models";
 import {
   FETCH_USER_FAIL,
   FETCH_USER_REQUEST,
@@ -12,50 +15,52 @@ import {
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
 } from "./types";
-import userService from "../services/user.service";
 
-export const fetchUser = (username: string) => async (dispatch: any) => {
-  dispatch({
-    type: FETCH_USER_REQUEST,
-    payload: null,
-  });
-  try {
-    const result: any = await userService.fetchUser(username);
+export const fetchUser =
+  (username: string) => async (dispatch: AppDispatch) => {
     dispatch({
-      type: FETCH_USER_SUCCESS,
-      payload: result.data,
-    });
-  } catch (error) {
-    dispatch({
-      type: FETCH_USER_FAIL,
+      type: FETCH_USER_REQUEST,
       payload: null,
     });
-    console.log(error);
-  }
-};
+    try {
+      const result = await userService.fetchUser(username);
+      dispatch({
+        type: FETCH_USER_SUCCESS,
+        payload: result.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: FETCH_USER_FAIL,
+        payload: null,
+      });
+      console.log(error);
+    }
+  };
 
-export const updateUser = (id: string, data: any) => async (dispatch: any) => {
-  dispatch({
-    type: UPDATE_USER_REQUEST,
-    payload: null,
-  });
-  try {
-    const result: any = await userService.updateUser(id, data);
+export const updateUser =
+  (id: number, data: Partial<AccountInterface>) =>
+  async (dispatch: AppDispatch) => {
     dispatch({
-      type: UPDATE_USER_SUCCESS,
-      payload: result.data,
-    });
-  } catch (error) {
-    dispatch({
-      type: UPDATE_USER_FAIL,
+      type: UPDATE_USER_REQUEST,
       payload: null,
     });
-    console.log(error);
-  }
-};
+    try {
+      const result = await userService.updateUser(id, data);
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: result.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: UPDATE_USER_FAIL,
+        payload: null,
+      });
+      console.log(error);
+    }
+  };
 
 export const followUser =
-  (id: string, username: string) => async (dispatch: any) => {
+  (id: number, username: string) => async (dispatch: AppDispatch) => {
     dispatch({
       type: FOLLOW_USER_REQUEST,
       payload: null,
@@ -76,7 +81,7 @@ export const followUser =
   };
 
 export const unfollowUser =
-  (id: string, username: string) => async (dispatch: any) => {
+  (id: number, username: string) => async (dispatch: AppDispatch) => {
     dispatch({
       type: UNFOLLOW_USER_REQUEST,
       payload: null,

@@ -1,10 +1,9 @@
 import { combineReducers } from "@reduxjs/toolkit";
-
-import sessions from "./sessions";
-import exercises from "./exercises";
 import authentication from "./authentication";
-import user from "./user";
+import exercises from "./exercises";
 import searchUsers from "./searchUsers";
+import sessions from "./sessions";
+import user from "./user";
 
 export default combineReducers({
   sessions,

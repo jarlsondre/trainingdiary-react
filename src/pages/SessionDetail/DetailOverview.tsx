@@ -1,88 +1,101 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
+import { retrieveExercises } from "../../actions/exercises";
+import { addExerciseUnit } from "../../actions/exerciseUnits";
 import {
   deleteSession,
   retrieveSingleSession,
   updateSession,
 } from "../../actions/sessions";
-import { addExerciseUnit } from "../../actions/exerciseUnits";
-import { retrieveExercises } from "../../actions/exercises";
-import { connect, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import {
-  compareExerciseUnitIds,
   compareExerciseNames,
+  compareExerciseUnitIds,
   formatDate,
 } from "../../utils/utils";
 import SessionComment from "./SessionComment";
 
-function DetailOverview(props: any) {
-  let { sessionId } = useParams();
+export default function DetailOverview() {
+  const { sessionId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  // Redux variables
+  const selectedSession = useAppSelector(
+    (state) => state.sessions.selectedSession,
+  );
+  const isLoading = useAppSelector(
+    (state) => state.sessions.selectedSession.isLoading,
+  );
+  const exercises = useAppSelector((state) => state.exercises);
+  const sessionUsername = useAppSelector(
+    (state) => state.sessions.selectedSession.username,
+  );
+  const personalUsername = useAppSelector(
+    (state) => state.user.personalUser.username,
+  );
+  const comments = useAppSelector(
+    (state) => state.sessions.selectedSession.comments,
+  );
 
   // State variables
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
   const [keyValue, setKeyValue] = useState<number>(0);
-  const [description, setDescription] = useState<string>(
-    props.selectedSession.description
+  const [description, setDescription] = useState<string | undefined>(
+    selectedSession.description,
   );
-  const [date, setDate] = useState<string>(props.selectedSession.datetime);
+  const [date, setDate] = useState<string | undefined>(
+    selectedSession.datetime,
+  );
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  // Redux variables
-  const sessionList = useSelector((state: any) => state.sessions.sessionList);
-  const sessionUsername = useSelector(
-    (state: any) => state.sessions.selectedSession.username
-  );
-  const personalUsername = useSelector(
-    (state: any) => state.user.personalUser.username
-  );
-  const comments = useSelector(
-    (state: any) => state.sessions.selectedSession.comments
-  );
   const maxLineCount = 4;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original fetch-on-load timing; dependency cleanup belongs to a behavior pass
   useEffect(() => {
     if (
-      (!props.selectedSession.id ||
-        props.selectedSession.id !== Number(sessionId)) &&
-      !props.isLoading
+      (!selectedSession.id || selectedSession.id !== Number(sessionId)) &&
+      !isLoading
     )
-      props.onRetrieveSingleSession(Number(sessionId), sessionList);
-    if (props.exercises.length === 0) props.onRetrieveExercises();
+      dispatch(retrieveSingleSession(Number(sessionId)));
+    if (exercises.length === 0) dispatch(retrieveExercises());
     else {
-      const sortedExercises = [...props.exercises].sort(compareExerciseNames);
-      setSelectedExercise(sortedExercises[0]?.id);
+      const sortedExercises = [...exercises].sort(compareExerciseNames);
+      setSelectedExercise(sortedExercises[0]?.id ?? null);
     }
-  }, [props.isLoading, props.exercises]);
+  }, [isLoading, exercises]);
 
   // Handle buttons
   const handleAddExercise = () => {
-    const data = {
-      exercise: selectedExercise,
-      session: sessionId,
-    };
-    props.onAddExerciseUnit(data);
+    if (selectedExercise === null) return;
+    dispatch(
+      addExerciseUnit({
+        exercise: selectedExercise,
+        session: Number(sessionId),
+      }),
+    );
     setKeyValue(keyValue + (1 % 5));
   };
 
   const handleDelete = () => {
-    props.onDeleteSession(Number(sessionId));
+    dispatch(deleteSession(Number(sessionId)));
     navigate("/");
   };
 
   const handleSave = () => {
-    let newDate;
+    let newDate: Date;
     if (date) newDate = new Date(date);
     else newDate = new Date();
     if (newDate.getHours() === 0) newDate.setHours(12);
-    const data = {
-      datetime: newDate.toISOString(),
-      description: description,
-    };
-    props.onUpdateSession(Number(sessionId), data);
+    dispatch(
+      updateSession(Number(sessionId), {
+        datetime: newDate.toISOString(),
+        description: description,
+      }),
+    );
     toggleIsEditingInfo();
   };
 
@@ -103,17 +116,17 @@ function DetailOverview(props: any) {
     return <div key={index}>{line}</div>;
   };
 
-  const descriptionLines = props.selectedSession.description
-    ? props.selectedSession.description.split("\n")
-    : "";
+  const descriptionLines = selectedSession.description
+    ? selectedSession.description.split("\n")
+    : [];
 
   let datetimeString = "";
-  if (props.selectedSession.datetime) {
-    datetimeString = props.selectedSession.datetime.substring(0, 10);
+  if (selectedSession.datetime) {
+    datetimeString = selectedSession.datetime.substring(0, 10);
   }
-  let editable = sessionUsername === personalUsername;
+  const editable = sessionUsername === personalUsername;
 
-  if (props.isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
   return (
     <div key={keyValue} className="detail-overview-container">
       <div className="detail-overview-inner-container">
@@ -123,7 +136,7 @@ function DetailOverview(props: any) {
               <button className="delete-session-button" onClick={handleDelete}>
                 Delete Session
               </button>
-              <div>User: {props.selectedSession.username}</div>
+              <div>User: {selectedSession.username}</div>
               <input
                 type="date"
                 id="session-date"
@@ -139,7 +152,7 @@ function DetailOverview(props: any) {
                   rows={3}
                   cols={40}
                   id="description"
-                  defaultValue={props.selectedSession.description}
+                  defaultValue={selectedSession.description}
                   onChange={(event) => {
                     setDescription(event.target.value);
                   }}
@@ -160,19 +173,22 @@ function DetailOverview(props: any) {
                 </button>
               )}
               <div>
-                <b>User</b>: {props.selectedSession.username}
+                <b>User</b>: {selectedSession.username}
               </div>
               <div>
-                <b>Date</b>: {formatDate(props.selectedSession.datetime)}
+                <b>Date</b>:{" "}
+                {selectedSession.datetime
+                  ? formatDate(selectedSession.datetime)
+                  : ""}
               </div>
               <div className="description-detail-container">
-                {descriptionLines !== "" &&
+                {descriptionLines.length > 0 &&
                   descriptionLines
                     .slice(
                       0,
                       showFullDescription
                         ? descriptionLines.length
-                        : maxLineCount
+                        : maxLineCount,
                     )
                     .map(renderDescriptionLine)}
                 {descriptionLines.length > maxLineCount && (
@@ -184,40 +200,38 @@ function DetailOverview(props: any) {
             </div>
           )}
         </div>
-        {props.selectedSession.exercise_unit &&
-        props.selectedSession.exercise_unit.length > 0
-          ? props.selectedSession.exercise_unit
+        {selectedSession.exercise_unit &&
+        selectedSession.exercise_unit.length > 0
+          ? [...selectedSession.exercise_unit]
               .sort(compareExerciseUnitIds)
-              .map((exerciseUnit: any, key: number) => {
+              .map((exerciseUnit) => {
                 return (
                   <ExerciseUnitDetail
-                    key={key}
+                    key={exerciseUnit.id}
                     exerciseUnit={exerciseUnit}
                     editable={editable}
                   />
                 );
               })
           : editable
-          ? ""
-          : "No exercises yet"}
+            ? ""
+            : "No exercises yet"}
         {editable && (
           <div className="add-exercise-container">
             <select
               name="exercises"
               id="exercises"
               onChange={(event) => {
-                setSelectedExercise(parseInt(event.target.value));
+                setSelectedExercise(parseInt(event.target.value, 10));
               }}
             >
-              {props.exercises
-                .sort(compareExerciseNames)
-                .map((exercise: any, key: number) => {
-                  return (
-                    <option key={key} value={exercise.id}>
-                      {exercise.name}
-                    </option>
-                  );
-                })}
+              {[...exercises].sort(compareExerciseNames).map((exercise) => {
+                return (
+                  <option key={exercise.id} value={exercise.id}>
+                    {exercise.name}
+                  </option>
+                );
+              })}
             </select>
             <button className="add-exercise-button" onClick={handleAddExercise}>
               Add Exercise
@@ -229,7 +243,7 @@ function DetailOverview(props: any) {
             <span className="comment-section-header">
               {comments.length} comments
             </span>
-            {comments.map((comment: any) => {
+            {comments.map((comment) => {
               return (
                 <SessionComment
                   key={comment.id}
@@ -245,34 +259,3 @@ function DetailOverview(props: any) {
     </div>
   );
 }
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    onRetrieveSingleSession: (id: number, sessionList: any) => {
-      dispatch(retrieveSingleSession(id, sessionList));
-    },
-    onRetrieveExercises: () => {
-      dispatch(retrieveExercises());
-    },
-    onAddExerciseUnit: (data: any) => {
-      dispatch(addExerciseUnit(data));
-    },
-    onDeleteSession: (id: number) => {
-      dispatch(deleteSession(id));
-    },
-    onUpdateSession: (id: number, data: any) => {
-      dispatch(updateSession(id, data));
-    },
-  };
-};
-
-const mapStateToProps = (state: any) => {
-  return {
-    selectedSession: state.sessions.selectedSession,
-    isLoading: state.sessions.selectedSession.isLoading,
-    exercises: state.exercises,
-    user: state.user,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DetailOverview);

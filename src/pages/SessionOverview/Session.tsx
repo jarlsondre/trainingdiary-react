@@ -1,70 +1,36 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import type React from "react";
 import { useNavigate } from "react-router-dom";
+import { likeSession } from "../../actions/sessions";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import type { SessionInterface } from "../../types/models";
 import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
-import { likeSession } from "../../actions/sessions";
 
 import { compareExerciseUnitIds, months } from "../../utils/utils";
-
-export interface SetInterface {
-  id: number;
-  weight: number;
-  repetitions: number;
-  set_number: number;
-  exercise_unit: number;
-}
-
-export interface ExerciseUnitInterface {
-  id: number;
-  set: SetInterface[];
-  exercise_name: string;
-  session: number;
-  exercise: number;
-  comment: string | null;
-}
-
-export interface SessionInterface {
-  id: number;
-  exercise_unit: ExerciseUnitInterface[];
-  description: string;
-  datetime: string;
-  user: number;
-  username: string;
-  liked_by_usernames: string[];
-  comments: any[];
-}
 
 type Props = {
   session: SessionInterface;
 };
 
 export default function Session(props: Props) {
-  let date = new Date(props.session.datetime);
-  const personalUser = useSelector((state: any) => state.user.personalUser);
-  const dispatch = useDispatch();
+  const date = new Date(props.session.datetime);
+  const personalUser = useAppSelector((state) => state.user.personalUser);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  function getDateString(date: Date) {
-    let year = date.getFullYear();
-    let monthNum: number = date.getMonth();
-    let month = months[monthNum];
-    let dayNumber: number = date.getDate();
-    let datestring: string =
-      month + " " + dayNumber.toString() + ", " + year.toString();
-    return datestring;
+  function getDateString(date: Date): string {
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const dayNumber = date.getDate();
+    return month + " " + dayNumber.toString() + ", " + year.toString();
   }
 
-  function get_likes_string(username: string) {
-    if (props.session.liked_by_usernames.length == 0) return "No likes yet";
-    let usernames = [];
-    if (props.session.liked_by_usernames.includes(personalUser.username)) {
-      usernames = props.session.liked_by_usernames.sort((x, y) => {
-        return x == personalUser.username
-          ? -1
-          : y == personalUser.username
-          ? 1
-          : 0;
+  function getLikesString(username: string | undefined): string {
+    if (props.session.liked_by_usernames.length === 0) return "No likes yet";
+    let usernames: string[] = [];
+    if (username && props.session.liked_by_usernames.includes(username)) {
+      usernames = [...props.session.liked_by_usernames].sort((x, y) => {
+        return x === username ? -1 : y === username ? 1 : 0;
       });
     } else usernames = props.session.liked_by_usernames;
     let result = "Liked by " + usernames[0];
@@ -75,8 +41,7 @@ export default function Session(props: Props) {
   }
 
   const handleLikeSession = () => {
-    let id = props.session.id;
-    dispatch(likeSession(id));
+    dispatch(likeSession(props.session.id));
   };
 
   const handleOpenSession = () => {
@@ -119,26 +84,33 @@ export default function Session(props: Props) {
           </div>
         )}
         <div>
-          {props.session.exercise_unit
+          {[...props.session.exercise_unit]
             .sort(compareExerciseUnitIds)
-            .map((exerciseUnit: any, key: number) => {
-              return <ExerciseUnit key={key} exerciseUnit={exerciseUnit} />;
+            .map((exerciseUnit) => {
+              return (
+                <ExerciseUnit
+                  key={exerciseUnit.id}
+                  exerciseUnit={exerciseUnit}
+                />
+              );
             })}
         </div>
       </div>
       {personalUser.username !== props.session.username &&
-      !props.session.liked_by_usernames.includes(personalUser.username) ? (
+      !props.session.liked_by_usernames.includes(
+        personalUser.username ?? "",
+      ) ? (
         <div className="like-container">
           <button onClick={handleLikeSession} className="like-button">
             Like
           </button>
-          {get_likes_string(personalUser.username)}
+          {getLikesString(personalUser.username)}
           {props.session.comments.length > 0 &&
             ", " + props.session.comments.length + " comments"}{" "}
         </div>
       ) : (
         <div className="like-container personal-like-container">
-          {get_likes_string(personalUser.username)}
+          {getLikesString(personalUser.username)}
           {props.session.comments.length > 0 &&
             ", " + props.session.comments.length + " comments"}{" "}
         </div>

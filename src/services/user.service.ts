@@ -1,132 +1,74 @@
 import axios from "axios";
 import http, { baseURL } from "../http-common";
+import type {
+  AccountInterface,
+  AccountSummaryInterface,
+  AuthTokens,
+  CursorPage,
+} from "../types/models";
+
+export interface LoginData {
+  username: string;
+  password: string;
+}
 
 class UserService {
-  async login(data: any) {
-    return await axios
-      .post(baseURL + "/api/token/", data)
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  login(data: LoginData) {
+    return axios.post<AuthTokens>(baseURL + "/api/token/", data);
   }
 
-  async fetchPersonalUser() {
-    return await http
-      .get(baseURL + "/accounts/get-personal-account/")
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  fetchPersonalUser() {
+    return http.get<AccountInterface>("/accounts/get-personal-account/");
   }
 
-  async fetchUser(username: string) {
-    return await http
-      .get(baseURL + "/accounts/get-account/?username=" + username)
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  fetchUser(username: string) {
+    return http.get<AccountInterface>(
+      "/accounts/get-account/?username=" + username,
+    );
   }
 
-  async updateUser(id: string, data: any) {
-    return await http
-      .patch(baseURL + "/accounts/" + id + "/", data)
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  updateUser(id: number, data: Partial<AccountInterface>) {
+    return http.patch<AccountInterface>("/accounts/" + id + "/", data);
   }
 
-  async searchUsers(cursor: string | null, searchString: string | null) {
-    return await http
-      .get(baseURL + "/accounts/?cursor=" + cursor + "&search=" + searchString)
-
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  searchUsers(cursor: string | null, searchString: string | null) {
+    return http.get<CursorPage<AccountSummaryInterface>>(
+      "/accounts/?cursor=" + cursor + "&search=" + searchString,
+    );
   }
 
-  async followUser(id: string) {
-    return await http
-      .post(baseURL + "/accounts/" + id + "/follow/")
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  followUser(id: number) {
+    return http.post(baseURL + "/accounts/" + id + "/follow/");
   }
 
-  async unfollowUser(id: string) {
-    return await http
-      .post(baseURL + "/accounts/" + id + "/unfollow/")
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  unfollowUser(id: number) {
+    return http.post(baseURL + "/accounts/" + id + "/unfollow/");
   }
 
-  async refresh(token: string) {
-    return await axios
-      .post(baseURL + "/api/token/refresh/", {
-        refresh: token,
-      })
-      .then((res: any) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  refresh(token: string) {
+    return axios.post<AuthTokens>(baseURL + "/api/token/refresh/", {
+      refresh: token,
+    });
   }
 
-  async resetPassword(email: string) {
-    return await axios
-      .post(baseURL + "/account/password-reset-request/", {
-        email: email,
-      })
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-        throw err;
-      });
+  resetPassword(email: string) {
+    return axios.post(baseURL + "/account/password-reset-request/", {
+      email: email,
+    });
   }
 
-  async confirmPassword(username: string, token: string, newPassword: string) {
-    return await axios
-      .post(
-        baseURL +
-          "/account/password-reset-confirm/" +
-          username +
-          "/" +
-          token +
-          "/",
-        {
-          new_password: newPassword,
-        }
-      )
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-        throw err;
-      });
+  confirmPassword(username: string, token: string, newPassword: string) {
+    return axios.post(
+      baseURL +
+        "/account/password-reset-confirm/" +
+        username +
+        "/" +
+        token +
+        "/",
+      {
+        new_password: newPassword,
+      },
+    );
   }
 }
 

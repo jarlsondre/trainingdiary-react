@@ -1,8 +1,16 @@
-export const compareExerciseUnitIds = (a: any, b: any) => {
+interface HasId {
+  id: number;
+}
+
+interface HasName {
+  name: string;
+}
+
+export const compareExerciseUnitIds = (a: HasId, b: HasId): number => {
   return a.id - b.id;
 };
 
-export const compareExerciseNames = (a: any, b: any) => {
+export const compareExerciseNames = (a: HasName, b: HasName): number => {
   return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 };
 
@@ -21,7 +29,7 @@ export const months: { [key: number]: string } = {
   11: "December",
 };
 
-export const formatDate = (dateString: string) => {
+export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
     year: "numeric",

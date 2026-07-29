@@ -1,17 +1,16 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { SetInterface } from "./Session";
+import { useAppSelector } from "../../hooks";
+import type { SetInterface } from "../../types/models";
 import "./set.css";
 
 type Props = {
   set: SetInterface;
 };
 
-export default function Set(props: Props) {
-  const unit = useSelector((state: any) => state.user.personalUser.unit_system);
+export default function SetItem(props: Props) {
+  const unit = useAppSelector((state) => state.user.personalUser.unit_system);
   const metric = unit === "kg";
-  function getWeight(metric: boolean) {
-    let multiplier = metric ? 1 : 2.2;
+  function getWeight(metric: boolean): number {
+    const multiplier = metric ? 1 : 2.2;
     return Math.round(props.set.weight * multiplier * 10) / 10;
   }
   return (

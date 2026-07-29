@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import "./sessionComment.css";
 
 import { formatDate } from "../../utils/utils";
@@ -6,7 +6,7 @@ import { formatDate } from "../../utils/utils";
 interface SessionCommentProps {
   username: string;
   text: string;
-  datetime: Date;
+  datetime: string;
 }
 
 const SessionComment: React.FC<SessionCommentProps> = ({
@@ -19,7 +19,7 @@ const SessionComment: React.FC<SessionCommentProps> = ({
       <div className="comment-detail-container">
         <span className="comment-username-container">{username}</span>
         <span className="comment-datetime-container">
-          {formatDate(datetime.toString())}
+          {formatDate(datetime)}
         </span>
       </div>
       <div>{text}</div>
