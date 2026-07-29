@@ -251,13 +251,7 @@ export default function sessionReducer(
           ...filteredSessionList,
           updatedSelectedSession as SessionInterface,
         ],
-        // Preserved quirk: selectedSession loses its fields here (the session
-        // ends up nested under an unread key), which makes the detail view
-        // re-fetch from the server. Candidate cleanup for a behavior pass.
-        selectedSession: {
-          sessionAddedExerciseUnit: updatedSelectedSession,
-          isLoading: false,
-        } as SelectedSessionState,
+        selectedSession: updatedSelectedSession,
       };
     }
 

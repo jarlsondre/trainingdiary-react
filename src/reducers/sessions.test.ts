@@ -188,6 +188,33 @@ describe("set actions on the selected session", () => {
 });
 
 describe("exercise unit actions", () => {
+  it("ADD_EXERCISE_UNIT appends the unit and keeps selectedSession intact", () => {
+    const existing = makeExerciseUnit({ id: 10 });
+    const session = makeSession({ id: 100, exercise_unit: [existing] });
+    const state = sessionReducer(
+      {
+        ...initial(),
+        sessionList: [session],
+        selectedSession: { ...session, isLoading: false },
+      },
+      {
+        type: Actions.ADD_EXERCISE_UNIT,
+        payload: makeExerciseUnit({ id: 11 }),
+      },
+    );
+    // Regression: selectedSession must stay a valid session. It used to be
+    // nested under a `sessionAddedExerciseUnit` key, which blanked the detail
+    // view until a manual refresh re-fetched the session.
+    expect(state.selectedSession.id).toBe(100);
+    expect(state.selectedSession.username).toBe("jarl");
+    expect(state.selectedSession.exercise_unit?.map((u) => u.id)).toEqual([
+      10, 11,
+    ]);
+    // list stays in sync with the selected session
+    const listed = state.sessionList.find((s) => s.id === 100);
+    expect(listed?.exercise_unit.map((u) => u.id)).toEqual([10, 11]);
+  });
+
   it("DELETE_EXERCISE_UNIT removes the unit from the selected session", () => {
     const unit = makeExerciseUnit({ id: 10 });
     const session = makeSession({ exercise_unit: [unit] });
