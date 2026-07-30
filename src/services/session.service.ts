@@ -1,13 +1,10 @@
 import http from "../http-common";
-import type { CursorPage, SessionInterface } from "../types/models";
+import type { CursorPage, FeedFilter, SessionInterface } from "../types/models";
 
 class SessionDataService {
-  getAll(cursor: string | null, filterPersonal = false) {
+  getAll(cursor: string | null, feed: FeedFilter = "all") {
     return http.get<CursorPage<SessionInterface>>(
-      "/session/?cursor=" +
-        cursor +
-        "&filter_personal=" +
-        filterPersonal.toString(),
+      `/session/?cursor=${cursor}&feed=${feed}`,
     );
   }
 

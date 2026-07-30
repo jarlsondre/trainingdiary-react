@@ -1,8 +1,8 @@
 import SessionService from "../services/session.service";
-import type { SessionInterface } from "../types/models";
+import type { FeedFilter, SessionInterface } from "../types/models";
 
-export const getSessions = (cursor: string | null, filterPersonal: boolean) =>
-  SessionService.getAll(cursor, filterPersonal).then((r) => r.data);
+export const getSessions = (cursor: string | null, feed: FeedFilter) =>
+  SessionService.getAll(cursor, feed).then((r) => r.data);
 
 export const getUserSessions = (username: string, cursor: string | null) =>
   SessionService.getUserSessions(username, cursor).then((r) => r.data);

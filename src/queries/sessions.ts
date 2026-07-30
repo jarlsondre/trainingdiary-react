@@ -1,13 +1,14 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getSession, getSessions, getUserSessions } from "../api/sessions";
+import type { FeedFilter } from "../types/models";
 import { queryKeys } from "./keys";
 import { cursorFromNextLink } from "./pagination";
 
-/** The main session feed (own + followed users, or personal-only). */
-export function useSessions(filterPersonal: boolean) {
+/** The main session feed, filtered by "all" / "personal" / "following". */
+export function useSessions(feed: FeedFilter) {
   return useInfiniteQuery({
-    queryKey: queryKeys.sessions(filterPersonal),
-    queryFn: ({ pageParam }) => getSessions(pageParam, filterPersonal),
+    queryKey: queryKeys.sessions(feed),
+    queryFn: ({ pageParam }) => getSessions(pageParam, feed),
     initialPageParam: "" as string | null,
     getNextPageParam: (lastPage) => cursorFromNextLink(lastPage.next),
   });

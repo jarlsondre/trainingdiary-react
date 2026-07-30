@@ -50,6 +50,9 @@ export interface AccountSummaryInterface {
 
 export type UnitSystem = "kg" | "lbs";
 
+/** Which sessions the main feed shows. */
+export type FeedFilter = "all" | "personal" | "following";
+
 export interface AccountInterface {
   id: number;
   username: string;

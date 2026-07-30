@@ -77,7 +77,7 @@ const feedIds = (data: ReturnType<typeof useSessions>["data"]): number[] =>
 
 describe("useSessions feed", () => {
   it("loads the first page", async () => {
-    const { result } = renderHook(() => useSessions(false), {
+    const { result } = renderHook(() => useSessions("all"), {
       wrapper: makeWrapper(),
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -86,7 +86,7 @@ describe("useSessions feed", () => {
   });
 
   it("paginates with fetchNextPage", async () => {
-    const { result } = renderHook(() => useSessions(false), {
+    const { result } = renderHook(() => useSessions("all"), {
       wrapper: makeWrapper(),
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -103,7 +103,7 @@ describe("useSessions feed", () => {
 describe("session mutations invalidate the feed", () => {
   it("delete removes the row after the invalidation refetch", async () => {
     const { result } = renderHook(
-      () => ({ feed: useSessions(false), del: useDeleteSession() }),
+      () => ({ feed: useSessions("all"), del: useDeleteSession() }),
       { wrapper: makeWrapper() },
     );
     await waitFor(() => expect(result.current.feed.isSuccess).toBe(true));
@@ -120,7 +120,7 @@ describe("session mutations invalidate the feed", () => {
 
   it("like updates the feed after the invalidation refetch", async () => {
     const { result } = renderHook(
-      () => ({ feed: useSessions(false), like: useLikeSession() }),
+      () => ({ feed: useSessions("all"), like: useLikeSession() }),
       { wrapper: makeWrapper() },
     );
     await waitFor(() => expect(result.current.feed.isSuccess).toBe(true));
@@ -142,7 +142,7 @@ describe("session mutations invalidate the feed", () => {
       () => new Promise(() => {}),
     );
     const { result } = renderHook(
-      () => ({ feed: useSessions(false), del: useDeleteSession() }),
+      () => ({ feed: useSessions("all"), del: useDeleteSession() }),
       { wrapper: makeWrapper() },
     );
     await waitFor(() => expect(result.current.feed.isSuccess).toBe(true));
