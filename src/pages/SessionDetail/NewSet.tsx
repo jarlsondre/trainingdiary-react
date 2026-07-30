@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { addSet } from "../../actions/sets";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useAppSelector } from "../../hooks";
+import { useAddSet } from "../../mutations/sets";
 import "./newSet.css";
 
 type Props = {
@@ -14,17 +14,15 @@ export default function NewSet(props: Props) {
 
   const unit = useAppSelector((state) => state.user.personalUser.unit_system);
   const metric = unit === "kg";
-  const dispatch = useAppDispatch();
+  const addSetMutation = useAddSet();
 
   const handleAddSet = () => {
-    dispatch(
-      addSet({
-        exercise_unit: props.exercise_unit,
-        set_number: props.set_number,
-        weight: Math.round(weight * 10) / 10,
-        repetitions: repetitions,
-      }),
-    );
+    addSetMutation.mutate({
+      exercise_unit: props.exercise_unit,
+      set_number: props.set_number,
+      weight: Math.round(weight * 10) / 10,
+      repetitions: repetitions,
+    });
   };
   return (
     <div className="new-set-container">

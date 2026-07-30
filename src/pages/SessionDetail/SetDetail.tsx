@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { deleteSet, updateSet } from "../../actions/sets";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useAppSelector } from "../../hooks";
+import { useDeleteSet, useUpdateSet } from "../../mutations/sets";
 import type { SetInterface } from "../../types/models";
 import "./setDetail.css";
 
@@ -13,7 +13,8 @@ export default function SetDetail(props: Props) {
   const [weight, setWeight] = useState(props.set.weight);
   const [repetitions, setRepetitions] = useState(props.set.repetitions);
   const [isEditing, setIsEditing] = useState(false);
-  const dispatch = useAppDispatch();
+  const deleteSetMutation = useDeleteSet();
+  const updateSetMutation = useUpdateSet();
   const unit = useAppSelector((state) => state.user.personalUser.unit_system);
   const metric = unit === "kg";
 
@@ -22,20 +23,18 @@ export default function SetDetail(props: Props) {
   };
 
   const handleDelete = () => {
-    dispatch(deleteSet(props.set));
+    deleteSetMutation.mutate(props.set.id);
     toggleIsEditing();
   };
 
   const handleUpdate = () => {
     toggleIsEditing();
-    dispatch(
-      updateSet({
-        id: props.set.id,
-        weight: Math.round(weight * 10) / 10,
-        repetitions: repetitions,
-        set_number: props.set.set_number,
-      }),
-    );
+    updateSetMutation.mutate({
+      id: props.set.id,
+      weight: Math.round(weight * 10) / 10,
+      repetitions: repetitions,
+      set_number: props.set.set_number,
+    });
   };
   if (props.editable)
     return (

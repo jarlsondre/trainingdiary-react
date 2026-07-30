@@ -3,10 +3,9 @@ import SetDetail from "./SetDetail";
 import "./exerciseUnitDetail.css";
 import { useState } from "react";
 import {
-  deleteExerciseUnit,
-  updateExerciseUnit,
-} from "../../actions/exerciseUnits";
-import { useAppDispatch } from "../../hooks";
+  useDeleteExerciseUnit,
+  useUpdateExerciseUnit,
+} from "../../mutations/exerciseUnits";
 import type { ExerciseUnitInterface } from "../../types/models";
 
 type Props = {
@@ -17,7 +16,8 @@ type Props = {
 export default function ExerciseUnitDetail(props: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [comment, setComment] = useState(props.exerciseUnit.comment);
-  const dispatch = useAppDispatch();
+  const deleteExerciseUnit = useDeleteExerciseUnit();
+  const updateExerciseUnit = useUpdateExerciseUnit();
 
   const toggleIsEditing = () => {
     setIsEditing(!isEditing);
@@ -27,11 +27,11 @@ export default function ExerciseUnitDetail(props: Props) {
   };
   const handleDeleteExercise = () => {
     setIsEditing(false);
-    dispatch(deleteExerciseUnit(props.exerciseUnit.id));
+    deleteExerciseUnit.mutate(props.exerciseUnit.id);
   };
   const handleUpdateExercise = () => {
     setIsEditing(false);
-    dispatch(updateExerciseUnit(props.exerciseUnit.id, { comment: comment }));
+    updateExerciseUnit.mutate({ id: props.exerciseUnit.id, data: { comment } });
   };
 
   return (

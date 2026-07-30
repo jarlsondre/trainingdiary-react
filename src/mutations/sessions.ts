@@ -1,6 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createSession, deleteSession, likeSession } from "../api/sessions";
+import {
+  createSession,
+  deleteSession,
+  likeSession,
+  updateSession,
+} from "../api/sessions";
 import { queryKeys } from "../queries/keys";
+import type { SessionInterface } from "../types/models";
 
 // The "sessions" prefix matches every session list (main feed + profile feeds),
 // so a create/delete/like refreshes them all.
@@ -29,6 +35,18 @@ export function useLikeSession() {
     onSuccess: (session) => {
       qc.invalidateQueries({ queryKey: SESSION_LISTS });
       qc.invalidateQueries({ queryKey: queryKeys.session(session.id) });
+    },
+  });
+}
+
+export function useUpdateSession() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id: number; data: Partial<SessionInterface> }) =>
+      updateSession(vars.id, vars.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: SESSION_LISTS });
+      qc.invalidateQueries({ queryKey: ["session"] });
     },
   });
 }

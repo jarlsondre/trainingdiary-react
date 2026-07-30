@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
-import { retrieveExercises } from "../../actions/exercises";
-import { addExerciseUnit } from "../../actions/exerciseUnits";
-import { retrieveSingleSession, updateSession } from "../../actions/sessions";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import { useDeleteSession } from "../../mutations/sessions";
+import { useAppSelector } from "../../hooks";
+import { useAddExerciseUnit } from "../../mutations/exerciseUnits";
+import { useDeleteSession, useUpdateSession } from "../../mutations/sessions";
+import { useExercises } from "../../queries/exercises";
+import { useSession } from "../../queries/sessions";
+import type { SessionCommentInterface } from "../../types/models";
 import {
   compareExerciseNames,
   compareExerciseUnitIds,
@@ -16,72 +17,52 @@ import SessionComment from "./SessionComment";
 
 export default function DetailOverview() {
   const { sessionId } = useParams();
+  const id = Number(sessionId);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+
+  const sessionQuery = useSession(id);
+  const exercisesQuery = useExercises();
+  const exercisesData = exercisesQuery.data;
+  const exercises = exercisesData ?? [];
+
+  const addExerciseUnit = useAddExerciseUnit();
+  const updateSessionMutation = useUpdateSession();
   const deleteMutation = useDeleteSession();
 
-  // Redux variables
-  const selectedSession = useAppSelector(
-    (state) => state.sessions.selectedSession,
-  );
-  const isLoading = useAppSelector(
-    (state) => state.sessions.selectedSession.isLoading,
-  );
-  const exercises = useAppSelector((state) => state.exercises);
-  const sessionUsername = useAppSelector(
-    (state) => state.sessions.selectedSession.username,
-  );
   const personalUsername = useAppSelector(
     (state) => state.user.personalUser.username,
   );
-  const comments = useAppSelector(
-    (state) => state.sessions.selectedSession.comments,
-  );
 
-  // State variables
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
-  const [keyValue, setKeyValue] = useState<number>(0);
-  const [description, setDescription] = useState<string | undefined>(
-    selectedSession.description,
-  );
-  const [date, setDate] = useState<string | undefined>(
-    selectedSession.datetime,
-  );
+  const [description, setDescription] = useState<string | undefined>(undefined);
+  const [date, setDate] = useState<string | undefined>(undefined);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const maxLineCount = 4;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original fetch-on-load timing; dependency cleanup belongs to a behavior pass
+  // Default the exercise picker to the first exercise once they load.
   useEffect(() => {
     if (
-      (!selectedSession.id || selectedSession.id !== Number(sessionId)) &&
-      !isLoading
-    )
-      dispatch(retrieveSingleSession(Number(sessionId)));
-    if (exercises.length === 0) dispatch(retrieveExercises());
-    else {
-      const sortedExercises = [...exercises].sort(compareExerciseNames);
-      setSelectedExercise(sortedExercises[0]?.id ?? null);
+      selectedExercise === null &&
+      exercisesData &&
+      exercisesData.length > 0
+    ) {
+      setSelectedExercise([...exercisesData].sort(compareExerciseNames)[0].id);
     }
-  }, [isLoading, exercises]);
+  }, [exercisesData, selectedExercise]);
 
-  // Handle buttons
+  const session = sessionQuery.data;
+
   const handleAddExercise = () => {
     if (selectedExercise === null) return;
-    dispatch(
-      addExerciseUnit({
-        exercise: selectedExercise,
-        session: Number(sessionId),
-      }),
-    );
-    setKeyValue(keyValue + (1 % 5));
+    addExerciseUnit.mutate({ exercise: selectedExercise, session: id });
   };
 
   const handleDelete = async () => {
-    // Delete on the server, then the mutation invalidates the sessions feed so
-    // the overview shows the correct list on arrival.
-    await deleteMutation.mutateAsync(Number(sessionId));
+    // Delete on the server, then the mutation invalidates the feed so the
+    // overview shows the correct list on arrival.
+    await deleteMutation.mutateAsync(id);
     navigate("/");
   };
 
@@ -90,45 +71,33 @@ export default function DetailOverview() {
     if (date) newDate = new Date(date);
     else newDate = new Date();
     if (newDate.getHours() === 0) newDate.setHours(12);
-    dispatch(
-      updateSession(Number(sessionId), {
-        datetime: newDate.toISOString(),
-        description: description,
-      }),
-    );
+    updateSessionMutation.mutate({
+      id,
+      data: { datetime: newDate.toISOString(), description },
+    });
     toggleIsEditingInfo();
   };
 
-  // Toggle functions
-  const toggleIsEditingInfo = () => {
-    setIsEditingInfo(!isEditingInfo);
-  };
-
-  const toggleDescription = () => {
-    setShowFullDescription(!showFullDescription);
-  };
+  const toggleIsEditingInfo = () => setIsEditingInfo(!isEditingInfo);
+  const toggleDescription = () => setShowFullDescription(!showFullDescription);
 
   const renderDescriptionLine = (line: string, index: number) => {
-    // If the line is empty, render a blank space for an extra line break
-    if (line === "") {
-      return <div key={index} style={{ height: "1em" }}></div>;
-    }
+    if (line === "") return <div key={index} style={{ height: "1em" }}></div>;
     return <div key={index}>{line}</div>;
   };
 
-  const descriptionLines = selectedSession.description
-    ? selectedSession.description.split("\n")
+  if (sessionQuery.isPending || !session) return <div>Loading...</div>;
+
+  const descriptionLines = session.description
+    ? session.description.split("\n")
     : [];
+  const datetimeString = session.datetime
+    ? session.datetime.substring(0, 10)
+    : "";
+  const editable = session.username === personalUsername;
 
-  let datetimeString = "";
-  if (selectedSession.datetime) {
-    datetimeString = selectedSession.datetime.substring(0, 10);
-  }
-  const editable = sessionUsername === personalUsername;
-
-  if (isLoading) return <div>Loading...</div>;
   return (
-    <div key={keyValue} className="detail-overview-container">
+    <div className="detail-overview-container">
       <div className="detail-overview-inner-container">
         <div className="session-info-container">
           {isEditingInfo && editable ? (
@@ -136,7 +105,7 @@ export default function DetailOverview() {
               <button className="delete-session-button" onClick={handleDelete}>
                 Delete Session
               </button>
-              <div>User: {selectedSession.username}</div>
+              <div>User: {session.username}</div>
               <input
                 type="date"
                 id="session-date"
@@ -152,7 +121,7 @@ export default function DetailOverview() {
                   rows={3}
                   cols={40}
                   id="description"
-                  defaultValue={selectedSession.description}
+                  defaultValue={session.description}
                   onChange={(event) => {
                     setDescription(event.target.value);
                   }}
@@ -173,13 +142,11 @@ export default function DetailOverview() {
                 </button>
               )}
               <div>
-                <b>User</b>: {selectedSession.username}
+                <b>User</b>: {session.username}
               </div>
               <div>
                 <b>Date</b>:{" "}
-                {selectedSession.datetime
-                  ? formatDate(selectedSession.datetime)
-                  : ""}
+                {session.datetime ? formatDate(session.datetime) : ""}
               </div>
               <div className="description-detail-container">
                 {descriptionLines.length > 0 &&
@@ -200,9 +167,8 @@ export default function DetailOverview() {
             </div>
           )}
         </div>
-        {selectedSession.exercise_unit &&
-        selectedSession.exercise_unit.length > 0
-          ? [...selectedSession.exercise_unit]
+        {session.exercise_unit.length > 0
+          ? [...session.exercise_unit]
               .sort(compareExerciseUnitIds)
               .map((exerciseUnit) => {
                 return (
@@ -238,12 +204,12 @@ export default function DetailOverview() {
             </button>
           </div>
         )}
-        {comments && comments.length > 0 && (
+        {session.comments.length > 0 && (
           <div className="comment-section-container">
             <span className="comment-section-header">
-              {comments.length} comments
+              {session.comments.length} comments
             </span>
-            {comments.map((comment) => {
+            {session.comments.map((comment: SessionCommentInterface) => {
               return (
                 <SessionComment
                   key={comment.id}
