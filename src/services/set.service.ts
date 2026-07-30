@@ -10,11 +10,11 @@ class SetDataService {
   }
 
   deleteSet(id: number) {
-    return http.delete("/set/" + id + "/");
+    return http.delete(`/set/${id}/`);
   }
 
   updateSet(data: UpdateSetData) {
-    return http.patch<SetInterface>("/set/" + data.id + "/", data);
+    return http.patch<SetInterface>(`/set/${data.id}/`, data);
   }
 }
 

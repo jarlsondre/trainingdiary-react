@@ -14,7 +14,7 @@ export interface LoginData {
 
 class UserService {
   login(data: LoginData) {
-    return axios.post<AuthTokens>(baseURL + "/api/token/", data);
+    return axios.post<AuthTokens>(`${baseURL}/api/token/`, data);
   }
 
   fetchPersonalUser() {
@@ -23,36 +23,36 @@ class UserService {
 
   fetchUser(username: string) {
     return http.get<AccountInterface>(
-      "/accounts/get-account/?username=" + username,
+      `/accounts/get-account/?username=${username}`,
     );
   }
 
   updateUser(id: number, data: Partial<AccountInterface>) {
-    return http.patch<AccountInterface>("/accounts/" + id + "/", data);
+    return http.patch<AccountInterface>(`/accounts/${id}/`, data);
   }
 
   searchUsers(cursor: string | null, searchString: string | null) {
     return http.get<CursorPage<AccountSummaryInterface>>(
-      "/accounts/?cursor=" + cursor + "&search=" + searchString,
+      `/accounts/?cursor=${cursor}&search=${searchString}`,
     );
   }
 
   followUser(id: number) {
-    return http.post("/accounts/" + id + "/follow/");
+    return http.post(`/accounts/${id}/follow/`);
   }
 
   unfollowUser(id: number) {
-    return http.post("/accounts/" + id + "/unfollow/");
+    return http.post(`/accounts/${id}/unfollow/`);
   }
 
   refresh(token: string) {
-    return axios.post<AuthTokens>(baseURL + "/api/token/refresh/", {
+    return axios.post<AuthTokens>(`${baseURL}/api/token/refresh/`, {
       refresh: token,
     });
   }
 
   resetPassword(email: string) {
-    return axios.post(baseURL + "/account/password-reset-request/", {
+    return axios.post(`${baseURL}/account/password-reset-request/`, {
       email: email,
     });
   }

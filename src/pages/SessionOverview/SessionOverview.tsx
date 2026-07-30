@@ -48,7 +48,7 @@ export default function SessionOverview() {
             setFilterPersonal(event.target.checked);
           }}
           className="checkbox"
-        ></input>
+        />
         <label htmlFor="filter-personal" className="checkbox-label">
           Personal Sessions
         </label>

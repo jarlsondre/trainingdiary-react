@@ -37,7 +37,7 @@ export default function Login() {
           onChange={(event) => {
             setUsername(event.target.value);
           }}
-        ></input>
+        />
 
         <input
           type="password"
@@ -51,7 +51,7 @@ export default function Login() {
               handleLogin();
             }
           }}
-        ></input>
+        />
       </div>
 
       {isLoading && <p>Logging in...</p>}

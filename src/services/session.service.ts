@@ -13,12 +13,12 @@ class SessionDataService {
 
   getUserSessions(username: string, cursor: string | null) {
     return http.get<CursorPage<SessionInterface>>(
-      `/sessions/user/${username}/?cursor=` + cursor,
+      `/sessions/user/${username}/?cursor=${cursor}`,
     );
   }
 
   getOne(id: number) {
-    return http.get<SessionInterface>("/session/" + id + "/");
+    return http.get<SessionInterface>(`/session/${id}/`);
   }
 
   addSession(data: Partial<SessionInterface>) {
@@ -26,15 +26,15 @@ class SessionDataService {
   }
 
   deleteSession(id: number) {
-    return http.delete("/session/" + id + "/");
+    return http.delete(`/session/${id}/`);
   }
 
   likeSession(id: number) {
-    return http.post<SessionInterface>("/session/" + id + "/like-session/");
+    return http.post<SessionInterface>(`/session/${id}/like-session/`);
   }
 
   updateSession(id: number, data: Partial<SessionInterface>) {
-    return http.patch<SessionInterface>("/session/" + id + "/", data);
+    return http.patch<SessionInterface>(`/session/${id}/`, data);
   }
 }
 

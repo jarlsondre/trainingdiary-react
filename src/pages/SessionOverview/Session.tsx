@@ -22,7 +22,7 @@ export default function Session(props: Props) {
     const year = date.getFullYear();
     const month = months[date.getMonth()];
     const dayNumber = date.getDate();
-    return month + " " + dayNumber.toString() + ", " + year.toString();
+    return `${month} ${dayNumber.toString()}, ${year.toString()}`;
   }
 
   function getLikesString(username: string | undefined): string {
@@ -33,9 +33,9 @@ export default function Session(props: Props) {
         return x === username ? -1 : y === username ? 1 : 0;
       });
     } else usernames = props.session.liked_by_usernames;
-    let result = "Liked by " + usernames[0];
+    let result = `Liked by ${usernames[0]}`;
     if (usernames.length > 1) {
-      result += " and " + (usernames.length - 1) + " more";
+      result += ` and ${usernames.length - 1} more`;
     }
     return result;
   }
@@ -47,12 +47,12 @@ export default function Session(props: Props) {
   const handleOpenSession = () => {
     // Unsaved optimistic session (negative temp id) isn't openable yet.
     if (props.session.id < 0) return;
-    navigate("/session/" + props.session.id);
+    navigate(`/session/${props.session.id}`);
   };
 
   const handleUsernameClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    navigate("/user/" + props.session.username);
+    navigate(`/user/${props.session.username}`);
   };
 
   return (
@@ -108,13 +108,13 @@ export default function Session(props: Props) {
           </button>
           {getLikesString(personalUser?.username)}
           {props.session.comments.length > 0 &&
-            ", " + props.session.comments.length + " comments"}{" "}
+            `, ${props.session.comments.length} comments`}{" "}
         </div>
       ) : (
         <div className="like-container personal-like-container">
           {getLikesString(personalUser?.username)}
           {props.session.comments.length > 0 &&
-            ", " + props.session.comments.length + " comments"}{" "}
+            `, ${props.session.comments.length} comments`}{" "}
         </div>
       )}
     </div>

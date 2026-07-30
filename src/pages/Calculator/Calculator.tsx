@@ -26,7 +26,7 @@ export default function Calculator() {
           }}
           className="calculator-weight-input"
           type="number"
-        ></input>
+        />
       </div>
       <div>
         Repetitions:{" "}
@@ -36,7 +36,7 @@ export default function Calculator() {
           }}
           className="calculator-repetition-input"
           type="number"
-        ></input>
+        />
       </div>{" "}
       <div>Result: {calculateOneRepMax(weight, repetitions)}</div>
     </div>

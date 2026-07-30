@@ -53,7 +53,7 @@ export default function SetDetail(props: Props) {
               onChange={(event) => {
                 setWeight(parseFloat(event.target.value) / (metric ? 1 : 2.2));
               }}
-            ></input>
+            />
             {metric ? "kg x" : "lbs x"}
             <input
               type="number"
@@ -64,7 +64,7 @@ export default function SetDetail(props: Props) {
               onChange={(event) => {
                 setRepetitions(parseInt(event.target.value, 10));
               }}
-            ></input>
+            />
 
             <button className="update-set-button" onClick={handleUpdate}>
               Save

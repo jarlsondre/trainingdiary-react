@@ -12,14 +12,11 @@ class ExerciseUnitDataService {
   }
 
   deleteExerciseUnit(id: number) {
-    return http.delete("/exercise-unit/" + id + "/");
+    return http.delete(`/exercise-unit/${id}/`);
   }
 
   updateExerciseUnit(id: number, data: Partial<ExerciseUnitInterface>) {
-    return http.patch<ExerciseUnitInterface>(
-      "/exercise-unit/" + id + "/",
-      data,
-    );
+    return http.patch<ExerciseUnitInterface>(`/exercise-unit/${id}/`, data);
   }
 }
 

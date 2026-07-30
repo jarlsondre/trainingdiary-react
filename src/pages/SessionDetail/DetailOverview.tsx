@@ -58,10 +58,13 @@ export default function DetailOverview() {
   };
 
   const handleDelete = async () => {
-    // Delete on the server, then the mutation invalidates the feed so the
-    // overview shows the correct list on arrival.
-    await deleteMutation.mutateAsync(id);
-    navigate("/");
+    try {
+      await deleteMutation.mutateAsync(id);
+      navigate("/");
+    } catch {
+      // Failed (e.g. offline): the mutation's onError already showed a toast,
+      // and the optimistic removal was rolled back — so stay on the page.
+    }
   };
 
   const handleSave = () => {
@@ -80,7 +83,7 @@ export default function DetailOverview() {
   const toggleDescription = () => setShowFullDescription(!showFullDescription);
 
   const renderDescriptionLine = (line: string, index: number) => {
-    if (line === "") return <div key={index} style={{ height: "1em" }}></div>;
+    if (line === "") return <div key={index} style={{ height: "1em" }} />;
     return <div key={index}>{line}</div>;
   };
 
@@ -113,7 +116,7 @@ export default function DetailOverview() {
                 onChange={(event) => {
                   setDate(event.target.value);
                 }}
-              ></input>
+              />
               <div className="text-area-container">
                 <textarea
                   rows={3}
@@ -123,7 +126,7 @@ export default function DetailOverview() {
                   onChange={(event) => {
                     setDescription(event.target.value);
                   }}
-                ></textarea>
+                />
                 <button onClick={handleSave} className="save-info-button">
                   Save
                 </button>

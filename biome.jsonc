@@ -1,0 +1,74 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": ["src/**"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "error",
+        // No stray debug logging in committed code (console.error/warn stay allowed).
+        "noConsole": {
+          "level": "error",
+          "options": { "allow": ["error", "warn"] }
+        }
+      },
+      "complexity": {
+        "useOptionalChain": "error",
+        "noUselessFragments": "error",
+        // Cognitive-complexity ceiling. Biome's default (15) is too strict for
+        // React components — JSX branching inflates the score — so 25 is a
+        // React-appropriate cap that still catches genuinely runaway functions.
+        // DetailOverview/UserDetail sit near the top; decompose candidates if we
+        // ever want to tighten this.
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": { "maxAllowedComplexity": 25 }
+        }
+      },
+      "style": {
+        "useImportType": "error",
+        "useExportType": "error",
+        "useSelfClosingElements": "error",
+        "useShorthandAssign": "error",
+        "noParameterAssign": "error",
+        "noNonNullAssertion": "error",
+        "useTemplate": "error",
+        // OFF on purpose: the domain types mirror the Django API's snake_case
+        // (exercise_unit, set_number, first_name). This rule would fight that.
+        "useNamingConvention": "off"
+      },
+      "a11y": {
+        // Tuned for a tap-first app that uses NO <form> elements:
+        // - useKeyWithClickEvents / noStaticElementInteractions want a keyboard
+        //   handler on every clickable card/row — pure noise for a touch app.
+        // - useButtonType guards against a <button>'s default type="submit"
+        //   submitting a form, but there are no forms here, so it's 31 buttons
+        //   of ceremony guarding an impossible bug. Re-enable if a form is added.
+        // The cheap a11y wins (useAltText, useValidAnchor, ...) stay on via recommended.
+        "useKeyWithClickEvents": "off",
+        "noStaticElementInteractions": "off",
+        "useButtonType": "off"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

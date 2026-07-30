@@ -30,6 +30,12 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(async (req) => {
+  // Fail fast when the device is offline, so mutations roll back (and queries
+  // error) immediately instead of hanging until the timeout.
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    throw new Error("You appear to be offline.");
+  }
+
   // always reading the token from localstorage
   const authToken = readAuthToken();
 
@@ -61,7 +67,6 @@ axiosInstance.interceptors.request.use(async (req) => {
       if (req.headers) req.headers.Authorization = `JWT ${res.data.access}`;
     })
     .catch(() => {
-      console.log("refreshing token failed");
       useAuthStore.getState().loggedOut();
     });
   return req;

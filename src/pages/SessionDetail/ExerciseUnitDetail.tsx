@@ -48,7 +48,7 @@ export default function ExerciseUnitDetail(props: Props) {
                 maxLength={100}
                 defaultValue={props.exerciseUnit.comment}
                 onChange={handleCommentChange}
-              ></input>
+              />
             </div>
           ) : (
             <span>

@@ -15,18 +15,18 @@ import SessionOverview from "./pages/SessionOverview/SessionOverview";
 function App() {
   return (
     <div>
-      <Navbar></Navbar>
+      <Navbar />
       <Routes>
-        <Route path="/" element={<SessionOverview />}></Route>
-        <Route path="password-reset" element={<PasswordReset />}></Route>
+        <Route path="/" element={<SessionOverview />} />
+        <Route path="password-reset" element={<PasswordReset />} />
         <Route
           path="password-reset-confirm/:username/:token"
           element={<PasswordResetConfirm />}
-        ></Route>
-        <Route path="session/:sessionId" element={<DetailOverview />}></Route>
-        <Route path="login" element={<Login />}></Route>
-        <Route path="calculator" element={<Calculator />}></Route>
-        <Route path="search" element={<Search />}></Route>
+        />
+        <Route path="session/:sessionId" element={<DetailOverview />} />
+        <Route path="login" element={<Login />} />
+        <Route path="calculator" element={<Calculator />} />
+        <Route path="search" element={<Search />} />
         <Route path="/user/:username" element={<UserDetail />} />
       </Routes>
       <Toaster />
