@@ -2,14 +2,15 @@ import type React from "react";
 import { useState } from "react";
 import "./search.css";
 import { useNavigate } from "react-router-dom";
-import { searchUsers } from "../../actions/searchUsers";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useUserSearch } from "../../queries/search";
 
 export default function Search() {
-  const users = useAppSelector((state) => state.searchUsers.searchResults);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [submittedTerm, setSubmittedTerm] = useState<string>("");
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+
+  const searchQuery = useUserSearch(submittedTerm);
+  const users = searchQuery.data?.pages.flatMap((page) => page.results) ?? [];
 
   const handleUserClick = (username: string) => {
     navigate(`/user/${username}`);
@@ -22,7 +23,7 @@ export default function Search() {
   };
 
   const handleSearch = () => {
-    dispatch(searchUsers("", searchTerm));
+    setSubmittedTerm(searchTerm);
   };
 
   return (

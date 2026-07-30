@@ -1,4 +1,4 @@
-import { useAppSelector } from "../../hooks";
+import { usePersonalUser } from "../../queries/accounts";
 import type { SetInterface } from "../../types/models";
 import "./set.css";
 
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function SetItem(props: Props) {
-  const unit = useAppSelector((state) => state.user.personalUser.unit_system);
+  const unit = usePersonalUser().data?.unit_system;
   const metric = unit === "kg";
   function getWeight(metric: boolean): number {
     const multiplier = metric ? 1 : 2.2;

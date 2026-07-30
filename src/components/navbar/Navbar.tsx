@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout, refresh } from "../../actions/authentication";
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { usePersonalUser } from "../../queries/accounts";
 import type { AuthTokens } from "../../types/models";
 import "./navbar.css";
 import logo from "./logo.jpg";
@@ -11,7 +12,7 @@ export default function Navbar() {
     (state) => state.authentication.isAuthenticated,
   );
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
-  const user = useAppSelector((state) => state.user.personalUser);
+  const user = usePersonalUser().data;
   const isLoading = useAppSelector((state) => state.authentication.isLoading);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ export default function Navbar() {
   };
 
   const handleProfileNavigation = () => {
+    if (!user?.username) return;
     navigate(`/user/${user.username}`);
     setMenuExpanded(false);
   };

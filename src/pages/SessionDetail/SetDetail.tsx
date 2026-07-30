@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAppSelector } from "../../hooks";
 import { useDeleteSet, useUpdateSet } from "../../mutations/sets";
+import { usePersonalUser } from "../../queries/accounts";
 import type { SetInterface } from "../../types/models";
 import "./setDetail.css";
 
@@ -15,7 +15,7 @@ export default function SetDetail(props: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const deleteSetMutation = useDeleteSet();
   const updateSetMutation = useUpdateSet();
-  const unit = useAppSelector((state) => state.user.personalUser.unit_system);
+  const unit = usePersonalUser().data?.unit_system;
   const metric = unit === "kg";
 
   const toggleIsEditing = () => {

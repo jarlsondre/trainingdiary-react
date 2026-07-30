@@ -1,7 +1,7 @@
 import type React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../hooks";
 import { useLikeSession } from "../../mutations/sessions";
+import { usePersonalUser } from "../../queries/accounts";
 import type { SessionInterface } from "../../types/models";
 import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
@@ -14,7 +14,7 @@ type Props = {
 
 export default function Session(props: Props) {
   const date = new Date(props.session.datetime);
-  const personalUser = useAppSelector((state) => state.user.personalUser);
+  const personalUser = usePersonalUser().data;
   const likeMutation = useLikeSession();
   const navigate = useNavigate();
 
@@ -56,14 +56,14 @@ export default function Session(props: Props) {
   return (
     <div
       className={
-        personalUser.username === props.session.username
+        personalUser?.username === props.session.username
           ? "session-container-wrap personal-session-container-wrap"
           : "session-container-wrap"
       }
     >
       <div
         className={
-          personalUser.username === props.session.username
+          personalUser?.username === props.session.username
             ? "session-container personal-session"
             : "session-container"
         }
@@ -96,21 +96,21 @@ export default function Session(props: Props) {
             })}
         </div>
       </div>
-      {personalUser.username !== props.session.username &&
+      {personalUser?.username !== props.session.username &&
       !props.session.liked_by_usernames.includes(
-        personalUser.username ?? "",
+        personalUser?.username ?? "",
       ) ? (
         <div className="like-container">
           <button onClick={handleLikeSession} className="like-button">
             Like
           </button>
-          {getLikesString(personalUser.username)}
+          {getLikesString(personalUser?.username)}
           {props.session.comments.length > 0 &&
             ", " + props.session.comments.length + " comments"}{" "}
         </div>
       ) : (
         <div className="like-container personal-like-container">
-          {getLikesString(personalUser.username)}
+          {getLikesString(personalUser?.username)}
           {props.session.comments.length > 0 &&
             ", " + props.session.comments.length + " comments"}{" "}
         </div>

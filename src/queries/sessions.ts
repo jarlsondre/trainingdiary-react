@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getSession, getSessions } from "../api/sessions";
+import { getSession, getSessions, getUserSessions } from "../api/sessions";
 import { queryKeys } from "./keys";
 import { cursorFromNextLink } from "./pagination";
 
@@ -19,5 +19,16 @@ export function useSession(id: number) {
     queryKey: queryKeys.session(id),
     queryFn: () => getSession(id),
     enabled: Number.isFinite(id) && id > 0,
+  });
+}
+
+/** A given user's sessions (their profile feed). */
+export function useUserSessions(username: string) {
+  return useInfiniteQuery({
+    queryKey: queryKeys.userSessions(username),
+    queryFn: ({ pageParam }) => getUserSessions(username, pageParam),
+    initialPageParam: "" as string | null,
+    getNextPageParam: (lastPage) => cursorFromNextLink(lastPage.next),
+    enabled: username.length > 0,
   });
 }

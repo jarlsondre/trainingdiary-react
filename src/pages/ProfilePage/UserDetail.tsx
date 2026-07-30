@@ -1,55 +1,38 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchUserSessions } from "../../actions/sessions";
 import {
-  fetchUser,
-  followUser,
-  unfollowUser,
-  updateUser,
-} from "../../actions/user";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import type { UnitSystem } from "../../types/models";
+  useFollow,
+  useUnfollow,
+  useUpdateUser,
+} from "../../mutations/accounts";
+import { useAccount, usePersonalUser } from "../../queries/accounts";
+import { useUserSessions } from "../../queries/sessions";
+import type { AccountSummaryInterface, UnitSystem } from "../../types/models";
 import Session from "../SessionOverview/Session";
 import "./userDetail.css";
 
 export default function UserDetail() {
-  const dispatch = useAppDispatch();
   const { username } = useParams() as { username: string };
 
-  const [isEditingProfile, setIsEditingProfile] = React.useState(false);
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [bio, setBio] = React.useState("");
-  const [unitSystem, setUnitSystem] = React.useState<UnitSystem>("kg");
+  const personalUser = usePersonalUser().data;
+  const accountQuery = useAccount(username);
+  const isPersonalProfile = username === personalUser?.username;
+  const user = isPersonalProfile ? personalUser : accountQuery.data;
 
-  const previousProfileUsername = useAppSelector(
-    (state) => state.sessions.profileSessions.username,
-  );
-  const userSessions = useAppSelector(
-    (state) => state.sessions.profileSessions.results,
-  );
-  const cursor = useAppSelector(
-    (state) => state.sessions.profileSessions.cursor,
-  );
-  const moreToLoad = useAppSelector(
-    (state) => state.sessions.profileSessions.moreToLoad,
-  );
+  const sessionsQuery = useUserSessions(username);
+  const userSessions =
+    sessionsQuery.data?.pages.flatMap((page) => page.results) ?? [];
 
-  // Selecting the correct user
-  const userState = useAppSelector((state) => state.user);
-  const isPersonalProfile = username === userState.personalUser.username;
-  const user = isPersonalProfile ? userState.personalUser : userState.otherUser;
+  const updateUser = useUpdateUser();
+  const follow = useFollow();
+  const unfollow = useUnfollow();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original fetch-on-navigation timing; dependency cleanup belongs to a behavior pass
-  React.useEffect(() => {
-    const newUser = username !== previousProfileUsername;
-    dispatch(fetchUser(username));
-    const effectiveCursor = !cursor || newUser ? "" : cursor;
-    if (userSessions.length === 0 || newUser) {
-      dispatch(fetchUserSessions(username, effectiveCursor, newUser));
-    }
-  }, [dispatch, username]);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>("kg");
 
   useEffect(() => {
     if (user) {
@@ -61,10 +44,6 @@ export default function UserDetail() {
     }
   }, [user]);
 
-  const handleLoadMore = () => {
-    dispatch(fetchUserSessions(username, cursor));
-  };
-
   const handleToggleEditProfile = () => {
     if (isPersonalProfile) {
       setIsEditingProfile(!isEditingProfile);
@@ -72,28 +51,34 @@ export default function UserDetail() {
   };
 
   const handleSaveProfile = () => {
-    if (user.id === undefined) return;
-    dispatch(
-      updateUser(user.id, {
+    if (!user) return;
+    updateUser.mutate({
+      id: user.id,
+      data: {
         first_name: firstName,
         last_name: lastName,
         email: email,
         bio: bio,
         unit_system: unitSystem,
-      }),
-    );
-    setIsEditingProfile(!isEditingProfile);
+      },
+    });
+    setIsEditingProfile(false);
   };
 
   const handleFollowProfile = () => {
-    if (user.id === undefined || user.username === undefined) return;
-    dispatch(followUser(user.id, user.username));
+    if (!user) return;
+    follow.mutate(user.id);
   };
 
   const handleUnfollowProfile = () => {
-    if (user.id === undefined || user.username === undefined) return;
-    dispatch(unfollowUser(user.id, user.username));
+    if (!user) return;
+    unfollow.mutate(user.id);
   };
+
+  const isFollowing =
+    personalUser?.following.some(
+      (followed: AccountSummaryInterface) => followed.username === username,
+    ) ?? false;
 
   return (
     <div className="user-details-container">
@@ -160,9 +145,7 @@ export default function UserDetail() {
             >
               Edit profile
             </button>
-          ) : userState.personalUser.following.some(
-              (userObject) => userObject.username === username,
-            ) ? (
+          ) : isFollowing ? (
             <button className="unfollow-button" onClick={handleUnfollowProfile}>
               Unfollow
             </button>
@@ -172,25 +155,25 @@ export default function UserDetail() {
             </button>
           )}
           <span className="user-name-container">
-            {user.first_name ? user.first_name : "Anonymous"}{" "}
-            {user.last_name ? user.last_name : "Gymrat"}
+            {user?.first_name ? user.first_name : "Anonymous"}{" "}
+            {user?.last_name ? user.last_name : "Gymrat"}
           </span>
-          @{user.username}
+          @{user?.username}
           <span className="unit-system-container">
             Units:{" "}
-            {user.unit_system === "kg" ? "Metric (kg)" : "Freedom units (lbs)"}
+            {user?.unit_system === "kg" ? "Metric (kg)" : "Freedom units (lbs)"}
           </span>
           <p>
             "
-            {user.bio
+            {user?.bio
               ? user.bio
               : "Frankly, I don't have that much to share about myself..."}
             "
           </p>
           <div className="user-statistics-container">
             <div># Sessions: TODO</div>
-            <div>Followers: {user.followers ? user.followers.length : 0}</div>
-            <div>Following: {user.following ? user.following.length : 0}</div>
+            <div>Followers: {user?.followers?.length ?? 0}</div>
+            <div>Following: {user?.following?.length ?? 0}</div>
           </div>
         </div>
       )}
@@ -205,10 +188,11 @@ export default function UserDetail() {
             );
           })}
 
-        {moreToLoad ? (
+        {sessionsQuery.hasNextPage ? (
           <button
             className="profile-load-more-button profile-more-to-load"
-            onClick={handleLoadMore}
+            onClick={() => sessionsQuery.fetchNextPage()}
+            disabled={sessionsQuery.isFetchingNextPage}
           >
             Load more
           </button>

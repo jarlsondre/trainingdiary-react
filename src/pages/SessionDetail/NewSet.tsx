@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAppSelector } from "../../hooks";
 import { useAddSet } from "../../mutations/sets";
+import { usePersonalUser } from "../../queries/accounts";
 import "./newSet.css";
 
 type Props = {
@@ -12,7 +12,7 @@ export default function NewSet(props: Props) {
   const [weight, setWeight] = useState(0);
   const [repetitions, setRepetitions] = useState(0);
 
-  const unit = useAppSelector((state) => state.user.personalUser.unit_system);
+  const unit = usePersonalUser().data?.unit_system;
   const metric = unit === "kg";
   const addSetMutation = useAddSet();
 

@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
-import { useAppSelector } from "../../hooks";
 import { useAddExerciseUnit } from "../../mutations/exerciseUnits";
 import { useDeleteSession, useUpdateSession } from "../../mutations/sessions";
+import { usePersonalUser } from "../../queries/accounts";
 import { useExercises } from "../../queries/exercises";
 import { useSession } from "../../queries/sessions";
 import type { SessionCommentInterface } from "../../types/models";
@@ -29,9 +29,7 @@ export default function DetailOverview() {
   const updateSessionMutation = useUpdateSession();
   const deleteMutation = useDeleteSession();
 
-  const personalUsername = useAppSelector(
-    (state) => state.user.personalUser.username,
-  );
+  const personalUsername = usePersonalUser().data?.username;
 
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
