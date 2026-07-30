@@ -1,4 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  type InfiniteData,
+  type QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   createSession,
   deleteSession,
@@ -6,36 +11,103 @@ import {
   updateSession,
 } from "../api/sessions";
 import { queryKeys } from "../queries/keys";
-import type { SessionInterface } from "../types/models";
+import { useToastStore } from "../stores/toasts";
+import type {
+  AccountInterface,
+  CursorPage,
+  SessionInterface,
+} from "../types/models";
 import { useOptimisticSessionMutation } from "./optimistic";
+import { nextTempId } from "./tempId";
 
-// The "sessions" prefix matches every session list (main feed + profile feeds),
-// so a create/delete/like refreshes them all.
+// The "sessions" prefix matches every session list (main feed + profile feeds).
 const SESSION_LISTS = ["sessions"] as const;
 
-export function useAddSession() {
-  const qc = useQueryClient();
+type FeedData = InfiniteData<CursorPage<SessionInterface>>;
+
+/** Optimistic mutation over the session lists (an infinite query). */
+function useOptimisticFeedMutation<V, R>(config: {
+  mutationFn: (variables: V) => Promise<R>;
+  update: (data: FeedData, variables: V, queryClient: QueryClient) => FeedData;
+  errorMessage: string;
+}) {
+  const queryClient = useQueryClient();
   return useMutation({
+    mutationFn: config.mutationFn,
+    onMutate: async (variables: V) => {
+      await queryClient.cancelQueries({ queryKey: SESSION_LISTS });
+      const snapshot = queryClient.getQueriesData({ queryKey: SESSION_LISTS });
+      queryClient.setQueriesData<FeedData>(
+        { queryKey: SESSION_LISTS },
+        (old: FeedData | undefined) =>
+          old ? config.update(old, variables, queryClient) : old,
+      );
+      return { snapshot };
+    },
+    onError: (_error, _variables, context) => {
+      context?.snapshot.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
+      useToastStore.getState().addToast(config.errorMessage);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: SESSION_LISTS });
+    },
+  });
+}
+
+export function useAddSession() {
+  return useOptimisticFeedMutation<void, SessionInterface>({
     mutationFn: () => createSession({}),
-    onSuccess: () => qc.invalidateQueries({ queryKey: SESSION_LISTS }),
+    errorMessage: "Couldn't create the session — please try again.",
+    update: (data, _variables, queryClient) => {
+      const me = queryClient.getQueryData<AccountInterface>(
+        queryKeys.personalUser(),
+      );
+      // Negative id marks it unsaved; the feed sorts by datetime, so "now" puts
+      // it at the top where the real new session will also land.
+      const optimisticSession: SessionInterface = {
+        id: nextTempId(),
+        exercise_unit: [],
+        description: "",
+        datetime: new Date().toISOString(),
+        user: me?.id ?? 0,
+        username: me?.username ?? "",
+        liked_by_usernames: [],
+        comments: [],
+      };
+      const [firstPage, ...restPages] = data.pages;
+      const newFirstPage: CursorPage<SessionInterface> = firstPage
+        ? { ...firstPage, results: [optimisticSession, ...firstPage.results] }
+        : { next: null, previous: null, results: [optimisticSession] };
+      return { ...data, pages: [newFirstPage, ...restPages] };
+    },
   });
 }
 
 export function useDeleteSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: number) => deleteSession(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: SESSION_LISTS }),
+  return useOptimisticFeedMutation<number, number>({
+    mutationFn: (id) => deleteSession(id),
+    errorMessage: "Couldn't delete the session — please try again.",
+    update: (data, id) => ({
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        results: page.results.filter((session) => session.id !== id),
+      })),
+    }),
   });
 }
 
 export function useLikeSession() {
-  const qc = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => likeSession(id),
     onSuccess: (session) => {
-      qc.invalidateQueries({ queryKey: SESSION_LISTS });
-      qc.invalidateQueries({ queryKey: queryKeys.session(session.id) });
+      queryClient.invalidateQueries({ queryKey: SESSION_LISTS });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.session(session.id),
+      });
     },
   });
 }

@@ -16,8 +16,13 @@ const readAuthToken = (): AuthTokens | null => {
   return raw ? (JSON.parse(raw) as AuthTokens) : null;
 };
 
+// Fail stuck requests (e.g. offline) so optimistic mutations actually roll back
+// instead of hanging forever.
+const REQUEST_TIMEOUT_MS = 20000;
+
 const axiosInstance = axios.create({
   baseURL,
+  timeout: REQUEST_TIMEOUT_MS,
   headers: {
     Authorization: `JWT ${readAuthToken()?.access}`,
     "Content-type": "application/json",
@@ -46,9 +51,11 @@ axiosInstance.interceptors.request.use(async (req) => {
   }
 
   await axios
-    .post<AuthTokens>(`${baseURL}/api/token/refresh/`, {
-      refresh: authToken.refresh,
-    })
+    .post<AuthTokens>(
+      `${baseURL}/api/token/refresh/`,
+      { refresh: authToken.refresh },
+      { timeout: REQUEST_TIMEOUT_MS },
+    )
     .then((res) => {
       localStorage.setItem("authToken", JSON.stringify(res.data));
       if (req.headers) req.headers.Authorization = `JWT ${res.data.access}`;

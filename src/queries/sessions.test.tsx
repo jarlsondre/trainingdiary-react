@@ -136,4 +136,24 @@ describe("session mutations invalidate the feed", () => {
       expect(liked?.liked_by_usernames).toContain("bob");
     });
   });
+
+  it("delete removes the row optimistically, before the server responds", async () => {
+    (sessionsApi.deleteSession as jest.Mock).mockImplementation(
+      () => new Promise(() => {}),
+    );
+    const { result } = renderHook(
+      () => ({ feed: useSessions(false), del: useDeleteSession() }),
+      { wrapper: makeWrapper() },
+    );
+    await waitFor(() => expect(result.current.feed.isSuccess).toBe(true));
+    expect(feedIds(result.current.feed.data)).toContain(1);
+
+    act(() => {
+      result.current.del.mutate(1);
+    });
+
+    await waitFor(() =>
+      expect(feedIds(result.current.feed.data)).not.toContain(1),
+    );
+  });
 });

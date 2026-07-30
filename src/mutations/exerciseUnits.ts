@@ -8,7 +8,6 @@ import { queryKeys } from "../queries/keys";
 import type { NewExerciseUnit } from "../services/exerciseUnit.service";
 import type { ExerciseInterface, ExerciseUnitInterface } from "../types/models";
 import { useOptimisticSessionMutation } from "./optimistic";
-import { nextTempId } from "./tempId";
 
 export function useAddExerciseUnit() {
   const queryClient = useQueryClient();
@@ -21,8 +20,13 @@ export function useAddExerciseUnit() {
         [];
       const exerciseName =
         exercises.find((e) => e.id === data.exercise)?.name ?? "";
+      // Units render sorted by id ascending (newest at the bottom), so give the
+      // optimistic one an id just above the current max — that lands it at the
+      // bottom, exactly where the real unit will appear after the refetch.
+      const optimisticId =
+        session.exercise_unit.reduce((max, u) => Math.max(max, u.id), 0) + 1;
       const optimisticUnit: ExerciseUnitInterface = {
-        id: nextTempId(),
+        id: optimisticId,
         set: [],
         exercise_name: exerciseName,
         session: data.session,

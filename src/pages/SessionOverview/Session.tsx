@@ -45,6 +45,8 @@ export default function Session(props: Props) {
   };
 
   const handleOpenSession = () => {
+    // Unsaved optimistic session (negative temp id) isn't openable yet.
+    if (props.session.id < 0) return;
     navigate("/session/" + props.session.id);
   };
 

@@ -167,4 +167,30 @@ describe("session detail mutations", () => {
       expect(result.current.session.data?.exercise_unit).toHaveLength(0),
     );
   });
+
+  it("add-exercise's optimistic unit sorts after existing units (bottom)", async () => {
+    session.exercise_unit.push(makeUnit({ id: 5 }));
+    // Never resolves -> the unit that appears is the optimistic one.
+    (unitsApi.createExerciseUnit as jest.Mock).mockImplementation(
+      () => new Promise(() => {}),
+    );
+    const { result } = renderHook(
+      () => ({ session: useSession(1), add: useAddExerciseUnit() }),
+      { wrapper: makeWrapper() },
+    );
+    await waitFor(() => expect(result.current.session.isSuccess).toBe(true));
+
+    act(() => {
+      result.current.add.mutate({ exercise: 1, session: 1 });
+    });
+
+    await waitFor(() =>
+      expect(result.current.session.data?.exercise_unit).toHaveLength(2),
+    );
+    const units = result.current.session.data?.exercise_unit ?? [];
+    const optimistic = units.find((u: ExerciseUnitInterface) => u.id !== 5);
+    // Higher id than the existing unit -> renders below it, where the real unit
+    // will also land (no jump-to-top).
+    expect(optimistic?.id).toBeGreaterThan(5);
+  });
 });
