@@ -1,7 +1,7 @@
 import type React from "react";
 import { useNavigate } from "react-router-dom";
-import { likeSession } from "../../actions/sessions";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useAppSelector } from "../../hooks";
+import { useLikeSession } from "../../mutations/sessions";
 import type { SessionInterface } from "../../types/models";
 import ExerciseUnit from "./ExerciseUnit";
 import "./session.css";
@@ -15,7 +15,7 @@ type Props = {
 export default function Session(props: Props) {
   const date = new Date(props.session.datetime);
   const personalUser = useAppSelector((state) => state.user.personalUser);
-  const dispatch = useAppDispatch();
+  const likeMutation = useLikeSession();
   const navigate = useNavigate();
 
   function getDateString(date: Date): string {
@@ -41,7 +41,7 @@ export default function Session(props: Props) {
   }
 
   const handleLikeSession = () => {
-    dispatch(likeSession(props.session.id));
+    likeMutation.mutate(props.session.id);
   };
 
   const handleOpenSession = () => {

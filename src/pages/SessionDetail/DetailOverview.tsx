@@ -4,12 +4,9 @@ import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
 import { retrieveExercises } from "../../actions/exercises";
 import { addExerciseUnit } from "../../actions/exerciseUnits";
-import {
-  deleteSession,
-  retrieveSingleSession,
-  updateSession,
-} from "../../actions/sessions";
+import { retrieveSingleSession, updateSession } from "../../actions/sessions";
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useDeleteSession } from "../../mutations/sessions";
 import {
   compareExerciseNames,
   compareExerciseUnitIds,
@@ -21,6 +18,7 @@ export default function DetailOverview() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const deleteMutation = useDeleteSession();
 
   // Redux variables
   const selectedSession = useAppSelector(
@@ -81,9 +79,9 @@ export default function DetailOverview() {
   };
 
   const handleDelete = async () => {
-    // Wait for the delete (and its DELETE_SESSION dispatch) to complete before
-    // navigating, so the overview never renders with a mid-delete cache.
-    await dispatch(deleteSession(Number(sessionId)));
+    // Delete on the server, then the mutation invalidates the sessions feed so
+    // the overview shows the correct list on arrival.
+    await deleteMutation.mutateAsync(Number(sessionId));
     navigate("/");
   };
 
