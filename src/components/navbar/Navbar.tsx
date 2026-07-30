@@ -41,7 +41,6 @@ export default function Navbar() {
     setMenuExpanded(false);
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original auth-check timing; dependency cleanup belongs to a behavior pass
   useEffect(() => {
     const raw = localStorage.getItem("authToken");
     const authToken: AuthTokens | null = raw ? JSON.parse(raw) : null;
@@ -54,7 +53,7 @@ export default function Navbar() {
       refresh(authToken.refresh);
     } else if (!isLoading && !isAuthenticated && !isPasswordResetRoute)
       navigate("/login");
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isLoading, location.pathname, navigate]);
 
   if (isAuthenticated)
     return (

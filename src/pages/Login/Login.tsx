@@ -21,10 +21,9 @@ export default function Login() {
     navigate("/password-reset");
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: navigate is stable; matching the original redirect timing
   useEffect(() => {
     if (isAuthenticated) navigate("/");
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="login-page">
