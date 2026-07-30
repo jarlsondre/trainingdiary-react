@@ -32,11 +32,13 @@ export default function SessionOverview() {
   // Pagination
   const cursor = useAppSelector((state) => state.sessions.cursor);
   const moreToLoad = useAppSelector((state) => state.sessions.moreToLoad);
-  // biome-ignore lint/correctness/useExhaustiveDependencies: preserving the original mount-only fetch; dependency cleanup belongs to a behavior pass
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only fetch; dependency cleanup belongs to a behavior pass
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    if (reduxSessions.length === 0)
-      dispatch(retrieveSessions(cursor, filterPersonal));
+    // Always fetch a fresh first page on landing so the list reflects current
+    // server state (e.g. after a session is deleted). Trusting the cached list
+    // here left it stale/empty until a manual refresh.
+    dispatch(retrieveSessions("", filterPersonal, true));
     dispatch({
       type: CLEAR_SEARCH_USERS,
       payload: {

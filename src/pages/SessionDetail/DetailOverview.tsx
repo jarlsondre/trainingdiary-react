@@ -80,8 +80,10 @@ export default function DetailOverview() {
     setKeyValue(keyValue + (1 % 5));
   };
 
-  const handleDelete = () => {
-    dispatch(deleteSession(Number(sessionId)));
+  const handleDelete = async () => {
+    // Wait for the delete (and its DELETE_SESSION dispatch) to complete before
+    // navigating, so the overview never renders with a mid-delete cache.
+    await dispatch(deleteSession(Number(sessionId)));
     navigate("/");
   };
 
