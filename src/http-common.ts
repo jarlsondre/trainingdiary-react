@@ -56,20 +56,22 @@ axiosInstance.interceptors.request.use(async (req) => {
     return req;
   }
 
-  await axios
-    .post<AuthTokens>(
+  try {
+    const res = await axios.post<AuthTokens>(
       `${baseURL}/api/token/refresh/`,
       { refresh: authToken.refresh },
       { timeout: REQUEST_TIMEOUT_MS },
-    )
-    .then((res) => {
-      localStorage.setItem("authToken", JSON.stringify(res.data));
-      if (req.headers) req.headers.Authorization = `JWT ${res.data.access}`;
-    })
-    .catch(() => {
-      useAuthStore.getState().loggedOut();
-    });
-  return req;
+    );
+    localStorage.setItem("authToken", JSON.stringify(res.data));
+    if (req.headers) req.headers.Authorization = `JWT ${res.data.access}`;
+    return req;
+  } catch (error) {
+    // Refresh failed (expired/invalid token, or the server hung) — don't then
+    // send a request we already know can't succeed. Sign out and reject now so
+    // the caller's error handling runs immediately, not after a second timeout.
+    useAuthStore.getState().loggedOut();
+    throw error;
+  }
 });
 
 export default axiosInstance;
