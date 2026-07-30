@@ -1,5 +1,4 @@
 import {
-  type InfiniteData,
   type QueryClient,
   useMutation,
   useQueryClient,
@@ -12,18 +11,18 @@ import {
 } from "../api/sessions";
 import { queryKeys } from "../queries/keys";
 import { useToastStore } from "../stores/toasts";
-import type {
-  AccountInterface,
-  CursorPage,
-  SessionInterface,
-} from "../types/models";
+import type { AccountInterface, SessionInterface } from "../types/models";
+import {
+  type FeedData,
+  prependSessionToFeed,
+  removeSessionFromFeed,
+} from "./feedCache";
 import { useOptimisticSessionMutation } from "./optimistic";
+import { applySessionUpdate } from "./sessionCache";
 import { nextTempId } from "./tempId";
 
 // The "sessions" prefix matches every session list (main feed + profile feeds).
 const SESSION_LISTS = ["sessions"] as const;
-
-type FeedData = InfiniteData<CursorPage<SessionInterface>>;
 
 /** Optimistic mutation over the session lists (an infinite query). */
 function useOptimisticFeedMutation<V, R>(config: {
@@ -76,11 +75,7 @@ export function useAddSession() {
         liked_by_usernames: [],
         comments: [],
       };
-      const [firstPage, ...restPages] = data.pages;
-      const newFirstPage: CursorPage<SessionInterface> = firstPage
-        ? { ...firstPage, results: [optimisticSession, ...firstPage.results] }
-        : { next: null, previous: null, results: [optimisticSession] };
-      return { ...data, pages: [newFirstPage, ...restPages] };
+      return prependSessionToFeed(data, optimisticSession);
     },
   });
 }
@@ -89,13 +84,7 @@ export function useDeleteSession() {
   return useOptimisticFeedMutation<number, number>({
     mutationFn: (id) => deleteSession(id),
     errorMessage: "Couldn't delete the session — please try again.",
-    update: (data, id) => ({
-      ...data,
-      pages: data.pages.map((page) => ({
-        ...page,
-        results: page.results.filter((session) => session.id !== id),
-      })),
-    }),
+    update: (data, id) => removeSessionFromFeed(data, id),
   });
 }
 
@@ -119,6 +108,6 @@ export function useUpdateSession() {
   >({
     mutationFn: (vars) => updateSession(vars.id, vars.data),
     errorMessage: "Couldn't save the session — please try again.",
-    update: (session, vars) => ({ ...session, ...vars.data }),
+    update: (session, vars) => applySessionUpdate(session, vars.data),
   });
 }

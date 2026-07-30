@@ -17,7 +17,8 @@ const readAuthToken = (): AuthTokens | null => {
 };
 
 // Fail stuck requests (e.g. offline) so optimistic mutations actually roll back
-// instead of hanging forever.
+// instead of hanging forever. 20s is deliberately generous; revisit if it feels
+// slow on flaky mobile networks (see CLAUDE.md).
 const REQUEST_TIMEOUT_MS = 20000;
 
 const axiosInstance = axios.create({
