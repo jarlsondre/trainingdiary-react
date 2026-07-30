@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAccount, getPersonalUser } from "../api/accounts";
-import { useAppSelector } from "../hooks";
+import { useAuthStore } from "../stores/auth";
 import { queryKeys } from "./keys";
 
 /**
@@ -9,9 +9,7 @@ import { queryKeys } from "./keys";
  * Redux reference in the query layer).
  */
 export function usePersonalUser() {
-  const isAuthenticated = useAppSelector(
-    (state) => state.authentication.isAuthenticated,
-  );
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   return useQuery({
     queryKey: queryKeys.personalUser(),
     queryFn: getPersonalUser,

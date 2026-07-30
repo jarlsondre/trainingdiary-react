@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import "./sessionOverview.css";
 import { useNavigate } from "react-router-dom";
-import { CLEAR_SEARCH_USERS } from "../../actions/types";
-import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useAddSession } from "../../mutations/sessions";
 import { useSessions } from "../../queries/sessions";
+import { useAuthStore } from "../../stores/auth";
 import type { SessionInterface } from "../../types/models";
 import Session from "./Session";
 
@@ -17,12 +16,9 @@ const compareDates = (
 
 export default function SessionOverview() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [filterPersonal, setFilterPersonal] = useState<boolean>(false);
 
-  const isAuthenticated = useAppSelector(
-    (state) => state.authentication.isAuthenticated,
-  );
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // The feed itself now lives entirely in TanStack Query. Changing the filter
   // just switches the query key, which refetches automatically.
@@ -36,12 +32,7 @@ export default function SessionOverview() {
 
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
-    // Search results live in a still-Redux slice; clear them on returning here.
-    dispatch({
-      type: CLEAR_SEARCH_USERS,
-      payload: { searchResults: [], searchCursor: "" },
-    });
-  }, [isAuthenticated, navigate, dispatch]);
+  }, [isAuthenticated, navigate]);
 
   const handleNewSession = () => {
     addSession.mutate();

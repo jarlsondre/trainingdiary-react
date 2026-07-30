@@ -1,18 +1,15 @@
 import type React from "react";
 import { useState } from "react";
 import "./passwordReset.css";
-import { resetPassword } from "../../actions/authentication";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { requestPasswordReset } from "../../auth/operations";
+import { useAuthStore } from "../../stores/auth";
 
 const PasswordReset: React.FC = () => {
-  const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
-  const isLoading = useAppSelector((state) => state.authentication.isLoading);
-  const resetPasswordFail = useAppSelector(
-    (state) => state.authentication.resetPasswordFail,
-  );
-  const resetPasswordSuccess = useAppSelector(
-    (state) => state.authentication.resetPasswordSuccess,
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const resetPasswordFail = useAuthStore((state) => state.resetPasswordFail);
+  const resetPasswordSuccess = useAuthStore(
+    (state) => state.resetPasswordSuccess,
   );
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +17,7 @@ const PasswordReset: React.FC = () => {
   };
 
   const handleResetPassword = () => {
-    dispatch(resetPassword(email));
+    requestPasswordReset(email);
   };
 
   return (

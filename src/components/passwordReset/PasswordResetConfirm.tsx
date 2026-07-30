@@ -2,19 +2,18 @@ import "./passwordResetConfirm.css";
 import type React from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { confirmPassword } from "../../actions/authentication";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { confirmPasswordReset } from "../../auth/operations";
+import { useAuthStore } from "../../stores/auth";
 
 const PasswordResetConfirm: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { username, token } = useParams<{ username: string; token: string }>();
   const [newPassword, setNewPassword] = useState("");
-  const isLoading = useAppSelector((state) => state.authentication.isLoading);
-  const confirmPasswordFail = useAppSelector(
-    (state) => state.authentication.confirmPasswordFail,
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const confirmPasswordFail = useAuthStore(
+    (state) => state.confirmPasswordFail,
   );
-  const confirmPasswordSuccess = useAppSelector(
-    (state) => state.authentication.confirmPasswordSuccess,
+  const confirmPasswordSuccess = useAuthStore(
+    (state) => state.confirmPasswordSuccess,
   );
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +22,7 @@ const PasswordResetConfirm: React.FC = () => {
 
   const handleConfirmPassword = () => {
     if (!username || !token) return;
-    dispatch(confirmPassword(username, token, newPassword));
+    confirmPasswordReset(username, token, newPassword);
   };
 
   return (

@@ -1,27 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
-import { login } from "../../actions/authentication";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { login } from "../../auth/operations";
+import { useAuthStore } from "../../stores/auth";
 
 export default function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const isAuthenticated = useAppSelector(
-    (state) => state.authentication.isAuthenticated,
-  );
-
-  const isLoading = useAppSelector((state) => state.authentication.isLoading);
-  const loginFailed = useAppSelector(
-    (state) => state.authentication.loginFailed,
-  );
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const loginFailed = useAuthStore((state) => state.loginFailed);
 
   const handleLogin = () => {
-    dispatch(login({ username: username, password: password }));
+    login({ username: username, password: password });
   };
 
   const handleReset = () => {

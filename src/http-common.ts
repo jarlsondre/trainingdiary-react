@@ -2,8 +2,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import jwt_decode from "jwt-decode";
 
-import { AUTH_ERROR } from "./actions/types";
-import store from "./store";
+import { useAuthStore } from "./stores/auth";
 import type { AuthTokens } from "./types/models";
 
 // API base URL: defaults to production so a build is always prod-safe. For local
@@ -32,7 +31,7 @@ axiosInstance.interceptors.request.use(async (req) => {
   // Logged out: flag it and send the request without credentials. (This used
   // to fall through into jwt_decode(undefined) and crash every request.)
   if (!authToken) {
-    store.dispatch({ type: AUTH_ERROR, payload: null });
+    useAuthStore.getState().loggedOut();
     return req;
   }
 
@@ -56,7 +55,7 @@ axiosInstance.interceptors.request.use(async (req) => {
     })
     .catch(() => {
       console.log("refreshing token failed");
-      store.dispatch({ type: AUTH_ERROR, payload: null });
+      useAuthStore.getState().loggedOut();
     });
   return req;
 });

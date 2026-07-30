@@ -1,25 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { logout, refresh } from "../../actions/authentication";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { logout, refresh } from "../../auth/operations";
 import { usePersonalUser } from "../../queries/accounts";
+import { useAuthStore } from "../../stores/auth";
 import type { AuthTokens } from "../../types/models";
 import "./navbar.css";
 import logo from "./logo.jpg";
 
 export default function Navbar() {
-  const isAuthenticated = useAppSelector(
-    (state) => state.authentication.isAuthenticated,
-  );
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isLoading = useAuthStore((state) => state.isLoading);
   const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
   const user = usePersonalUser().data;
-  const isLoading = useAppSelector((state) => state.authentication.isLoading);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
-    dispatch(logout());
+    logout();
     setMenuExpanded(false);
     navigate("/login");
   };
@@ -54,7 +51,7 @@ export default function Navbar() {
       pathname.startsWith("/password-reset") ||
       pathname.startsWith("/password-reset-confirm");
     if (authToken?.refresh && !isAuthenticated) {
-      dispatch(refresh(authToken.refresh));
+      refresh(authToken.refresh);
     } else if (!isLoading && !isAuthenticated && !isPasswordResetRoute)
       navigate("/login");
   }, [isAuthenticated]);

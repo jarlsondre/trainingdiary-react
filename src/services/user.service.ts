@@ -38,11 +38,11 @@ class UserService {
   }
 
   followUser(id: number) {
-    return http.post(baseURL + "/accounts/" + id + "/follow/");
+    return http.post("/accounts/" + id + "/follow/");
   }
 
   unfollowUser(id: number) {
-    return http.post(baseURL + "/accounts/" + id + "/unfollow/");
+    return http.post("/accounts/" + id + "/unfollow/");
   }
 
   refresh(token: string) {
