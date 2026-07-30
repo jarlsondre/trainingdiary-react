@@ -7,6 +7,7 @@ import {
 } from "../api/sessions";
 import { queryKeys } from "../queries/keys";
 import type { SessionInterface } from "../types/models";
+import { useOptimisticSessionMutation } from "./optimistic";
 
 // The "sessions" prefix matches every session list (main feed + profile feeds),
 // so a create/delete/like refreshes them all.
@@ -40,13 +41,12 @@ export function useLikeSession() {
 }
 
 export function useUpdateSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (vars: { id: number; data: Partial<SessionInterface> }) =>
-      updateSession(vars.id, vars.data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: SESSION_LISTS });
-      qc.invalidateQueries({ queryKey: ["session"] });
-    },
+  return useOptimisticSessionMutation<
+    { id: number; data: Partial<SessionInterface> },
+    SessionInterface
+  >({
+    mutationFn: (vars) => updateSession(vars.id, vars.data),
+    errorMessage: "Couldn't save the session — please try again.",
+    update: (session, vars) => ({ ...session, ...vars.data }),
   });
 }

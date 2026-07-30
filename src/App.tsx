@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import PasswordReset from "./components/passwordReset/PasswordReset";
 import PasswordResetConfirm from "./components/passwordReset/PasswordResetConfirm";
+import Toaster from "./components/Toaster/Toaster";
 import Calculator from "./pages/Calculator/Calculator";
 import Login from "./pages/Login/Login";
 import UserDetail from "./pages/ProfilePage/UserDetail";
@@ -28,6 +29,7 @@ function App() {
         <Route path="search" element={<Search />}></Route>
         <Route path="/user/:username" element={<UserDetail />} />
       </Routes>
+      <Toaster />
     </div>
   );
 }
