@@ -41,7 +41,13 @@ export default function Navbar() {
     setMenuExpanded(false);
   };
 
+  // Single redirect authority for the whole app (Navbar is always mounted).
+  // While auth is settled/in-flight we do nothing; only once we know the user
+  // is unauthenticated *and* nothing is pending do we act.
   useEffect(() => {
+    // Authenticated, or a login/refresh is in flight — wait it out.
+    if (isAuthenticated || isLoading) return;
+
     const raw = localStorage.getItem("authToken");
     const authToken: AuthTokens | null = raw ? JSON.parse(raw) : null;
 
@@ -49,10 +55,13 @@ export default function Navbar() {
     const isPasswordResetRoute =
       pathname.startsWith("/password-reset") ||
       pathname.startsWith("/password-reset-confirm");
-    if (authToken?.refresh && !isAuthenticated) {
+
+    if (authToken?.refresh) {
+      // Stored token: silently refresh (sets isLoading, so this won't re-fire).
       refresh(authToken.refresh);
-    } else if (!isLoading && !isAuthenticated && !isPasswordResetRoute)
+    } else if (!isPasswordResetRoute) {
       navigate("/login");
+    }
   }, [isAuthenticated, isLoading, location.pathname, navigate]);
 
   if (isAuthenticated)

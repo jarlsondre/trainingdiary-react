@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./sessionOverview.css";
-import { useNavigate } from "react-router-dom";
 import { useAddSession } from "../../mutations/sessions";
 import { useSessions } from "../../queries/sessions";
-import { useAuthStore } from "../../stores/auth";
 import type { FeedFilter, SessionInterface } from "../../types/models";
 import Session from "./Session";
 
@@ -26,9 +24,6 @@ const isFeedFilter = (value: string | null): value is FeedFilter =>
   value === "all" || value === "personal" || value === "following";
 
 export default function SessionOverview() {
-  const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
   // Remembered across reloads; defaults to "all".
   const [feed, setFeed] = useState<FeedFilter>(() => {
     const stored = localStorage.getItem(FEED_STORAGE_KEY);
@@ -42,10 +37,6 @@ export default function SessionOverview() {
   const sessions = (data?.pages.flatMap((page) => page.results) ?? []).sort(
     compareDates,
   );
-
-  useEffect(() => {
-    if (!isAuthenticated) navigate("/login");
-  }, [isAuthenticated, navigate]);
 
   const handleFeedChange = (value: FeedFilter) => {
     setFeed(value);

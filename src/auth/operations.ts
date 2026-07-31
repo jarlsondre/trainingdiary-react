@@ -25,6 +25,9 @@ export async function login(data: LoginData): Promise<void> {
 
 export async function refresh(token: string): Promise<void> {
   const auth = useAuthStore.getState();
+  // Mark auth as in-flight so redirect guards wait for the silent refresh
+  // instead of bouncing to /login while it's still resolving.
+  auth.loginRequest();
   try {
     const tokens = await authApi.refreshTokens(token);
     localStorage.setItem(AUTH_TOKEN_KEY, JSON.stringify(tokens));
