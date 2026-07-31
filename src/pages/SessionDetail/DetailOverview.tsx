@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ExerciseUnitDetail from "./ExerciseUnitDetail";
 import "./detailOverview.css";
+import { useAddComment } from "../../mutations/comments";
 import { useAddExerciseUnit } from "../../mutations/exerciseUnits";
 import { useDeleteSession, useUpdateSession } from "../../mutations/sessions";
 import { usePersonalUser } from "../../queries/accounts";
@@ -30,12 +31,14 @@ export default function DetailOverview() {
   const deleteMutation = useDeleteSession();
 
   const personalUsername = usePersonalUser().data?.username;
+  const addComment = useAddComment(personalUsername ?? "");
 
   const [selectedExercise, setSelectedExercise] = useState<number | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [date, setDate] = useState<string | undefined>(undefined);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [commentText, setCommentText] = useState("");
 
   const maxLineCount = 4;
 
@@ -77,6 +80,13 @@ export default function DetailOverview() {
       data: { datetime: newDate.toISOString(), description },
     });
     toggleIsEditingInfo();
+  };
+
+  const handleAddComment = () => {
+    const text = commentText.trim();
+    if (!text) return;
+    addComment.mutate({ session: id, text });
+    setCommentText("");
   };
 
   const toggleIsEditingInfo = () => setIsEditingInfo(!isEditingInfo);
@@ -205,23 +215,39 @@ export default function DetailOverview() {
             </button>
           </div>
         )}
-        {session.comments.length > 0 && (
-          <div className="comment-section-container">
+        <div className="comment-section-container">
+          {session.comments.length > 0 && (
             <span className="comment-section-header">
               {session.comments.length} comments
             </span>
-            {session.comments.map((comment: SessionCommentInterface) => {
-              return (
-                <SessionComment
-                  key={comment.id}
-                  username={comment.username}
-                  text={comment.text}
-                  datetime={comment.datetime}
-                />
-              );
-            })}
+          )}
+          {session.comments.map((comment: SessionCommentInterface) => {
+            return (
+              <SessionComment
+                key={comment.id}
+                username={comment.username}
+                text={comment.text}
+                datetime={comment.datetime}
+              />
+            );
+          })}
+          <div className="add-comment-container">
+            <textarea
+              className="comment-input-field"
+              rows={2}
+              placeholder="Add a comment..."
+              value={commentText}
+              onChange={(event) => setCommentText(event.target.value)}
+            />
+            <button
+              className="add-comment-button"
+              onClick={handleAddComment}
+              disabled={commentText.trim() === ""}
+            >
+              Post
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

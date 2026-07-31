@@ -1,9 +1,11 @@
 import type {
   ExerciseUnitInterface,
+  SessionCommentInterface,
   SessionInterface,
   SetInterface,
 } from "../types/models";
 import {
+  addCommentToSession,
   addExerciseUnitToSession,
   addSetToSession,
   applySessionUpdate,
@@ -179,6 +181,32 @@ describe("removeExerciseUnitFromSession", () => {
     });
     const result = removeExerciseUnitFromSession(session, 10);
     expect(result.exercise_unit.map((u) => u.id)).toEqual([11]);
+  });
+});
+
+describe("addCommentToSession", () => {
+  const makeComment = (
+    overrides: Partial<SessionCommentInterface> = {},
+  ): SessionCommentInterface => ({
+    id: -1,
+    session: 100,
+    user: 1,
+    username: "jarl",
+    text: "nice lift",
+    datetime: "2026-07-14T12:00:00Z",
+    ...overrides,
+  });
+
+  it("appends the comment when it belongs to the session", () => {
+    const session = makeSession({ id: 100, comments: [] });
+    const result = addCommentToSession(session, makeComment({ session: 100 }));
+    expect(result.comments.map((c) => c.text)).toEqual(["nice lift"]);
+  });
+
+  it("leaves the session untouched when the comment is for another session", () => {
+    const session = makeSession({ id: 100, comments: [] });
+    const result = addCommentToSession(session, makeComment({ session: 999 }));
+    expect(result).toBe(session);
   });
 });
 

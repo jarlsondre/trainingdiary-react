@@ -1,5 +1,9 @@
 import type { NewSetData, UpdateSetData } from "../services/set.service";
-import type { ExerciseUnitInterface, SessionInterface } from "../types/models";
+import type {
+  ExerciseUnitInterface,
+  SessionCommentInterface,
+  SessionInterface,
+} from "../types/models";
 
 /**
  * Pure optimistic patches on a cached session's nested tree. Each returns a new
@@ -81,6 +85,16 @@ export const removeExerciseUnitFromSession = (
   ...session,
   exercise_unit: session.exercise_unit.filter((unit) => unit.id !== id),
 });
+
+export const addCommentToSession = (
+  session: SessionInterface,
+  comment: SessionCommentInterface,
+): SessionInterface =>
+  // Guard by id: setQueriesData applies to every cached session detail, but the
+  // comment belongs to exactly one — only append it there.
+  session.id === comment.session
+    ? { ...session, comments: [...session.comments, comment] }
+    : session;
 
 export const applySessionUpdate = (
   session: SessionInterface,
