@@ -96,6 +96,25 @@ export const addCommentToSession = (
     ? { ...session, comments: [...session.comments, comment] }
     : session;
 
+export const updateCommentInSession = (
+  session: SessionInterface,
+  id: number,
+  text: string,
+): SessionInterface => ({
+  ...session,
+  comments: session.comments.map((comment) =>
+    comment.id === id ? { ...comment, text } : comment,
+  ),
+});
+
+export const removeCommentFromSession = (
+  session: SessionInterface,
+  id: number,
+): SessionInterface => ({
+  ...session,
+  comments: session.comments.filter((comment) => comment.id !== id),
+});
+
 export const applySessionUpdate = (
   session: SessionInterface,
   data: Partial<SessionInterface>,

@@ -9,8 +9,10 @@ import {
   addExerciseUnitToSession,
   addSetToSession,
   applySessionUpdate,
+  removeCommentFromSession,
   removeExerciseUnitFromSession,
   removeSetFromSession,
+  updateCommentInSession,
   updateExerciseUnitInSession,
   updateSetInSession,
 } from "./sessionCache";
@@ -207,6 +209,48 @@ describe("addCommentToSession", () => {
     const session = makeSession({ id: 100, comments: [] });
     const result = addCommentToSession(session, makeComment({ session: 999 }));
     expect(result).toBe(session);
+  });
+});
+
+describe("updateCommentInSession", () => {
+  const comment = (id: number, text: string): SessionCommentInterface => ({
+    id,
+    session: 100,
+    user: 1,
+    username: "jarl",
+    text,
+    datetime: "2026-07-14T12:00:00Z",
+  });
+
+  it("replaces the text of the matching comment only", () => {
+    const session = makeSession({
+      comments: [comment(1, "old"), comment(2, "keep")],
+    });
+    const result = updateCommentInSession(session, 1, "new");
+    expect(result.comments.map((c) => c.text)).toEqual(["new", "keep"]);
+  });
+
+  it("does not mutate the original session", () => {
+    const session = makeSession({ comments: [comment(1, "old")] });
+    updateCommentInSession(session, 1, "new");
+    expect(session.comments[0].text).toBe("old");
+  });
+});
+
+describe("removeCommentFromSession", () => {
+  const comment = (id: number): SessionCommentInterface => ({
+    id,
+    session: 100,
+    user: 1,
+    username: "jarl",
+    text: "x",
+    datetime: "2026-07-14T12:00:00Z",
+  });
+
+  it("removes the comment with the given id", () => {
+    const session = makeSession({ comments: [comment(1), comment(2)] });
+    const result = removeCommentFromSession(session, 1);
+    expect(result.comments.map((c) => c.id)).toEqual([2]);
   });
 });
 

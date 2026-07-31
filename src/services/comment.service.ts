@@ -14,6 +14,12 @@ class CommentDataService {
   deleteComment(id: number) {
     return http.delete(`/session-comment/${id}/`);
   }
+
+  updateComment(id: number, text: string) {
+    return http.patch<SessionCommentInterface>(`/session-comment/${id}/`, {
+      text,
+    });
+  }
 }
 
 export default new CommentDataService();
