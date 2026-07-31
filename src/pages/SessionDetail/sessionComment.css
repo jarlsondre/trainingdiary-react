@@ -3,6 +3,8 @@
   border-radius: 10px;
   margin-top: 10px;
   padding: 5px;
+  /* Break long unbroken words so a comment can't widen the page. */
+  overflow-wrap: anywhere;
 }
 
 .comment-detail-container {
