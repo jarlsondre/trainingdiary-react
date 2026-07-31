@@ -12,6 +12,13 @@ type Props = {
   session: SessionInterface;
 };
 
+const MAX_COMMENT_PREVIEW_CHARS = 120;
+
+const truncate = (text: string): string =>
+  text.length > MAX_COMMENT_PREVIEW_CHARS
+    ? `${text.slice(0, MAX_COMMENT_PREVIEW_CHARS).trimEnd()}…`
+    : text;
+
 export default function Session(props: Props) {
   const date = new Date(props.session.datetime);
   const personalUser = usePersonalUser().data;
@@ -54,6 +61,9 @@ export default function Session(props: Props) {
     event.stopPropagation();
     navigate(`/user/${props.session.username}`);
   };
+
+  // The two most recent comments (comments come oldest-first from the API).
+  const previewComments = props.session.comments.slice(-2);
 
   return (
     <div
@@ -115,6 +125,18 @@ export default function Session(props: Props) {
           {getLikesString(personalUser?.username)}
           {props.session.comments.length > 0 &&
             `, ${props.session.comments.length} comments`}{" "}
+        </div>
+      )}
+      {previewComments.length > 0 && (
+        <div className="comment-preview-container">
+          {previewComments.map((comment) => (
+            <div key={comment.id} className="comment-preview">
+              <span className="comment-preview-username">
+                {comment.username}
+              </span>{" "}
+              {truncate(comment.text)}
+            </div>
+          ))}
         </div>
       )}
     </div>

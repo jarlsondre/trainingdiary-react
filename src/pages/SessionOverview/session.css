@@ -67,6 +67,25 @@
   justify-content: end;
 }
 
+.comment-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 8px 8px;
+  background-color: white;
+  border-radius: 0 0 4px 4px;
+}
+
+.comment-preview {
+  font-size: small;
+  color: #333;
+  overflow-wrap: anywhere;
+}
+
+.comment-preview-username {
+  font-weight: bold;
+}
+
 .like-button {
   background-color: white;
   border-radius: 4px;
